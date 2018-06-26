@@ -1,0 +1,15 @@
+<!doctype html>
+	<title>FriendshipBot</title>
+	<body>
+		{% for event in events['events'] %}
+    		<div style='margin-bottom: 30px'>
+    			<h1>{{ event['name']['text'] }}</h1>
+    			<img src="{{ event['logo']['url'] }}" style="max-width:1024px"></img>
+    			<h2>{{ event['start']['local'] }} - {{ event['end']['local'] }}</h2>
+    			<div>{{ event['description']['text'] }}</div>
+    			<!-- <div>{{ event['description']['html']|safe }}</div> -->
+    			<div>{{ event['resource_uri'] }}</div>
+    		</div>
+		{% endfor %}
+	</body>
+</html>

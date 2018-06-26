@@ -1,0 +1,5 @@
+alembic == 0.9.9
+eventbrite == 3.3.3
+flask == 1.0.2
+postgres == 2.2.1
+sqlalchemy == 1.2.8
