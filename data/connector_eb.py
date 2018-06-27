@@ -6,6 +6,10 @@ from eventbrite import Eventbrite
 
 from model.base import session
 from model.connector_event import ConnectorEvent
+from model.event import Event
+from model.event_connector_event import EventConnectorEvent
+
+from utils.get_from import get_from
 
 class EBEventType:
 	MUSIC = 103
@@ -70,62 +74,61 @@ class ConnectorEB:
 	):
 		today = datetime.date.today()
 
-		params = {
-		}
+		params = {}
 
 		if limit_today:
 			event_params.update({
-				'start_date.range_start': self.format_time_str(today),
-				'start_date.range_end': self.format_time_str(today+datetime.timedelta(days=1)),
+				'start_date.range_start': klass.format_time_str(today),
+				'start_date.range_end': klass.format_time_str(today+datetime.timedelta(days=1)),
 			})
 		elif limit_tomorrow:
-			event_params.update({
-				'start_date.range_start': self.format_time_str(today+datetime.timedelta(days=1)),
-				'start_date.range_end': self.format_time_str(today+datetime.timedelta(days=2)),
+			params.update({
+				'start_date.range_start': klass.format_time_str(today+datetime.timedelta(days=1)),
+				'start_date.range_end': klass.format_time_str(today+datetime.timedelta(days=2)),
 			})
 		elif limit_this_weekend:
 			if today.weekday() == 7:
-				event_params.update({
-					'start_date.range_start': self.format_time_str(today),
-					'start_date.range_end': self.format_time_str(today+datetime.timedelta(days=1)),	
+				params.update({
+					'start_date.range_start': klass.format_time_str(today),
+					'start_date.range_end': klass.format_time_str(today+datetime.timedelta(days=1)),	
 				})
 			else:
 				day_delta = 5-today.weekday()
 				this_saturday = today+datetime.timedelta(days=day_delta)
 
-				event_params.update({
-					'start_date.range_start': self.format_time_str(this_saturday),
-					'start_date.range_end': self.format_time_str(this_saturday+datetime.timedelta(days=2)),	
+				params.update({
+					'start_date.range_start': klass.format_time_str(this_saturday),
+					'start_date.range_end': klass.format_time_str(this_saturday+datetime.timedelta(days=2)),	
 				})
 		elif limit_next_weekend:
 			if today.weekday() == 6:
 				next_saturday = today+datetime.timedelta(days=7)
-				event_params.update({
-					'start_date.range_start': self.format_time_str(next_saturday),
-					'start_date.range_end': self.format_time_str(next_saturday+datetime.timedelta(days=2)),	
+				params.update({
+					'start_date.range_start': klass.format_time_str(next_saturday),
+					'start_date.range_end': klass.format_time_str(next_saturday+datetime.timedelta(days=2)),	
 				})
 			else:
 				day_delta = 5-today.weekday()+7
 
 				next_saturday = today+datetime.timedelta(days=day_delta)
 
-				event_params.update({
-					'start_date.range_start': self.format_time_str(next_saturday),
-					'start_date.range_end': self.format_time_str(next_saturday+datetime.timedelta(days=2)),	
+				params.update({
+					'start_date.range_start': klass.format_time_str(next_saturday),
+					'start_date.range_end': klass.format_time_str(next_saturday+datetime.timedelta(days=2)),	
 				})
 		elif limit_this_week:
 			day_delta = 6-today.weekday()
 			this_sunday = today+datetime.timedelta(days=day_delta)
-			event_params.update({
-				'start_date.range_start': self.format_time_str(today),
-				'start_date.range_end': self.format_time_str(this_sunday+datetime.timedelta(days=1)),	
+			params.update({
+				'start_date.range_start': klass.format_time_str(today),
+				'start_date.range_end': klass.format_time_str(this_sunday+datetime.timedelta(days=1)),	
 			})
 		elif limit_next_week:
 			day_delta = 6-today.weekday()+1
 			next_monday = today+datetime.timedelta(days=day_delta)
-			event_params.update({
-				'start_date.range_start': self.format_time_str(next_monday),
-				'start_date.range_end': self.format_time_str(next_monday+datetime.timedelta(days=7)),	
+			params.update({
+				'start_date.range_start': klass.format_time_str(next_monday),
+				'start_date.range_end': klass.format_time_str(next_monday+datetime.timedelta(days=7)),	
 			})
 
 		return params
@@ -166,16 +169,55 @@ class ConnectorEB:
 			)
 		)
 
-		events = self.client.event_search(**event_params)
-		for event in events['events']:
-			row_connector_event = ConnectorEvent(
-				connector_event_id="{}_{}".format(self.CONNECTOR_TYPE, event['id']),
-				connector_type=self.CONNECTOR_TYPE,
-				data=event
-			)
-			session.merge(row_connector_event)
-		session.commit()
-		return events
+		event_params['expand'] = 'organizer,venue'
+
+		sentinel = True
+		while sentinel:
+			raw_events = self.client.event_search(**event_params)
+			for i, event in enumerate(raw_events['events']):
+				connector_event_id = "{}_{}".format(self.CONNECTOR_TYPE, event['id'])
+				row_connector_event = ConnectorEvent(
+					connector_event_id=connector_event_id,
+					connector_type=self.CONNECTOR_TYPE,
+					data=event
+				)
+				session.merge(row_connector_event)
+				session.commit()
+
+				row_event_connector_event = session.query(EventConnectorEvent).filter(EventConnectorEvent.connector_event_id==connector_event_id).first()			
+				if row_event_connector_event:
+					row_event = session.query(Event).filter(Event.event_id==row_event_connector_event.event_id).first()
+				else:
+					row_event = Event(
+						name = event['name']['text'],
+						description = event['description']['text'],
+						short_name = event['name']['text'],
+						img_url = get_from(event, ['logo', 'url']),
+						start_time = event['start']['utc'],
+						end_time = event['end']['utc'],
+						# cost = ,
+						currency = event['currency'],
+						venue_name = event['venue']['name'],
+						address = event['venue']['address']['localized_multi_line_address_display'],
+						latitude = event['venue']['latitude'],
+						longitude = event['venue']['longitude'],
+						link = event['resource_uri']
+					)
+					session.add(row_event)
+					session.commit()
+
+					row_event_connector_event = EventConnectorEvent(
+						event_id = row_event.event_id,
+						connector_event_id = row_connector_event.connector_event_id
+					)
+					session.merge(row_event_connector_event)
+					session.commit()
+
+				yield row_event
+
+			sentinel = raw_events['pagination']['has_more_items']
+			if sentinel:
+				event_params['page'] = raw_events['pagination']['page_number']+1
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
