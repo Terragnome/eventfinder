@@ -169,11 +169,16 @@ class ConnectorEB:
 			)
 		)
 
-		event_params['expand'] = 'organizer,venue'
+		event_params.update({
+			'expand': 'organizer,venue',
+			'include_all_series_instances': False,
+			'include_unavailable_events': False
+		})
 
 		sentinel = True
 		while sentinel:
 			raw_events = self.client.event_search(**event_params)
+
 			for i, event in enumerate(raw_events['events']):
 				connector_event_id = "{}_{}".format(self.CONNECTOR_TYPE, event['id'])
 				row_connector_event = ConnectorEvent(
@@ -188,9 +193,24 @@ class ConnectorEB:
 				if row_event_connector_event:
 					row_event = session.query(Event).filter(Event.event_id==row_event_connector_event.event_id).first()
 				else:
+					event_name = get_from(event, ['name','text'])
+					if event_name:
+						lower_event_name = event_name.lower()	
+						if ("speed dating" in lower_event_name):
+							continue
+
+					event_description = get_from(event, ['description','text'])
+					if event_description:
+						lower_event_description = event_description.lower()
+						if (
+							"wine" in lower_event_description
+							and "shuttle" in lower_event_description
+						):
+							continue
+
 					row_event = Event(
-						name = event['name']['text'],
-						description = event['description']['text'],
+						name = event_name,
+						description = event_description,
 						short_name = event['name']['text'],
 						img_url = get_from(event, ['logo', 'url']),
 						start_time = event['start']['utc'],
@@ -223,8 +243,8 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--address', default='13960 Lynde Ave, Saratoga, CA 95070')
 	parser.add_argument('--distance', default='30mi')
-	parser.add_argument('--categories')
-	parser.add_argument('--sort_by')
+	parser.add_argument('--categories', default=EBEventType.FOOD_DRINK)
+	parser.add_argument('--sort_by', default="distance")
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument('--today', action='store_true')
 	group.add_argument('--tomorrow', action='store_true')
@@ -232,9 +252,11 @@ if __name__ == '__main__':
 	group.add_argument('--next_weekend', action='store_true')
 	group.add_argument('--this_week', action='store_true')
 	group.add_argument('--next_week', action='store_true')
-	group.add_argument('--this_month', action='store_true')
+	# group.add_argument('--this_month', action='store_true')
 	args = parser.parse_args()
 
 	e = ConnectorEB()
 	events = e.get_events(**vars(args))
-	print(json.dumps(events, indent=4))
+	for i, event in enumerate(events):
+		# print(json.dumps(dict(event), indent=4))
+		print(i, event.name)

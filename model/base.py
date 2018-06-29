@@ -9,3 +9,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 Base = declarative_base()
+
+from .connector_event import ConnectorEvent
+from .event import Event
+from .event_connector_event import EventConnectorEvent

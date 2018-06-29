@@ -6,11 +6,11 @@ from model.event import Event
 
 class EventController:
 	def get_events(self):
-		ConnectorEB().get_events(
-			address='13960 Lynde Ave, Saratoga, CA 95070',
-			distance='100mi',
-			categories=EBEventType.FOOD_DRINK,
-			next_week=True
-		)
-		events = session.query(Event)
+		# ConnectorEB().get_events(
+		# 	address='13960 Lynde Ave, Saratoga, CA 95070',
+		# 	distance='100mi',
+		# 	categories=EBEventType.FOOD_DRINK,
+		# 	next_week=True
+		# )
+		events = session.query(Event).all()
 		return events

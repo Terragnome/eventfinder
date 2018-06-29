@@ -22,6 +22,8 @@ class Event(Base):
 
 	link = Column(String)
 
+	connector_events = relationship('ConnectorEvent', secondary='event_connector_events')
+
 	@property
 	def display_time(self):
 		if self.start_time.isocalendar() == self.end_time.isocalendar():
