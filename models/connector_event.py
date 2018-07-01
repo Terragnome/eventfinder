@@ -9,4 +9,4 @@ class ConnectorEvent(Base):
 	connector_type = Column(String, primary_key=True)
 	data = Column(JSON)
 
-	event = relationship('Event', secondary='event_connector_events')
+	event = relationship('Event', secondary='event_connector_events', uselist=False)

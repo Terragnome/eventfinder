@@ -1,0 +1,61 @@
+@font-face {
+    font-family: Roboto;
+    src: url('https://fonts.googleapis.com/css?family=Roboto');
+}
+
+body{
+	font-family: Roboto,sans-serif;
+}
+
+.app_header{
+	overflow: auto;
+}
+
+.app_login{
+	float: right;
+	margin: 10px 0 0 0;
+}
+
+.app_title{
+	float: left;
+}
+
+.entry{
+	padding: 5px 20px 30px 20px;
+	text-align: center;
+}
+
+.entry_list{
+	border: 1px solid black;
+	float: left;
+	height: 490px;
+	margin: 0 10px 50px 10px;
+	padding: 5px 20px 30px 20px;
+	text-align: center;
+	width: 480px;
+}
+
+.entry_address{
+	margin: 0 0 10px 0;
+	text-align: center;
+}
+
+.entry_choice{
+	margin: 0 10px 0 10px;
+}
+
+.entry_choices{
+}
+
+.entry_description{
+	text-align: left;
+}
+
+.entry_img{
+	max-width: 460px;
+}
+
+.user_profile_img{
+	border-radius: 25px;
+	width: 50px;
+}

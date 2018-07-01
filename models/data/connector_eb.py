@@ -4,10 +4,10 @@ import json
 
 from eventbrite import Eventbrite
 
-from model.base import session
-from model.connector_event import ConnectorEvent
-from model.event import Event
-from model.event_connector_event import EventConnectorEvent
+from models.base import db_session
+from models.connector_event import ConnectorEvent
+from models.event import Event
+from models.event_connector_event import EventConnectorEvent
 
 from utils.get_from import get_from
 
@@ -186,12 +186,12 @@ class ConnectorEB:
 					connector_type=self.CONNECTOR_TYPE,
 					data=event
 				)
-				session.merge(row_connector_event)
-				session.commit()
+				db_session.merge(row_connector_event)
+				db_session.commit()
 
-				row_event_connector_event = session.query(EventConnectorEvent).filter(EventConnectorEvent.connector_event_id==connector_event_id).first()			
+				row_event_connector_event = db_session.query(EventConnectorEvent).filter(EventConnectorEvent.connector_event_id==connector_event_id).first()			
 				if row_event_connector_event:
-					row_event = session.query(Event).filter(Event.event_id==row_event_connector_event.event_id).first()
+					row_event = db_session.query(Event).filter(Event.event_id==row_event_connector_event.event_id).first()
 				else:
 					event_name = get_from(event, ['name','text'])
 					if event_name:
@@ -223,15 +223,15 @@ class ConnectorEB:
 						longitude = event['venue']['longitude'],
 						link = event['resource_uri']
 					)
-					session.add(row_event)
-					session.commit()
+					db_session.add(row_event)
+					db_session.commit()
 
 					row_event_connector_event = EventConnectorEvent(
 						event_id = row_event.event_id,
 						connector_event_id = row_connector_event.connector_event_id
 					)
-					session.merge(row_event_connector_event)
-					session.commit()
+					db_session.merge(row_event_connector_event)
+					db_session.commit()
 
 				yield row_event
 

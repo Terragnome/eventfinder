@@ -6,10 +6,14 @@ from sqlalchemy.orm import sessionmaker
 alembic_cfg = Config("./alembic.ini")
 engine = create_engine(alembic_cfg.get_main_option("sqlalchemy.url"))
 Session = sessionmaker(bind=engine)
-session = Session()
+db_session = Session()
 
 Base = declarative_base()
 
+from .auth import Auth
 from .connector_event import ConnectorEvent
 from .event import Event
 from .event_connector_event import EventConnectorEvent
+from .user import User
+from .user_auth import UserAuth
+from .user_event import UserEvent

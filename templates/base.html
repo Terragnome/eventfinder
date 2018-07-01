@@ -1,0 +1,28 @@
+<!doctype html>
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"></link>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css', v=(range(1, 100000) | random)) }}"></link>
+</head>
+<title>{% block title %}{% endblock %}</title>
+<section class="content">
+	<header class='app_header'>
+		<div class='app_title'>{% block header %}{% endblock %}</div>
+		<div class='app_login'>
+			{% if session.user %}
+			  <a href="{{ url_for('logout') }}">
+			    {% if session.user.image_url %}
+			      <img class="user_profile_img" src="{{session.user.image_url}}"></img>
+			    {% endif %}
+			    {{ session.user.username }}
+			  </a>
+			{% else %}
+			  <a href="{{ url_for('oauth2.authorize') }}">
+			  	<!-- <img class="user_profile_img"></img> -->
+			  	Sign In
+			  </a>
+			{% endif %}
+		</div>
+	</header>
+  {% block content %}{% endblock %}
+</section>
+</html>
