@@ -16,43 +16,67 @@ body{
 	margin: 10px 0 0 0;
 }
 
+.app_nav{
+	margin: 5px 0 10px 0;
+}
+
 .app_title{
 	float: left;
 }
 
-.entry{
-	padding: 5px 20px 30px 20px;
+.event{
+	padding: 5px 10px 15px 10px;
 	text-align: center;
 }
 
-.entry_list{
+.event_list{
 	border: 1px solid black;
 	float: left;
-	height: 490px;
 	margin: 0 10px 50px 10px;
-	padding: 5px 20px 30px 20px;
+	padding: 5px 10px 15px 10px;
 	text-align: center;
 	width: 480px;
 }
 
-.entry_address{
-	margin: 0 0 10px 0;
+.event_address{
+	margin: 5px 0 0px 0;
 	text-align: center;
 }
 
-.entry_choice{
+.event_choice{
 	margin: 0 10px 0 10px;
 }
 
-.entry_choices{
+.event_choices{
+	margin: 10px 0 0 0;
 }
 
-.entry_description{
+.event_description{
 	text-align: left;
 }
 
-.entry_img{
-	max-width: 460px;
+.event_img{
+	/*max-width: 480px;*/
+}
+
+.event_time{
+	font-size: 18px;
+	margin: 10px 0 0 0;
+}
+
+.event_title{
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.event_users{
+	margin:10px 0 0 0;
+}
+
+.event_venue{
+	font-size: 20px;
+	font-weight: bold;
+	margin: 5px 0 0 0;
 }
 
 .user_profile_img{

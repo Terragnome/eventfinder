@@ -1,7 +1,9 @@
 alembic == 0.9.9
 eventbrite == 3.3.3
 flask == 1.0.2
+geocoder == 1.38
 oauth2client == 4.1.2
 postgres == 2.2.1
 psycopg2-binary == 2.7.5
+redis == 2.10.6
 sqlalchemy == 1.2.8

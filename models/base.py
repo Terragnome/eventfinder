@@ -13,7 +13,9 @@ Base = declarative_base()
 from .auth import Auth
 from .connector_event import ConnectorEvent
 from .event import Event
-from .event_connector_event import EventConnectorEvent
+from .squad import Squad
+from .squad_invite import SquadInvite
+from .squad_user import SquadUser
 from .user import User
 from .user_auth import UserAuth
 from .user_event import UserEvent

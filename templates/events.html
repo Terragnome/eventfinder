@@ -1,43 +1,44 @@
 {% extends 'base.html' %}
 
-{% block header %}
-  <h1>{% block title %}Friendship Bot{% endblock %}</h1>
-{% endblock %}
-
 {% block content %}
 	{% for event in events %}
-		<div class='entry_list'>
+		<div class='event_list'>
 			<div>
-        <h1>{{ event.name }}</h1>
+        <div class='event_title'>{{ event.name }}</div>
         <a href="{{ url_for('event', event_id=event.event_id) }}">
           {% if event.img_url %}
-            <img class="entry_img" src="{{ event.img_url }}"></img>
+            <img class="event_img" src="{{ event.img_url }}"></img>
           {% endif %}
         </a>
-        <div>
-          {%if event.is_free %}
-            Free
-          {% else %}
-            Not Free
-          {% endif %}
+        <div class='event_venue'>
+          {% if event.venue_name %}{{ event.venue_name }}{% endif %}
+          {% if event.is_free %}(Free){% else %}(Paid){% endif %}
         </div>
-        {% if event.venue_name %}<h2>{{ event.venue_name }}</h2>{% endif %}
-        <h3>{{ event.display_time }}</h3>
+        
+        <div class="event_time">{{ event.display_time }}</div>
       </div>
-      <div class="entry_address">
-        <div>{{ event.address[0] }}</div>
-        <div>{{ event.address[1] }}</div>
+      <div class="event_address">
+        <div>{{ event.display_city }}</div>
+      </div
+      <div class='event_choices'>
+        {%if not event.current_user_event or event.current_user_interested %} 
+          <a class='event_choice' href="{{ url_for('event_update', event_id=event.event_id, choice='skip') }}">Skip</a>
+        {% else %}
+          <span>Skip</span>
+        {% endif %}
+        {%if not event.current_user_interested %} 
+          <a class='event_choice' href="{{ url_for('event_update', event_id=event.event_id, choice='yes') }}">Interested</a>
+        {% else %}
+          <span>Interested</span>
+        {% endif %}
       </div>
-      {%if not event.current_user_event or event.current_user_interested %} 
-        <a class='entry_choice' href="{{ url_for('event_update', event_id=event.event_id, choice='skip') }}">Skip</a>
-      {% else %}
-        <span>Skip</span>
-      {% endif %}
-      {%if not event.current_user_interested %} 
-        <a class='entry_choice' href="{{ url_for('event_update', event_id=event.event_id, choice='yes') }}">Interested</a>
-      {% else %}
-        <span>Interested</span>
-      {% endif %}
+      <div class='event_users'>
+        {% for user_event in event.user_events %}
+          {% if user_event.interested %}
+            <img class="user_profile_img" title="{{ user_event.user.username}}" src="{{ user_event.user.image_url }}"></img>
+          {% endif %}
+        {% endfor %}
+      </div>
 		</div>
-	{% endfor %}
+  {% endfor %}
 {% endblock %}

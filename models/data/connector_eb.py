@@ -7,7 +7,6 @@ from eventbrite import Eventbrite
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
-from models.event_connector_event import EventConnectorEvent
 
 from utils.get_from import get_from
 
@@ -180,7 +179,8 @@ class ConnectorEB:
 			raw_events = self.client.event_search(**event_params)
 
 			for i, event in enumerate(raw_events['events']):
-				connector_event_id = "{}_{}".format(self.CONNECTOR_TYPE, event['id'])
+				connector_event_id = event['id']
+
 				row_connector_event = ConnectorEvent(
 					connector_event_id=connector_event_id,
 					connector_type=self.CONNECTOR_TYPE,
@@ -189,49 +189,49 @@ class ConnectorEB:
 				db_session.merge(row_connector_event)
 				db_session.commit()
 
-				row_event_connector_event = db_session.query(EventConnectorEvent).filter(EventConnectorEvent.connector_event_id==connector_event_id).first()			
-				if row_event_connector_event:
-					row_event = db_session.query(Event).filter(Event.event_id==row_event_connector_event.event_id).first()
+				event_name = get_from(event, ['name','text'])
+				if event_name:
+					lower_event_name = event_name.lower()	
+					if ("speed dating" in lower_event_name):
+						continue
+
+				event_description = get_from(event, ['description','text'])
+				if event_description:
+					lower_event_description = event_description.lower()
+					if (
+						"wine" in lower_event_description
+						and "shuttle" in lower_event_description
+					):
+						continue
+
+				if row_connector_event.event_id:
+					row_event = db_session.query(Event).filter(Event.event_id==event_id)
 				else:
-					event_name = get_from(event, ['name','text'])
-					if event_name:
-						lower_event_name = event_name.lower()	
-						if ("speed dating" in lower_event_name):
-							continue
+					row_event = Event()
 
-					event_description = get_from(event, ['description','text'])
-					if event_description:
-						lower_event_description = event_description.lower()
-						if (
-							"wine" in lower_event_description
-							and "shuttle" in lower_event_description
-						):
-							continue
+				row_event = Event(
+					name = event_name,
+					description = event_description,
+					short_name = event['name']['text'],
+					img_url = get_from(event, ['logo', 'url']),
+					start_time = event['start']['utc'],
+					end_time = event['end']['utc'],
+					# cost = ,
+					currency = event['currency'],
+					venue_name = event['venue']['name'],
+					address = event['venue']['address']['localized_multi_line_address_display'],
+					city = event['venue']['address']['city'],
+					state = event['venue']['address']['region'],
+					latitude = event['venue']['latitude'],
+					longitude = event['venue']['longitude'],
+					link = event['resource_uri']
+				)
+				db_session.add(row_event)
+				db_session.commit()
 
-					row_event = Event(
-						name = event_name,
-						description = event_description,
-						short_name = event['name']['text'],
-						img_url = get_from(event, ['logo', 'url']),
-						start_time = event['start']['utc'],
-						end_time = event['end']['utc'],
-						# cost = ,
-						currency = event['currency'],
-						venue_name = event['venue']['name'],
-						address = event['venue']['address']['localized_multi_line_address_display'],
-						latitude = event['venue']['latitude'],
-						longitude = event['venue']['longitude'],
-						link = event['resource_uri']
-					)
-					db_session.add(row_event)
-					db_session.commit()
-
-					row_event_connector_event = EventConnectorEvent(
-						event_id = row_event.event_id,
-						connector_event_id = row_connector_event.connector_event_id
-					)
-					db_session.merge(row_event_connector_event)
-					db_session.commit()
+				row_connector_event.event_id = row_event.event_id
+				db_session.merge(row_connector_event)
+				db_session.commit()
 
 				yield row_event
 

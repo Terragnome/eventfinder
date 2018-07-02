@@ -1,3 +1,5 @@
+import traceback
+
 from flask import session
 from sqlalchemy import and_
 
@@ -13,34 +15,47 @@ from models.user_event import UserEvent
 from utils.get_from import get_from
 
 class EventController:
-	def get_events(self):
-		# ConnectorEB().get_events(
-		# 	address='13960 Lynde Ave, Saratoga, CA 95070',
-		# 	distance='100mi',
-		# 	categories=EBEventType.FOOD_DRINK,
-		# 	next_week=True
-		# )
-		events = db_session.query(Event).all()
+	# ConnectorEB().get_events(
+	# 	address='13960 Lynde Ave, Saratoga, CA 95070',
+	# 	distance='100mi',
+	# 	categories=EBEventType.FOOD_DRINK,
+	# 	next_week=True
+	# )
+
+	def get_events_by_interested(self, interested):
+		events = []
 		
-		user_events_by_event_id = {}
-		user_id = UserController().get_current_user_id()
-		if user_id:
-			event_ids = [x.event_id for x in events]
+		user = UserController().get_current_user()
+		if user:
 			user_events = db_session.query(UserEvent).filter(
 				and_(
-					UserEvent.user_id==user_id,
-					UserEvent.event_id.in_(event_ids)
+					UserEvent.user_id == user.user_id,
+					UserEvent.interested == interested
 				)
 			).all()
 
-			user_events_by_event_id = {
-				x.event_id: x for x in user_events
-			}
+			user_events_by_event_id = { x.event_id: x for x in user_events }
+
+			events = db_session.query(Event).filter(
+				Event.event_id.in_(user_events_by_event_id.keys())
+			).all()
 
 			for event in events:
 				user_event = get_from(user_events_by_event_id, [event.event_id])
 				if user_event:
 					event.current_user_event = user_event
+
+		return events
+
+	def get_events(self):
+		event_query = db_session.query(Event)
+
+		user = UserController().get_current_user()
+		if user:
+			user_events = user.user_events
+			user_event_ids = [x.event_id for x in user_events]
+			event_query = event_query.filter(~Event.event_id.in_(user_event_ids))
+		events = event_query.limit(20)
 
 		return events
 
@@ -61,7 +76,7 @@ class EventController:
 
 		return event
 
-	def update(self, event_id, interested):
+	def update_event(self, event_id, interested):
 		user_id = UserController().get_current_user_id()
 		if user_id:
 			user_event = db_session.query(UserEvent).filter(
@@ -80,6 +95,10 @@ class EventController:
 					interested=interested
 				)
 				db_session.add(user_event)
-			db_session.commit()
-			return user_event
+			try:
+				db_session.commit()
+				return user_event
+			except Exception as e:
+				print(e)
+				traceback.print_exc()
 		return None

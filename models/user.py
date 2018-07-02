@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, JSON, String
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -14,4 +14,6 @@ class User(Base):
 
 	auth = relationship('Auth', secondary='user_auths')
 	events = relationship('Event', secondary='user_events')
+	squads = relationship('Squad', secondary='squad_users')
+	squad_users = relationship('SquadUser', cascade="all, delete-orphan")
 	user_events = relationship('UserEvent', cascade="all, delete-orphan")

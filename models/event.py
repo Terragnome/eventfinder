@@ -25,17 +25,26 @@ class Event(Base):
 
 	venue_name = Column(String)
 	address = Column(JSON)
+	city = Column(String)
+	state = Column(String)
 	latitude = Column(Float)
 	longitude = Column(Float)
 
 	link = Column(String)
 
-	connector_events = relationship('ConnectorEvent', secondary='event_connector_events')
+	connector_events = relationship('ConnectorEvent')
 	user_events = relationship('UserEvent')
 
 	@orm.reconstructor
 	def init_on_load(self):
 		pass
+
+	@property
+	def display_city(self):
+		response = ""
+		if self.city or self.state:
+			return ", ".join([self.city, self.state])
+		return response
 
 	@property
 	def display_time(self):
