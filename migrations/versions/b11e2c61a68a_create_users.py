@@ -5,6 +5,8 @@ Revises: a6e624c45eda
 Create Date: 2018-06-30 14:14:19.330123
 
 """
+from sqlalchemy.sql import func
+
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import ForeignKey
@@ -19,7 +21,9 @@ def upgrade():
 	auth_table = op.create_table(
 		'auths',
 		sa.Column('auth_key', sa.String(255), primary_key=True),
-		sa.Column('auth_name', sa.String(255), nullable=False)
+		sa.Column('auth_name', sa.String(255), nullable=False),
+		sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
+		sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now())
 	)
 	op.bulk_insert(
 		auth_table,
@@ -38,7 +42,9 @@ def upgrade():
 		sa.Column('email', sa.String(255), nullable=False),
 		sa.Column('first_name', sa.String(255)),
 		sa.Column('last_name', sa.String(255)),
-		sa.Column('image_url', sa.String(255))
+		sa.Column('image_url', sa.String(255)),
+		sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
+		sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now())
 	)
 	op.create_index('users_by_username', 'users', ['username'])
 	op.create_index('users_by_email', 'users', ['email'])
@@ -47,14 +53,18 @@ def upgrade():
 		'user_auths',
 		sa.Column('user_id', sa.Integer, ForeignKey('users.user_id'), primary_key=True, unique=True),
 		sa.Column('auth_key', sa.String(255), ForeignKey('auths.auth_key'), primary_key=True),
-		sa.Column('auth_id', sa.String(255), primary_key=True)
+		sa.Column('auth_id', sa.String(255), primary_key=True),
+		sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
+		sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now())
 	)
 
 	op.create_table(
 		'user_events',
 		sa.Column('event_id', sa.Integer, ForeignKey('events.event_id'), primary_key=True),
 		sa.Column('user_id', sa.Integer, ForeignKey('users.user_id'), primary_key=True),
-		sa.Column('interested', sa.Boolean, nullable=False)
+		sa.Column('interested', sa.Boolean, nullable=False),
+		sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
+		sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now()),
 	)
 	op.create_index('user_events_by_interest', 'user_events', ['event_id', 'user_id', 'interested'])
 

@@ -5,6 +5,8 @@ Revises:
 Create Date: 2018-06-24 21:27:12.883136
 
 """
+from sqlalchemy.sql import func
+
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import ForeignKey
@@ -29,9 +31,13 @@ def upgrade():
 		sa.Column('currency', sa.String(255)),
 		sa.Column('venue_name', sa.String(255)),
 		sa.Column('address', sa.JSON),
+		sa.Column("city", sa.String),
+		sa.Column("state", sa.String),
 		sa.Column('latitude', sa.Float(precision=15)),
 		sa.Column('longitude', sa.Float(precision=15)),
-		sa.Column('link', sa.String(255))
+		sa.Column('link', sa.String(255)),
+		sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
+		sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now())
 	)
 	op.create_index('events_by_name', 'events', ['name'])
 	op.create_index('events_by_cost_and_start_time', 'events', ['cost', 'start_time'])
@@ -41,7 +47,9 @@ def upgrade():
 		sa.Column('connector_event_id', sa.String(255), primary_key=True),
 		sa.Column('connector_type', sa.String(255), primary_key=True),
 		sa.Column('data', sa.JSON, nullable=False),
-		sa.Column('event_id', sa.Integer, ForeignKey('events.event_id'))
+		sa.Column('event_id', sa.Integer, ForeignKey('events.event_id')),
+		sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
+		sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now())
 	)
 
 def downgrade():

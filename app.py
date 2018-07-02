@@ -53,8 +53,8 @@ def events_interested():
     return render_template('events.html', events=events)
 
 @oauth2.required(scopes=["profile"])
-@app.route("/events/skipped/")
-def events_skipped():
+@app.route("/events/skip/")
+def events_skip():
     events = EventController().get_events_by_interested(interested=False)
     return render_template('events.html', events=events)
 
