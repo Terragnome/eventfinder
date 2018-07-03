@@ -25,7 +25,7 @@ class EventController:
 	def get_events_by_interested(self, interested):
 		events = []
 		
-		user = UserController().get_current_user()
+		user = UserController().current_user
 		if user:
 			user_events = db_session.query(UserEvent).filter(
 				and_(
@@ -50,7 +50,7 @@ class EventController:
 	def get_events(self):
 		event_query = db_session.query(Event)
 
-		user = UserController().get_current_user()
+		user = UserController().current_user
 		if user:
 			user_events = user.user_events
 			user_event_ids = [x.event_id for x in user_events]
@@ -62,7 +62,7 @@ class EventController:
 	def get_event(self, event_id):
 		event = db_session.query(Event).filter(Event.event_id==event_id).first()
 
-		user_id = UserController().get_current_user_id()
+		user_id = UserController().current_user_id
 		if user_id:
 			user_event = db_session.query(UserEvent).filter(
 				and_(
@@ -77,7 +77,7 @@ class EventController:
 		return event
 
 	def update_event(self, event_id, interested):
-		user_id = UserController().get_current_user_id()
+		user_id = UserController().current_user_id
 		if user_id:
 			user_event = db_session.query(UserEvent).filter(
 				and_(

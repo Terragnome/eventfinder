@@ -19,7 +19,7 @@
       </div>
       <div class="event_address">
         <div>{{ event.display_city }}</div>
-      </div
+      </div>
       <div class='event_choices'>
         {%if not event.current_user_event or event.current_user_interested %} 
           <a class='event_choice' href="{{ url_for('event_update', event_id=event.event_id, choice='skip') }}">Skip</a>

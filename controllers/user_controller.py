@@ -35,14 +35,16 @@ class UserController:
 			)
 			return None
 
-		session['profile'] = json.loads(content.decode('utf-8'))
+		profile = json.loads(content.decode('utf-8'))
 
-		google_auth_id = session['profile']['id']
-		username = session['profile']['displayName']
-		email = session['profile']['emails'][0]['value']
-		first_name = get_from(session, ['profile', 'name', 'givenName'])
-		last_name = get_from(session, ['profile', 'name', 'familyName'])
-		image_url = get_from(session, ['profile', 'image', 'url'])
+		google_auth_id = profile['id']
+		user = {
+			'username': profile['displayName'],
+			'email': profile['emails'][0]['value'],
+			'first_name': get_from(profile, ['name', 'givenName']),
+			'last_name': get_from(profile, ['name', 'familyName']),
+			'image_url': get_from(profile, ['image', 'url']),
+		}
 
 		row_user_auth = db_session.query(UserAuth).filter(
 			and_(
@@ -51,13 +53,7 @@ class UserController:
 			)
 		).first()
 		if not row_user_auth:
-			row_user = User(
-				first_name = first_name,
-				last_name = last_name,
-				username = username,
-				email = email,
-				image_url = image_url
-			)
+			row_user = User(**user)
 			db_session.add(row_user)
 			db_session.commit()
 
@@ -70,11 +66,8 @@ class UserController:
 			db_session.commit()
 		else:
 			row_user = row_user_auth.user
-			row_user.first_name = first_name
-			row_user.last_name = last_name
-			row_user.username = username
-			row_user.email = email
-			row_user.image_url = image_url
+			for k,v in user.items():
+				setattr(row_user, k, v)
 			db_session.merge(row_user)
 			db_session.commit()
 
@@ -85,14 +78,16 @@ class UserController:
 			'image_url': row_user.image_url
 		}
 
-	def get_current_user_id(self):
+	@property
+	def current_user_id(self):
 		user_id = None
 		if 'user' in session:
 			user_id = session['user']['user_id']
 		return user_id
 
-	def get_current_user(self):
-		user_id = self.get_current_user_id()
+	@property
+	def current_user(self):
+		user_id = self.current_user_id
 		user = None
 		if user_id:
 			user = db_session.query(User).filter(User.user_id==user_id).first()

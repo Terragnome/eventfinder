@@ -6,6 +6,7 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import session
+from flask_session import Session
 from oauth2client.contrib.flask_util import UserOAuth2
 import redis
 
@@ -24,6 +25,9 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url('127.0.0.1:6379')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
+sess = Session()
+sess.init_app(app)
+
 oauth2 = UserOAuth2()
 oauth2.init_app(
     app,
@@ -38,7 +42,7 @@ def login():
 @app.route("/logout")
 def logout():
     UserController()._logout()
-    return redirect(request.referrer or '/')
+    return redirect('/')
 
 @app.route("/")
 @app.route("/events/")
@@ -46,15 +50,19 @@ def events():
     events = EventController().get_events()
     return render_template('events.html', events=events)
 
-@oauth2.required(scopes=["profile"])
 @app.route("/events/interested/")
+@oauth2.required(scopes=["profile"])
 def events_interested():
+    if not UserController().current_user_id:
+        return redirect(request.referrer or '/')
     events = EventController().get_events_by_interested(interested=True)
     return render_template('events.html', events=events)
 
-@oauth2.required(scopes=["profile"])
 @app.route("/events/skip/")
+@oauth2.required(scopes=["profile"])
 def events_skip():
+    if not UserController().current_user_id:
+        return redirect(request.referrer or '/')
     events = EventController().get_events_by_interested(interested=False)
     return render_template('events.html', events=events)
 
@@ -66,6 +74,9 @@ def event(event_id):
 @app.route("/event/<int:event_id>/update")
 @oauth2.required(scopes=["profile"])
 def event_update(event_id):
+    if not UserController().current_user_id:
+        return redirect(request.referrer or '/')        
+
     choice = request.args.get('choice')
     interested = choice == 'yes'
 
