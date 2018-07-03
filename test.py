@@ -1,11 +1,10 @@
-from model.base import session
-from model.connector_event import ConnectorEvent
-from model.event import Event
+from models.base import db_session
+from models.connector_event import ConnectorEvent
+from models.event import Event
+from models.user import User
 
 def run():
-	session.query(ConnectorEvent).delete()
-	session.query(Event).delete()
-	session.commit()
+	row_user = db_session.query(User).first()
 
 if __name__ == "__main__":
 	run()

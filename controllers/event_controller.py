@@ -2,6 +2,7 @@ import traceback
 
 from flask import session
 from sqlalchemy import and_
+from sqlalchemy.sql import func
 
 from controllers.user_controller import UserController
 
@@ -36,16 +37,24 @@ class EventController:
 
 			user_events_by_event_id = { x.event_id: x for x in user_events }
 
-			events = db_session.query(Event).filter(
+			events_with_counts = db_session.query(
+				Event,
+				func.count(Event.user_events).label('ct')
+			).filter(
 				Event.event_id.in_(user_events_by_event_id.keys())
+			).join(
+				Event.user_events
+			).group_by(
+				Event.event_id
+			).order_by(
+				'ct DESC'
 			).all()
 
-			for event in events:
+			for event, user_event_count in events_with_counts:
 				user_event = get_from(user_events_by_event_id, [event.event_id])
 				if user_event:
 					event.current_user_event = user_event
-
-		return events
+				yield event
 
 	def get_events(self):
 		event_query = db_session.query(Event)

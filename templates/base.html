@@ -3,10 +3,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"></link>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v=(range(1, 100000) | random)) }}"></link>
 </head>
-<title>{% block title %}{% endblock %}</title>
+<title>{% block title %}FriendshipBot{% endblock %}</title>
 <section class="content">
 	<header class='app_header'>
-		<div class='app_title'>{% block header %}{% endblock %}</div>
+		<div class='app_title'>{% block header %}FriendshipBot{% endblock %}</div>
 		<div class='app_login'>
 			{% if session.user %}
 			  <a href="{{ url_for('logout') }}">
@@ -26,7 +26,6 @@
 	<div class="app_nav">
 		<a href="{{ url_for('events') }}">Events</a>
 		<a href="{{ url_for('events_interested') }}">Interested</a>
-		<a href="{{ url_for('events_skip') }}">Skip</a>
 	</div>
 	{% block content %}{% endblock %}
 </section>

@@ -53,16 +53,12 @@ def events():
 @app.route("/events/interested/")
 @oauth2.required(scopes=["profile"])
 def events_interested():
-    if not UserController().current_user_id:
-        return redirect(request.referrer or '/')
     events = EventController().get_events_by_interested(interested=True)
     return render_template('events.html', events=events)
 
 @app.route("/events/skip/")
 @oauth2.required(scopes=["profile"])
 def events_skip():
-    if not UserController().current_user_id:
-        return redirect(request.referrer or '/')
     events = EventController().get_events_by_interested(interested=False)
     return render_template('events.html', events=events)
 
@@ -74,9 +70,6 @@ def event(event_id):
 @app.route("/event/<int:event_id>/update")
 @oauth2.required(scopes=["profile"])
 def event_update(event_id):
-    if not UserController().current_user_id:
-        return redirect(request.referrer or '/')        
-
     choice = request.args.get('choice')
     interested = choice == 'yes'
 

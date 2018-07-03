@@ -22,6 +22,8 @@ body{
 
 .app_title{
 	float: left;
+	font-size: 24px;
+	margin: 10px 0 0 0;
 }
 
 .event{
