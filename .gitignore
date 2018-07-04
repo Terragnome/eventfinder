@@ -1,5 +1,6 @@
 *.DS_Store
 *.pyc
 dump.rdb
+__pycache__
 config/
 venv

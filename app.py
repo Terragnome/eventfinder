@@ -47,13 +47,19 @@ def logout():
 @app.route("/")
 @app.route("/events/")
 def events():
-    events = EventController().get_events()
+    page = request.args.get('p', default=1, type=int)
+    if page<=0: page=1
+
+    events = EventController().get_events(page=page)
     return render_template('events.html', events=events)
 
 @app.route("/events/interested/")
 @oauth2.required(scopes=["profile"])
 def events_interested():
-    events = EventController().get_events_by_interested(interested=True)
+    page = request.args.get('p', default=1, type=int)
+    if page<=0: page=1
+
+    events = EventController().get_events_by_interested(interested=True, page=page)
     return render_template('events.html', events=events)
 
 @app.route("/events/skip/")

@@ -16,6 +16,7 @@ from models.user_event import UserEvent
 from utils.get_from import get_from
 
 class EventController:
+	PAGE_SIZE=20
 	# ConnectorEB().get_events(
 	# 	address='13960 Lynde Ave, Saratoga, CA 95070',
 	# 	distance='100mi',
@@ -23,7 +24,7 @@ class EventController:
 	# 	next_week=True
 	# )
 
-	def get_events_by_interested(self, interested):
+	def get_events_by_interested(self, interested, page=1):
 		events = []
 		
 		user = UserController().current_user
@@ -48,7 +49,11 @@ class EventController:
 				Event.event_id
 			).order_by(
 				'ct DESC'
-			).all()
+			).limit(
+				self.PAGE_SIZE
+			).offset(
+				(page-1)*self.PAGE_SIZE
+			)
 
 			for event, user_event_count in events_with_counts:
 				user_event = get_from(user_events_by_event_id, [event.event_id])
@@ -56,17 +61,32 @@ class EventController:
 					event.current_user_event = user_event
 				yield event
 
-	def get_events(self):
-		event_query = db_session.query(Event)
+	def get_events(self, page=1):
+		events_with_count_query = db_session.query(
+			Event,
+			func.count(Event.user_events).filter(UserEvent.interested).label('ct')
+		)
 
 		user = UserController().current_user
 		if user:
 			user_events = user.user_events
 			user_event_ids = [x.event_id for x in user_events]
-			event_query = event_query.filter(~Event.event_id.in_(user_event_ids))
-		events = event_query.limit(20)
+			events_with_count_query = events_with_count_query.filter(~Event.event_id.in_(user_event_ids))
 
-		return events
+		events_with_counts = events_with_count_query.join(
+			Event.user_events
+		).group_by(
+			Event.event_id
+		).order_by(
+			'ct DESC', Event.start_time.asc(), Event.event_id.desc()
+		).limit(
+			self.PAGE_SIZE
+		).offset(
+			(page-1)*self.PAGE_SIZE
+		)
+
+		for event, user_event_count in events_with_counts:
+			yield event
 
 	def get_event(self, event_id):
 		event = db_session.query(Event).filter(Event.event_id==event_id).first()
