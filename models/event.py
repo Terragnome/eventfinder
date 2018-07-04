@@ -42,8 +42,12 @@ class Event(Base):
 	@property
 	def display_city(self):
 		response = ""
-		if self.city or self.state:
+		if self.city and self.state:
 			return ", ".join([self.city, self.state])
+		elif self.city:
+			return self.city
+		elif self.state:
+			return self.state
 		return response
 
 	@property

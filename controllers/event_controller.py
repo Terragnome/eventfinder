@@ -73,7 +73,7 @@ class EventController:
 			user_event_ids = [x.event_id for x in user_events]
 			events_with_count_query = events_with_count_query.filter(~Event.event_id.in_(user_event_ids))
 
-		events_with_counts = events_with_count_query.join(
+		events_with_counts = events_with_count_query.outerjoin(
 			Event.user_events
 		).group_by(
 			Event.event_id

@@ -3,4 +3,5 @@
 dump.rdb
 __pycache__
 config/
+postgres-data/
 venv

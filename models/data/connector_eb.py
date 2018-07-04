@@ -206,27 +206,40 @@ class ConnectorEB:
 
 				if row_connector_event.event_id:
 					row_event = db_session.query(Event).filter(Event.event_id==event_id)
+					row_event.name = event_name
+					row_event.description = event_description
+					row_event.short_name = event['name']['text']
+					row_event.img_url = get_from(event, ['logo', 'url'])
+					row_event.start_time = event['start']['utc']
+					row_event.end_time = event['end']['utc']
+					row_event.currency = event['currency']
+					row_event.venue_name = event['venue']['name']
+					row_event.address = event['venue']['address']['localized_multi_line_address_display']
+					row_event.city = event['venue']['address']['city']
+					row_event.state = event['venue']['address']['region']
+					row_event.latitude = event['venue']['latitude']
+					row_event.longitude = event['venue']['longitude']
+					row_event.link = event['resource_uri']
+					db_session.merge(row_event)
 				else:
-					row_event = Event()
-
-				row_event = Event(
-					name = event_name,
-					description = event_description,
-					short_name = event['name']['text'],
-					img_url = get_from(event, ['logo', 'url']),
-					start_time = event['start']['utc'],
-					end_time = event['end']['utc'],
-					# cost = ,
-					currency = event['currency'],
-					venue_name = event['venue']['name'],
-					address = event['venue']['address']['localized_multi_line_address_display'],
-					city = event['venue']['address']['city'],
-					state = event['venue']['address']['region'],
-					latitude = event['venue']['latitude'],
-					longitude = event['venue']['longitude'],
-					link = event['resource_uri']
-				)
-				db_session.add(row_event)
+					row_event = Event(
+						name = event_name,
+						description = event_description,
+						short_name = event['name']['text'],
+						img_url = get_from(event, ['logo', 'url']),
+						start_time = event['start']['utc'],
+						end_time = event['end']['utc'],
+						# cost = ,
+						currency = event['currency'],
+						venue_name = event['venue']['name'],
+						address = event['venue']['address']['localized_multi_line_address_display'],
+						city = event['venue']['address']['city'],
+						state = event['venue']['address']['region'],
+						latitude = event['venue']['latitude'],
+						longitude = event['venue']['longitude'],
+						link = event['resource_uri']
+					)
+					db_session.add(row_event)
 				db_session.commit()
 
 				row_connector_event.event_id = row_event.event_id
@@ -235,6 +248,7 @@ class ConnectorEB:
 
 				yield row_event
 
+			print(raw_events['pagination'])
 			sentinel = raw_events['pagination']['has_more_items']
 			if sentinel:
 				event_params['page'] = raw_events['pagination']['page_number']+1
@@ -258,5 +272,4 @@ if __name__ == '__main__':
 	e = ConnectorEB()
 	events = e.get_events(**vars(args))
 	for i, event in enumerate(events):
-		# print(json.dumps(dict(event), indent=4))
 		print(i, event.name)

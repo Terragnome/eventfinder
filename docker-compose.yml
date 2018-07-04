@@ -1,0 +1,32 @@
+version: '2.1'
+services:
+  postgres:
+    restart: always
+    image: postgres:10
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=event_finder
+    volumes:
+      - ./postgres-data/postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  redis:
+    restart: always
+    container_name: redis
+    image: redis
+    volumes:
+      - ../data/redis:/data
+    ports:
+        - 6379:6379
+  app:
+    restart: always
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 5000:5000
+    depends_on:
+      - postgres
+      - redis
+    entrypoint: ["python", "app.py", "run"]
