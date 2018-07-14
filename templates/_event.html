@@ -2,11 +2,11 @@
   <div class='event_header'>
     <a href="javascript:get_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
       <div class="event_title">{{ event.name }}</div>
-      {% if event.img_url %}<img class="event_img" src="{{ event.img_url }}"></img>{% endif %}
+      {% if event.img_url %}<img id="event_img_{{ event.event_id }}"class="event_img" onerror="remove_elem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>{% endif %}
     </a>
     <div class='float_container, event_venue'>
       <div class='float_center'><div class='float_child'>
-        {% if event.venue_name %}<span class='event_venue_name'>{{ event.venue_name }}</span>{% endif %}
+        {% if event.display_venue_name %}<span class='event_venue_name'>{{ event.display_venue_name }}</span>{% endif %}
         {% if event.is_free %}(Free){% else %}<span class='event_paid'>Paid</span>{% endif %}
       </div></div>
     </div>

@@ -51,6 +51,10 @@ class Event(Base):
     return response
 
   @property
+  def display_venue_name(self):
+    return self.venue_name or self.display_city
+
+  @property
   def display_time(self):
     def format_date(t):
       return t.strftime("%a, %B %-d")
