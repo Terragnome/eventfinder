@@ -4,10 +4,10 @@ from sqlalchemy.orm import relationship
 from .base import Base
 
 class UserEvent(Base):
-	__tablename__ = 'user_events'
-	event_id = Column(Integer, ForeignKey('events.event_id'), primary_key=True)
-	user_id = Column(Integer, ForeignKey('users.user_id'), primary_key=True)
-	interested = Column(Boolean, nullable=False)
+  __tablename__ = 'user_events'
+  event_id = Column(Integer, ForeignKey('events.event_id'), primary_key=True)
+  user_id = Column(Integer, ForeignKey('users.user_id'), primary_key=True)
+  interested = Column(Boolean, nullable=False)
 
-	event = relationship('Event', uselist=False)
-	user = relationship('User', uselist=False)
+  event = relationship('Event', uselist=False)
+  user = relationship('User', uselist=False)

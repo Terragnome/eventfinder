@@ -7,4 +7,4 @@ from models.squad_user import SquadUser
 from utils.get_from import get_from
 
 class SquadController:
-	pass
+  pass

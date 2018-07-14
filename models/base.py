@@ -9,10 +9,10 @@ Session = sessionmaker(bind=engine)
 db_session = Session()
 
 class Base:
-	def to_json(self):
-		return {
-			col.name: getattr(self, col.name) for col in self.__table__.columns
-		}
+  def to_json(self):
+    return {
+      col.name: getattr(self, col.name) for col in self.__table__.columns
+    }
 
 Base = declarative_base(cls=Base)
 

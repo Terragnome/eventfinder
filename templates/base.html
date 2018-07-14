@@ -39,7 +39,7 @@
 			{% if session.user %}
 			    <a href="{{ url_for('logout') }}">{{ session.user.username }}</a>
           {% if session.user.image_url %}
-			      <a href="javascript:get_component('#main', '{{ url_for('events_interested') }}')">
+			      <a href="javascript:get_component('#main', '{{ url_for('user', identifier=session.user.username) }}')">
               <img class="user_profile_img" src="{{ session.user.image_url }}"></img>
             </a>
 			    {% endif %}
