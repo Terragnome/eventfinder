@@ -1,18 +1,14 @@
 <div class='event'>
   <div class='event_header'>
-    <div>
-      <a class='event_title' href="javascript:get_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
-        {{ event.name }}
-      </a>
-    </div>
     <a href="javascript:get_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
-      {% if event.img_url %}
-        <img class="event_img" src="{{ event.img_url }}"></img>
-      {% endif %}
+      <div class="event_title">{{ event.name }}</div>
+      {% if event.img_url %}<img class="event_img" src="{{ event.img_url }}"></img>{% endif %}
     </a>
-    <div class='event_venue'>
-      {% if event.venue_name %}{{ event.venue_name }}{% endif %}
-      {% if event.is_free %}(Free){% else %}(Paid){% endif %}
+    <div class='float_container, event_venue'>
+      <div class='float_center'><div class='float_child'>
+        {% if event.venue_name %}<span class='event_venue_name'>{{ event.venue_name }}</span>{% endif %}
+        {% if event.is_free %}(Free){% else %}<span class='event_paid'>Paid</span>{% endif %}
+      </div></div>
     </div>
     <div class="event_time">{{ event.display_time }}</div>
   </div>
@@ -25,29 +21,29 @@
       {% endfor %}
     {% endif %}
   </div>
-  {% if not card %}
-    <p class="event_description">{{ event.description }}</p>
-  {% endif %}
-  <div>
+  {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
+  <div class='event_choices'>
     {%if not event.current_user_event or event.current_user_interested %} 
-      <a href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Remove</a>
+      <a class='event_choice' href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Remove</a>
     {% else %}
-      <span>Remove</span>
+      <span class='event_choice'>Remove</span>
     {% endif %}
     {%if not event.current_user_interested %}
-      <a href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', p=page) }}'})">Interested</a>
+      <a class='event_choice' href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', p=page) }}'})">Interested</a>
     {% else %}
-      <span>Interested</span>
+      <span class='event_choice'>Interested</span>
     {% endif %}
   </div>
-  <div class='event_users'>
-    {% for user_event in event.user_events %}
-      {% if user_event.interested %}
-        <a class='link_img' href="javascript:get_component('#main', '{{ url_for('user', identifier=user_event.user.username) }}')">
-          <img class="user_profile_img" title="{{ user_event.user.username}}" src="{{ user_event.user.image_url }}"></img>
-        </a>
-      {% endif %}
-    {% endfor %}
-    {% if event.interested_user_count %}{{ event.interested_user_count }}{% endif %}
+  <div class='float_container, event_users'>
+    <div class='float_center'><div class='float_child'>
+      {% for user_event in event.user_events %}
+        {% if user_event.interested %}
+          <a class='link_img' href="javascript:get_component('#main', '{{ url_for('user', identifier=user_event.user.username) }}')">
+            <img class="user_profile_mini_img" title="{{ user_event.user.username}}" src="{{ user_event.user.image_url }}"></img>
+          </a>
+        {% endif %}
+      {% endfor %}
+      {% if event.interested_user_count %}<a class='link_img'><div class='event_users_count'>+{{ event.interested_user_count }}</div></a>{% endif %}
+    </div></div>
   </div>
 </div>

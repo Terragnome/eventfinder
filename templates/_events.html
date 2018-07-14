@@ -4,7 +4,7 @@
   {% if next_page_url %}<a href="javascript:get_component('#main', '{{ next_page_url }}')">Next</a>{% endif %}
 
   {% for event in events %}
-    <div class='list_event'>
+    <div class='event_card'>
       {% with event=event, card=True %}
         {% include "_event.html"%}
       {% endwith %}

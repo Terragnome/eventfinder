@@ -5,17 +5,42 @@
 
 body{
   font-family: Roboto,sans-serif;
+  height: 100%;
+  width: 100%;
 }
 
-.link{
-  background: none;
-  border: none;
-  font-size: 16px;
-  text-decoration: underline;
-  cursor: pointer; 
+a{
+  color: #FF0000;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.clear {
+  clear: both;
+}
+
+.float_center {
+  float: right;
+  position: relative;
+  left: -50%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+
+}
+
+.float_child {
+  position: relative;
+  left: 50%;
+}
+
+.float_container  {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .link_img{
+  cursor: pointer;
   text-decoration: none;
 }
 
@@ -38,6 +63,7 @@ body{
   font-size: 24px;
   margin: 10px 0 0 0;
   text-decoration: none;
+  text-transform: none;
 }
 
 .event{
@@ -47,34 +73,50 @@ body{
 
 .events_list{}
 
-.list_event{
+.event_card{
   border: 1px solid black;
+  border-radius: 5px;
   margin: 0 10px 50px 10px;
-  padding: 5px 10px 15px 10px;
+  padding: 10px 10px 15px 10px;
   text-align: center;
-  width: 480px;
+  width: 430px;
 }
 
 .event_address{
+  /*font-size: 16px;*/
   margin: 5px 0 0px 0;
   text-align: center;
 }
 
 .event_choice{
-  margin: 0 10px 0 10px;
+  margin: 0 5px 0 5px;
 }
 
 .event_choices{
-  margin: 10px 0 0 0;
+  margin: 15px 0 0 0;
 }
 
 .event_description{
   text-align: left;
+  text-indent: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
 }
 
 .event_img{
-  /*max-width: 480px;*/
-  margin: 5px 0 5px 0;
+  margin: 20px 0 5px 0;
+}
+
+.event_paid{
+  color: white;
+  background-color: red;
+  float: left;
+  font-size: 10px;
+  font-weight: bold;
+  margin: 4px 0 0 5px;
+  padding: 3px;
+  text-transform: uppercase;
 }
 
 .event_time{
@@ -87,18 +129,50 @@ body{
   font-size: 24px;
   font-weight: bold;
   text-decoration: none;
+  text-transform: none;
 }
 
 .event_users{
-  margin:10px 0 0 0;
+  margin: 15px 0 0 0;
+  overflow: auto;
+}
+
+.event_users_count{
+  border: 1px solid #BEBEBE;
+  border-radius: 20px;
+  color: #BEBEBE;
+  cursor: default;
+  display: inline-block;
+  float: left;
+  font-weight: none;
+  font-size: 12px;
+  height: 26px;
+  margin: 0 3px 0 3px;
+  padding: 12px 0 0 0;
+  text-align: center;
+  width: 38px;
 }
 
 .event_venue{
+  overflow: auto;
+}
+
+.event_venue_name{
+  float: left;
   font-size: 20px;
   font-weight: bold;
 }
 
 .user_profile_img{
   border-radius: 25px;
+  float: left;
   width: 50px;
+}
+
+.user_profile_mini_img{
+  border-radius: 20px;
+  display: inline-block;
+  float: left;
+  margin: 0 3px 0 3px;
+  width: 40px;
 }

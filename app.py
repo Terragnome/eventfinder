@@ -77,14 +77,12 @@ def events(page=1, next_page_url=None, prev_page_url=None):
     return render_template(
       '_events.html',
       events=events,
-      page=page,
       next_page_url=next_page_url,
       prev_page_url=prev_page_url
     )
   return render_template(
     'main.html',
     events=events,
-    page=page,
     next_page_url=next_page_url,
     prev_page_url=prev_page_url
   )
@@ -101,7 +99,7 @@ def event(event_id):
 def event_update(event_id):
   interested = request.form.get('go') == 'true'
   callback = request.form.get('cb')
-  if callback == "/": callback = 'events{}'.format(callback)
+  if callback == "/": callback = 'events'
 
   event = EventController().update_event(
     event_id=event_id,
@@ -117,9 +115,9 @@ def event_update(event_id):
 def user(identifier, page=1, next_page_url=None, prev_page_url=None):
   user = UserController().get_user(identifier)
   events = EventController().get_events_for_user_by_interested(
-    user = user,
-    interested = True,
-    page = page
+    user=user,
+    interested=True,
+    page=page
   )
 
   if user:
@@ -127,7 +125,6 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
       return render_template(
         '_events.html',
         events=events,
-        page=page,
         next_page_url=next_page_url,
         prev_page_url=prev_page_url
       )
@@ -136,7 +133,6 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
         '_user.html',
         user=user,
         events=events,
-        page=page,
         next_page_url=next_page_url,
         prev_page_url=prev_page_url
       )
