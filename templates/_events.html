@@ -1,7 +1,7 @@
 <div id='events_list' class='events_list'>
   {% if events|length >0 %}
-    {% if page>1 %}<a href="javascript:get_component('#main', '{{ url_for("events", p=page-1) }}')">Prev</a>{% endif %}
-    <a href="javascript:get_component('#main', '{{ url_for("events", p=page+1) }}')">Next</a>
+    {% if page>1 %}<a href="javascript:get_component('#main', '{{ url_for(request.url_rule.endpoint, p=page-1) }}')">Prev</a>{% endif %}
+    <a href="javascript:get_component('#main', '{{ url_for(request.url_rule.endpoint, p=page+1) }}')">Next</a>
   {% endif %}
 
   {% for event in events %}
