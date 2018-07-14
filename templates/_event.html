@@ -1,9 +1,11 @@
+{% set event=event or (vargs.event if vargs else None) %}
+
 <div class='event'>
   <div class='event_header'>
-    <a href="javascript:get_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
-      <div class="event_title">{{ event.name }}</div>
+    {% if card %}<a href="javascript:get_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">{% endif %}
+      <div class="event_title">{{ event.display_name }}</div>
       {% if event.img_url %}<img id="event_img_{{ event.event_id }}"class="event_img" onerror="remove_elem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>{% endif %}
-    </a>
+    {% if card %}</a>{% endif %}
     <div class='float_container, event_venue'>
       <div class='float_center'><div class='float_child'>
         {% if event.display_venue_name %}<span class='event_venue_name'>{{ event.display_venue_name }}</span>{% endif %}
@@ -24,9 +26,9 @@
   {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
   <div class='event_choices'>
     {%if not event.current_user_event or event.current_user_interested %} 
-      <a class='event_choice' href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Remove</a>
+      <a class='event_choice' href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Skip</a>
     {% else %}
-      <span class='event_choice'>Remove</span>
+      <span class='event_choice'>Skip</span>
     {% endif %}
     {%if not event.current_user_interested %}
       <a class='event_choice' href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', p=page) }}'})">Interested</a>
@@ -34,16 +36,21 @@
       <span class='event_choice'>Interested</span>
     {% endif %}
   </div>
-  <div class='float_container, event_users'>
+  <div class='float_container event_users'>
     <div class='float_center'><div class='float_child'>
-      {% for user_event in event.user_events %}
-        {% if user_event.interested %}
-          <a class='link_img' href="javascript:get_component('#main', '{{ url_for('user', identifier=user_event.user.username) }}')">
-            <img class="user_profile_mini_img" title="{{ user_event.user.username}}" src="{{ user_event.user.image_url }}"></img>
-          </a>
-        {% endif %}
+      {% if card %}
+        {% set max_user_icons = 8 %}
+      {% else %}
+        {% set max_user_icons = 20 %}
+      {% endif %}
+      {% for user in event.users[:max_user_icons] %}
+        <a class='link_img' href="javascript:get_component('#main', '{{ url_for('user', identifier=user.username) }}')">
+          <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
+        </a>
       {% endfor %}
-      {% if event.interested_user_count %}<a class='link_img'><div class='event_users_count'>+{{ event.interested_user_count }}</div></a>{% endif %}
+      {% if event.interested_user_count and event.interested_user_count>max_user_icons %}
+        <a class='link_img'><div class='event_users_count'>+{{ event.interested_user_count-max_user_icons }}</div></a>
+      {% endif %}
     </div></div>
   </div>
 </div>

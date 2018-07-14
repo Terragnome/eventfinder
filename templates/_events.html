@@ -1,3 +1,7 @@
+{% set events=events or (vargs.events if vargs else None) %}
+{% set next_page_url=next_page_url or (vargs.next_page_url if vargs else None) %}
+{% set prev_page_url=prev_page_url or (vargs.prev_page_url if vargs else None) %}
+
 <div id='events_list'>
   <div class='pagination'>
     <div class='float_container'>

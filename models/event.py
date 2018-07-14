@@ -34,10 +34,23 @@ class Event(Base):
 
   connector_events = relationship('ConnectorEvent')
   user_events = relationship('UserEvent')
+  # Need to filter this only down to interested people
+  users = relationship('User', secondary='user_events')
 
   @orm.reconstructor
   def init_on_load(self):
     pass
+
+  @property
+  def current_user_event(self):
+    return self._current_user_event
+  @current_user_event.setter
+  def current_user_event(self, value):
+    self._current_user_event = value
+
+  @property
+  def current_user_interested(self):
+    return self.current_user_event and self.current_user_event.interested
 
   @property
   def display_city(self):
@@ -51,8 +64,8 @@ class Event(Base):
     return response
 
   @property
-  def display_venue_name(self):
-    return self.venue_name or self.display_city
+  def display_name(self):
+    return self.name[:80]
 
   @property
   def display_time(self):
@@ -82,24 +95,17 @@ class Event(Base):
       )   
     ])
 
-    @property
-    def interested_user_count(self):
-      return self._interested_user_count
-    @interested_user_count.setter
-    def interested_user_count(self, value):
-      self._interested_user_count = value
+  @property
+  def display_venue_name(self):
+    return self.venue_name if self.venue_name and len(self.venue_name)<=45 else self.display_city or ""  
 
-    @property
-    def current_user_event(self):
-      return self._current_user_event
-    @current_user_event.setter
-    def current_user_event(self, value):
-      self._current_user_event = value
-
-    @property
-    def current_user_interested(self):
-      return self.current_user_event and self.current_user_event.interested
-    
-    @property
-    def is_free(self):
-      return self.cost == 0
+  @property
+  def interested_user_count(self):
+    return self._interested_user_count
+  @interested_user_count.setter
+  def interested_user_count(self, value):
+    self._interested_user_count = value
+  
+  @property
+  def is_free(self):
+    return self.cost == 0

@@ -14,8 +14,8 @@
       $.post(url, params, {
       }).done(function(response) {
         $(target).html(response);
-      }).fail(function() {
-        $(target).text("{{ 'Error: Could not contact server.' }}");
+      }).fail(function(xhr, status, error) {
+        $(target).text("Error: "+error);
       });
     }
 
@@ -24,8 +24,8 @@
       $.get(url, {
       }).done(function(response) {
         $(target).html(response);
-      }).fail(function() {
-        $(target).text("{{ 'Error: Could not contact server.' }}");
+      }).fail(function(xhr, status, error) {
+        $(target).text("Error: "+error);
       });
     }
   </script>

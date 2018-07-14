@@ -267,6 +267,7 @@ class ConnectorEB:
                         img_url = get_from(event, ['logo', 'url']),
                         start_time = event['start']['utc'],
                         end_time = event['end']['utc'],
+                        cost = 0 if event['is_free'] else None,
                         currency = event['currency'],
                         venue_name = event['venue']['name'],
                         address = event['venue']['address']['localized_multi_line_address_display'],

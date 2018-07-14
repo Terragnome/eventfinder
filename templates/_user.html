@@ -1,16 +1,16 @@
-<div class='user'>
-  <div>
-    <div style='float:left;'>
-      <img class="user_profile_img" src="{{ user.image_url }}"></img>
+{% set user=user or (vargs.user if vargs else None) %}
+
+<div class='user_feed_profile'>
+  {% if user %}
+    <div class='float_container'>
+      <img class="left user_feed_profile_img user_profile_img" src="{{ user.image_url }}"></img>
+      <div class='left user_feed_profile_data'>
+        <div>{{ user.display_name }}</div>
+        <div>{{ user.email }}</div>
+      </div>
     </div>
-    <div>
-      <div>{{ user.username }}</div>
-      <div>{{ user.email }}</div>
-    </div>
-  </div>
-  <div>
-    {% with events=events, page=page %}
-      {% include "_events.html" %}
-    {% endwith %}
-  </div>
+  {% endif %}
+  {% with vargs=vargs %}
+    {% include "_events.html" %}
+  {% endwith %}
 </div>

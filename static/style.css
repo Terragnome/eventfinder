@@ -18,8 +18,17 @@ img{
   font-size: 12px;
 }
 
-.clear{
+.clearfix {
+  display: inline-block;
+}
+
+.clearfix:after{
   clear: both;
+  content: " ";
+  display: block;
+  font-size: 0;
+  height: 0;
+  visibility: hidden;
 }
 
 .float_center{
@@ -76,12 +85,10 @@ img{
 }
 
 .app_title{
-  color: black;
   float: left;
-  font-size: 24px;
+  font-size: 32px;
   margin: 10px 0 0 0;
   text-decoration: none;
-  text-transform: none;
 }
 
 .event{
@@ -90,7 +97,7 @@ img{
 }
 
 .event_card{
-  border: 1px solid black;
+  border: 1px solid #BEBEBE;
   border-radius: 5px;
   float: left;
   margin: 0 10px 30px 10px;
@@ -129,6 +136,7 @@ img{
 
 .event_paid{
   color: white;
+  cursor: default;
   background-color: red;
   float: left;
   font-size: 10px;
@@ -160,7 +168,7 @@ img{
   border: 1px solid #BEBEBE;
   border-radius: 20px;
   color: #BEBEBE;
-  cursor: default;
+  cursor: pointer;
   display: inline-block;
   float: left;
   font-weight: none;
@@ -180,6 +188,19 @@ img{
   float: left;
   font-size: 18px;
   font-weight: bold;
+}
+
+.user_feed_profile{
+  font-size: 16px;
+  margin: 20px 0px 10px 0;
+}
+
+.user_feed_profile_data{
+  margin: 5px 0 0 0;
+}
+
+.user_feed_profile_img{
+  margin: 0 15px 0 0;
 }
 
 .user_profile_img{

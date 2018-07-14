@@ -30,14 +30,21 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 sess = Session()
 sess.init_app(app)
 
+oauth2_scopes = ["profile", "email"]
 oauth2 = UserOAuth2()
 oauth2.init_app(
   app,
-  scopes = ["profile", "email"],
+  scopes = oauth2_scopes,
   prompt = 'select_account',
   authorize_callback=UserController()._request_user_info
 )
 
+TEMPLATE_MAIN = "main.html"
+TEMPLATE_EVENT = "_event.html"
+TEMPLATE_EVENTS = "_events.html"
+TEMPLATE_USER = "_user.html"
+
+# TODO: Need to fix showing next button with no next pages
 def paginated(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
@@ -45,15 +52,15 @@ def paginated(fn):
     if page <= 0: page = 1
     kwargs['page'] = page
 
-    next_kwargs = dict(kwargs)
-    next_kwargs['page'] = page+1
-    kwargs['next_page_url'] = url_for(fn.__name__, *args, **next_kwargs)
-
     kwargs['prev_page_url'] = None
     if page > 1:
       prev_kwargs = dict(kwargs)
       prev_kwargs['page'] = page-1
       kwargs['prev_page_url'] = url_for(fn.__name__, *args, **prev_kwargs)
+
+    next_kwargs = dict(kwargs)
+    next_kwargs['page'] = page+1
+    kwargs['next_page_url'] = url_for(fn.__name__, *args, **next_kwargs)
 
     return fn(*args, **kwargs)
   return decorated_fn
@@ -73,29 +80,31 @@ def logout():
 def events(page=1, next_page_url=None, prev_page_url=None):
   events = EventController().get_events(page=page)
 
+  vargs = {
+    'events': events,
+    'next_page_url': next_page_url,
+    'prev_page_url': prev_page_url,
+  }
+
   if request.is_xhr:
-    return render_template(
-      '_events.html',
-      events=events,
-      next_page_url=next_page_url,
-      prev_page_url=prev_page_url
-    )
-  return render_template(
-    'main.html',
-    events=events,
-    next_page_url=next_page_url,
-    prev_page_url=prev_page_url
-  )
+    return render_template(TEMPLATE_EVENTS, vargs=vargs, **vargs)
+  return render_template(TEMPLATE_MAIN, template=TEMPLATE_EVENTS, vargs=vargs, **vargs)
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):
   event = EventController().get_event(event_id=event_id)
   if event:
-    return render_template('_event.html', event=event)
+    template = TEMPLATE_EVENT
+    vargs = {'event': event}
+
+    if request.is_xhr:
+      return render_template(template, vargs=vargs, **vargs)
+    else:
+      return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
 @app.route("/event/<int:event_id>/", methods=['POST'])
-@oauth2.required(scopes=["profile"])
+@oauth2.required(scopes=oauth2_scopes)
 def event_update(event_id):
   interested = request.form.get('go') == 'true'
   callback = request.form.get('cb')
@@ -121,21 +130,28 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
   )
 
   if user:
+    vargs = {
+      'events': events,
+      'next_page_url': next_page_url,
+      'prev_page_url': prev_page_url
+    }
+
     if user.user_id == UserController().current_user_id:
-      return render_template(
-        '_events.html',
-        events=events,
-        next_page_url=next_page_url,
-        prev_page_url=prev_page_url
-      )
+      template = TEMPLATE_EVENTS
+
+      if request.is_xhr:
+        return render_template(template, vargs=vargs, **vargs)
+      else:
+        return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
     else:
-      return render_template(
-        '_user.html',
-        user=user,
-        events=events,
-        next_page_url=next_page_url,
-        prev_page_url=prev_page_url
-      )
+      template = TEMPLATE_USER
+      vargs['user'] = user
+
+      if request.is_xhr:        
+        return render_template(template, vargs=vargs, **vargs)
+      else:
+        return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+
   return redirect(request.referrer or '/')    
 
 if __name__ == '__main__':
