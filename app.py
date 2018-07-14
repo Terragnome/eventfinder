@@ -32,8 +32,14 @@ oauth2 = UserOAuth2()
 oauth2.init_app(
     app,
     scopes = ["profile", "email"],
+    prompt = 'select_account',
     authorize_callback=UserController()._request_user_info
 )
+
+def _get_page():
+    page = request.args.get('p', default=1, type=int)
+    if page <= 0: page = 1
+    return page
 
 @app.route("/login")
 def login():
@@ -44,47 +50,62 @@ def logout():
     UserController()._logout()
     return redirect('/')
 
-@app.route("/")
-@app.route("/events/")
-def events():
-    page = request.args.get('p', default=1, type=int)
-    if page<=0: page=1
-
+@app.route("/", methods=['GET'])
+def main():
+    page = _get_page()
     events = EventController().get_events(page=page)
-    return render_template('events.html', events=events)
-
-@app.route("/events/interested/")
-@oauth2.required(scopes=["profile"])
-def events_interested():
-    page = request.args.get('p', default=1, type=int)
-    if page<=0: page=1
-
-    events = EventController().get_events_by_interested(interested=True, page=page)
-    return render_template('events.html', events=events)
-
-@app.route("/events/skip/")
-@oauth2.required(scopes=["profile"])
-def events_skip():
-    events = EventController().get_events_by_interested(interested=False)
-    return render_template('events.html', events=events)
+    return render_template('main.html', events=events, page=page)
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):
     event = EventController().get_event(event_id=event_id)
-    return render_template('event.html', event=event)
+    if event:
+        return render_template('_event.html', event=event)
+    return redirect(request.referrer or '/')
 
-@app.route("/event/<int:event_id>/update")
+@app.route("/event/<int:event_id>/", methods=['POST'])
 @oauth2.required(scopes=["profile"])
 def event_update(event_id):
-    choice = request.args.get('choice')
-    interested = choice == 'yes'
+    interested = request.form.get('choice').lower() == 'interested'
 
-    response = EventController().update_event(
+    event = EventController().update_event(
         event_id=event_id,
         interested=interested
     )
 
+    if event:
+        return render_template('_event.html', event=event)
     return redirect(request.referrer or '/')
+
+@app.route("/events/", methods=['GET'])
+def events():
+    page = _get_page()
+    events = EventController().get_events(page=page)
+    return render_template('_events.html', events=events, page=page)
+
+@app.route("/events/interested/", methods=['GET'])
+@oauth2.required(scopes=["profile"])
+def events_interested():
+    page = _get_page()
+    events = EventController().get_events_for_user_by_interested(
+        interested = True,
+        page = page
+    )
+    return render_template('_events.html', events=events, page=page)
+
+@app.route("/user/<identifier>/", methods=['GET'])
+def user(identifier):
+    page = _get_page()
+    user = UserController().get_user(identifier)
+    events = EventController().get_events_for_user_by_interested(
+        user = user,
+        interested = True,
+        page = page
+    )
+
+    if user:
+        return render_template('_user.html', user=user, events=events, page=page)
+    return redirect(request.referrer or '/')    
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

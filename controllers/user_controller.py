@@ -2,7 +2,7 @@ import httplib2
 import json
 
 from flask import current_app, session
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 from models.base import db_session
 from models.auth import Auth
@@ -21,8 +21,6 @@ class UserController:
 		oauth2.storage.delete()
 
 	def _request_user_info(self, credentials):
-		# self._logout()
-
 		http = httplib2.Http()
 		credentials.authorize(http)
 		resp, content = http.request('https://www.googleapis.com/plus/v1/people/me')
@@ -38,9 +36,11 @@ class UserController:
 		profile = json.loads(content.decode('utf-8'))
 
 		google_auth_id = profile['id']
+		email = profile['emails'][0]['value']
 		user = {
-			'username': profile['displayName'],
-			'email': profile['emails'][0]['value'],
+			'username': email.split("@")[0],
+			'email': email,
+			'display_name': profile['displayName'],
 			'first_name': get_from(profile, ['name', 'givenName']),
 			'last_name': get_from(profile, ['name', 'familyName']),
 			'image_url': get_from(profile, ['image', 'url']),
@@ -71,12 +71,7 @@ class UserController:
 			db_session.merge(row_user)
 			db_session.commit()
 
-		session['user'] = {
-			'user_id': row_user.user_id,
-			'username': row_user.username,
-			'email': row_user.email,
-			'image_url': row_user.image_url
-		}
+		session['user'] = row_user.to_json()
 
 	@property
 	def current_user_id(self):
@@ -90,5 +85,15 @@ class UserController:
 		user_id = self.current_user_id
 		user = None
 		if user_id:
-			user = db_session.query(User).filter(User.user_id==user_id).first()
+			user = db_session.query(User).filter(User.user_id == user_id).first()
 		return user
+
+	def get_user(self, identifier):
+		if identifier.__class__ is int:
+			user = db_session.query(User).filter(User.user_id==identifier).first()
+		else:
+			user = db_session.query(User).filter(User.username==identifier).first()
+		return user
+
+	def get_users(self):
+		return db_session.query(User).all()

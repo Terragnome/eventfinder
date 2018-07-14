@@ -8,6 +8,7 @@ class User(Base):
 	user_id = Column(Integer, primary_key=True, autoincrement=True)
 	username = Column(String, nullable=False)
 	email = Column(String, nullable=False)
+	display_name = Column(String)
 	first_name = Column(String)
 	last_name = Column(String)
 	image_url = Column(String)

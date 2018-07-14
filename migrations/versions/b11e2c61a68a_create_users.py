@@ -40,6 +40,7 @@ def upgrade():
 		sa.Column('user_id', sa.Integer, primary_key=True, autoincrement=True),
 		sa.Column('username', sa.String(255), nullable=False),
 		sa.Column('email', sa.String(255), nullable=False),
+		sa.Column('display_name', sa.String(255)),
 		sa.Column('first_name', sa.String(255)),
 		sa.Column('last_name', sa.String(255)),
 		sa.Column('image_url', sa.String(255)),

@@ -8,7 +8,13 @@ engine = create_engine(alembic_cfg.get_main_option("sqlalchemy.url"))
 Session = sessionmaker(bind=engine)
 db_session = Session()
 
-Base = declarative_base()
+class Base:
+	def to_json(self):
+		return {
+			col.name: getattr(self, col.name) for col in self.__table__.columns
+		}
+
+Base = declarative_base(cls=Base)
 
 from .auth import Auth
 from .connector_event import ConnectorEvent

@@ -1,8 +1,10 @@
 import argparse
 import datetime
 import json
+import re
 
 from eventbrite import Eventbrite
+from sqlalchemy import and_
 
 from models.base import db_session
 from models.connector_event import ConnectorEvent
@@ -36,7 +38,7 @@ class EBEventType:
 class ConnectorEB:
 	CONNECTOR_TYPE = "Eventbrite"
 
-	EVENT_BRITE_API = 'JHGGT67PPYAEIDCP4T3D'
+	API_KEY = 'JHGGT67PPYAEIDCP4T3D'
 
 	@classmethod
 	def format_time_str(klass, d):
@@ -132,8 +134,12 @@ class ConnectorEB:
 
 		return params
 
+	@classmethod
+	def tokenize(klass, t):
+		return re.sub(r'[^a-z ]', '', t.lower()).split(" ")
+
 	def __init__(self):
-		self.client = Eventbrite(self.EVENT_BRITE_API)
+		self.client = Eventbrite(self.API_KEY)
 
 	def get_events(
 		self,
@@ -169,7 +175,7 @@ class ConnectorEB:
 		)
 
 		event_params.update({
-			'expand': 'organizer,venue',
+			'expand': 'organizer,venue,format,category',
 			'include_all_series_instances': False,
 			'include_unavailable_events': False
 		})
@@ -180,24 +186,55 @@ class ConnectorEB:
 
 			for i, event in enumerate(raw_events['events']):
 				connector_event_id = event['id']
+				print(json.dumps(event, indent=4))
 
-				row_connector_event = ConnectorEvent(
-					connector_event_id=connector_event_id,
-					connector_type=self.CONNECTOR_TYPE,
-					data=event
-				)
-				db_session.merge(row_connector_event)
-				db_session.commit()
+				row_connector_event = db_session.query(ConnectorEvent).filter(
+					and_(
+						ConnectorEvent.connector_event_id == connector_event_id,
+						ConnectorEvent.connector_type == self.CONNECTOR_TYPE
+					)
+				).first()
+
+				if not row_connector_event:
+					row_connector_event = ConnectorEvent(
+						connector_event_id=connector_event_id,
+						connector_type=self.CONNECTOR_TYPE,
+						data=event
+					)
+					db_session.merge(row_connector_event)
+					db_session.commit()
+
+				event_format = get_from(event, ['format', 'name'])
+				if event_format:
+					lower_event_format = self.tokenize(event_format)
+					if (
+						('seminar' in lower_event_format)
+					):
+						continue
 
 				event_name = get_from(event, ['name','text'])
 				if event_name:
-					lower_event_name = event_name.lower()	
-					if ("speed dating" in lower_event_name):
+					lower_event_name = self.tokenize(event_name)
+					if (
+						("speed dating" in lower_event_name)
+						or ("high" in lower_event_name and 'school' in lower_event_name)
+						or ("kindergarten" in lower_event_name)
+						or ("gluten" in lower_event_name)
+						or ("health" in lower_event_name)
+						or ("vegan" in lower_event_name)
+						or ("vegan" in lower_event_name)
+						or ("job" in lower_event_name and "fair" in lower_event_name)
+						or ("kid" in lower_event_name)
+						or ("kids" in lower_event_name)
+						or ("teen" in lower_event_name)
+						or ("teens" in lower_event_name)
+						or ("wealth" in lower_event_name and "management" in lower_event_name)
+					):
 						continue
 
 				event_description = get_from(event, ['description','text'])
 				if event_description:
-					lower_event_description = event_description.lower()
+					lower_event_description = self.tokenize(event_description)
 					if (
 						"wine" in lower_event_description
 						and "shuttle" in lower_event_description
@@ -205,7 +242,7 @@ class ConnectorEB:
 						continue
 
 				if row_connector_event.event_id:
-					row_event = db_session.query(Event).filter(Event.event_id==event_id)
+					row_event = db_session.query(Event).filter(Event.event_id == row_connector_event.event_id).first()
 					row_event.name = event_name
 					row_event.description = event_description
 					row_event.short_name = event['name']['text']
@@ -221,6 +258,7 @@ class ConnectorEB:
 					row_event.longitude = event['venue']['longitude']
 					row_event.link = event['resource_uri']
 					db_session.merge(row_event)
+					db_session.commit()
 				else:
 					row_event = Event(
 						name = event_name,
@@ -229,7 +267,6 @@ class ConnectorEB:
 						img_url = get_from(event, ['logo', 'url']),
 						start_time = event['start']['utc'],
 						end_time = event['end']['utc'],
-						# cost = ,
 						currency = event['currency'],
 						venue_name = event['venue']['name'],
 						address = event['venue']['address']['localized_multi_line_address_display'],
@@ -240,11 +277,11 @@ class ConnectorEB:
 						link = event['resource_uri']
 					)
 					db_session.add(row_event)
-				db_session.commit()
+					db_session.commit()
 
-				row_connector_event.event_id = row_event.event_id
-				db_session.merge(row_connector_event)
-				db_session.commit()
+					row_connector_event.event_id = row_event.event_id
+					db_session.merge(row_connector_event)
+					db_session.commit()
 
 				yield row_event
 

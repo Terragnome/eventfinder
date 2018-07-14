@@ -1,0 +1,16 @@
+<div class='user'>
+  <div>
+    <div style='float:left;'>
+      <img class="user_profile_img" src="{{ user.image_url }}"></img>
+    </div>
+    <div>
+      <div>{{ user.username }}</div>
+      <div>{{ user.email }}</div>
+    </div>
+  </div>
+  <div>
+    {% with events=events, page=page %}
+      {% include "_events.html" %}
+    {% endwith %}
+  </div>
+</div>

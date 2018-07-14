@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block scripts %}{% endblock %}
+
+{% block content %}
+{% with events=events, page=page %}
+	{% include "_events.html" %}
+{% endwith %}
+{% endblock %}

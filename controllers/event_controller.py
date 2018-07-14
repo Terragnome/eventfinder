@@ -1,3 +1,4 @@
+import datetime
 import traceback
 
 from flask import session
@@ -17,17 +18,72 @@ from utils.get_from import get_from
 
 class EventController:
 	PAGE_SIZE=20
-	# ConnectorEB().get_events(
-	# 	address='13960 Lynde Ave, Saratoga, CA 95070',
-	# 	distance='100mi',
-	# 	categories=EBEventType.FOOD_DRINK,
-	# 	next_week=True
-	# )
 
-	def get_events_by_interested(self, interested, page=1):
-		events = []
-		
+	def get_event(self, event_id):
+		event = db_session.query(Event).filter(Event.event_id == event_id).first()
+
+		user_id = UserController().current_user_id
+		if user_id:
+			user_event = db_session.query(UserEvent).filter(
+				and_(
+					UserEvent.event_id==event.event_id,
+					UserEvent.user_id==user_id
+				)
+			).first()
+
+			if user_event:
+				event.current_user_event=user_event
+
+		user_event_count = db_session.query(UserEvent).filter(
+			and_(
+				UserEvent.event_id==event_id,
+				UserEvent.interested
+			)
+		).count()
+		event.interested_user_count = user_event_count
+
+		return event
+
+	def get_events(self, page=1):
+		events_with_count_query = db_session.query(
+			Event,
+			func.count(Event.user_events).filter(UserEvent.interested).label('ct')
+		)
+
 		user = UserController().current_user
+		if user:
+			user_events = user.user_events
+			user_event_ids = [x.event_id for x in user_events]
+			events_with_count_query = events_with_count_query.filter(
+				and_(
+					~Event.event_id.in_(user_event_ids)
+				)
+			)
+
+		events_with_counts = events_with_count_query.outerjoin(
+			Event.user_events
+		).filter(
+			Event.start_time > datetime.datetime.now()
+		).group_by(
+			Event.event_id
+		).order_by(
+			'ct DESC', Event.start_time.asc(), Event.event_id.desc()
+		).limit(
+			self.PAGE_SIZE
+		).offset(
+			(page-1)*self.PAGE_SIZE
+		)
+
+		results = []
+		for event, user_event_count in events_with_counts:
+			event.interested_user_count = user_event_count
+			results.append(event)
+		return results
+
+	def get_events_for_user_by_interested(self, interested, user=None, page=1):
+		if not user:
+			user = UserController().current_user
+
 		if user:
 			user_events = db_session.query(UserEvent).filter(
 				and_(
@@ -42,68 +98,31 @@ class EventController:
 				Event,
 				func.count(Event.user_events).label('ct')
 			).filter(
-				Event.event_id.in_(user_events_by_event_id.keys())
+				and_(
+					Event.event_id.in_(user_events_by_event_id.keys()),
+					Event.start_time > datetime.datetime.now(),
+					UserEvent.interested
+				)
 			).join(
 				Event.user_events
 			).group_by(
 				Event.event_id
 			).order_by(
-				'ct DESC'
+				'ct DESC', Event.start_time.asc(), Event.event_id.desc()
 			).limit(
 				self.PAGE_SIZE
 			).offset(
 				(page-1)*self.PAGE_SIZE
 			)
 
+			results = []
 			for event, user_event_count in events_with_counts:
 				user_event = get_from(user_events_by_event_id, [event.event_id])
 				if user_event:
 					event.current_user_event = user_event
-				yield event
-
-	def get_events(self, page=1):
-		events_with_count_query = db_session.query(
-			Event,
-			func.count(Event.user_events).filter(UserEvent.interested).label('ct')
-		)
-
-		user = UserController().current_user
-		if user:
-			user_events = user.user_events
-			user_event_ids = [x.event_id for x in user_events]
-			events_with_count_query = events_with_count_query.filter(~Event.event_id.in_(user_event_ids))
-
-		events_with_counts = events_with_count_query.outerjoin(
-			Event.user_events
-		).group_by(
-			Event.event_id
-		).order_by(
-			'ct DESC', Event.start_time.asc(), Event.event_id.desc()
-		).limit(
-			self.PAGE_SIZE
-		).offset(
-			(page-1)*self.PAGE_SIZE
-		)
-
-		for event, user_event_count in events_with_counts:
-			yield event
-
-	def get_event(self, event_id):
-		event = db_session.query(Event).filter(Event.event_id==event_id).first()
-
-		user_id = UserController().current_user_id
-		if user_id:
-			user_event = db_session.query(UserEvent).filter(
-				and_(
-					UserEvent.event_id==event.event_id,
-					UserEvent.user_id==user_id
-				)
-			).first()
-
-			if user_event:
-				event.current_user_event=user_event
-
-		return event
+					event.user_count = user_event_count
+				results.append(event)
+			return results
 
 	def update_event(self, event_id, interested):
 		user_id = UserController().current_user_id

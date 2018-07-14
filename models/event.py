@@ -79,9 +79,15 @@ class Event(Base):
 		])
 
 	@property
+	def interested_user_count(self):
+		return self._interested_user_count
+	@interested_user_count.setter
+	def interested_user_count(self, value):
+		self._interested_user_count = value
+
+	@property
 	def current_user_event(self):
 		return self._current_user_event
-
 	@current_user_event.setter
 	def current_user_event(self, value):
 		self._current_user_event = value
@@ -90,7 +96,6 @@ class Event(Base):
 	def current_user_interested(self):
 		return self.current_user_event and self.current_user_event.interested
 	
-
 	@property
 	def is_free(self):
 		return self.cost == 0

@@ -1,0 +1,37 @@
+<div class='event'>
+	<div>
+    <div class='event_title'>{{ event.name }}</div>
+    {% if event.img_url %}<img class="event_img" src="{{ event.img_url }}"></img>{% endif %}
+    <div class='event_venue'>
+      {% if event.venue_name %}{{ event.venue_name }}{% endif %}
+      {% if event.is_free %}(Free){% else %}(Paid){% endif %}
+    </div>
+    <h3>{{ event.display_time }}</h3>
+  </div>
+  <div class="event_address">
+    {% for row in event.address %}
+      <div>{{ row }}</div>
+    {% endfor %}
+  </div>
+  <p class="event_description">{{ event.description }}</p>
+  <div class='event_choices'>
+    {% if event.current_user_interested %} 
+      <a class='event_choice' href="{{ url_for('event_update', event_id=event.event_id, choice='skip') }}">Skip</a>
+    {% else %}
+      <span>Skip</span>
+    {% endif %}
+    {% if not event.current_user_interested %} 
+      <a class='event_choice' href="{{ url_for('event_update', event_id=event.event_id, choice='yes') }}">Interested</a>
+    {% else %}
+      <span>Interested</span>
+    {% endif %}
+  </div>
+  <div class='event_users'>
+    {% for user_event in event.user_events %}
+      {% if user_event.interested %}
+        <img class="user_profile_img" title="{{ user_event.user.username}}" src="{{ user_event.user.image_url }}"></img>
+      {% endif %}
+    {% endfor %}
+    {% if event.interested_user_count %}{{ event.interested_user_count }}{% endif %}
+  </div>
+</div>

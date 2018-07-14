@@ -1,0 +1,58 @@
+<div id='events_list' class='events_list'>
+
+{% if events|length >0 %}
+  {% if page>1 %}<a href="javascript:load_component('#main', '{{ url_for("events", p=page-1) }}')">Prev</a>{% endif %}
+  <a href="javascript:load_component('#main', '{{ url_for("events", p=page+1) }}')">Next</a>
+{% endif %}
+
+{% for event in events %}
+  <div class='list_event'>
+    <div class='event_header'>
+      <div>
+        <a class='event_title' href="javascript:load_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
+          {{ event.name }}
+        </a>
+      </div>
+      <a href="javascript:load_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
+        {% if event.img_url %}
+          <img class="event_img" src="{{ event.img_url }}"></img>
+        {% endif %}
+      </a>
+      <div class='event_venue'>
+        {% if event.venue_name %}{{ event.venue_name }}{% endif %}
+        {% if event.is_free %}(Free){% else %}(Paid){% endif %}
+      </div>
+      <div class="event_time">{{ event.display_time }}</div>
+    </div>
+    <div class="event_address">
+      <div>{{ event.display_city }}</div>
+    </div>
+    <form class='event_choices' name='event_choices' action="{{ url_for('event_update', event_id=event.event_id) }}" method='post'>
+      {%if not event.current_user_event or event.current_user_interested %} 
+        <input class='link' type="submit" name="choice" value="Skip"/>
+      {% else %}
+        <span>Skip</span>
+      {% endif %}
+      {%if not event.current_user_interested %}
+        <input class='link' type="submit" name="choice" value="Interested"/>
+      {% else %}
+        <span>Interested</span>
+      {% endif %}
+    </form>
+    <div class='event_users'>
+      {% for user_event in event.user_events %}
+        {% if user_event.interested %}
+          <a href="javascript:load_component('#main', '{{ url_for('user', identifier=user_event.user.username) }}')">
+            <img class="user_profile_img" title="{{ user_event.user.username}}" src="{{ user_event.user.image_url }}"></img>
+          </a>
+        {% endif %}
+      {% endfor %}
+      {% if event.interested_user_count %}{{ event.interested_user_count }}{% endif %}
+    </div>
+  </div>
+{% else %}
+  <div>
+    No Events
+  </div>
+{% endfor %}
+</div>
