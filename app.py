@@ -66,7 +66,9 @@ def event(event_id):
 @app.route("/event/<int:event_id>/", methods=['POST'])
 @oauth2.required(scopes=["profile"])
 def event_update(event_id):
-    interested = request.form.get('choice').lower() == 'interested'
+    interested = request.form.get('go') == 'true'
+    callback = request.form.get('cb')
+    if callback == "/": callback = 'events{}'.format(callback)
 
     event = EventController().update_event(
         event_id=event_id,
@@ -74,7 +76,7 @@ def event_update(event_id):
     )
 
     if event:
-        return render_template('_event.html', event=event)
+        return redirect(callback)
     return redirect(request.referrer or '/')
 
 @app.route("/events/", methods=['GET'])

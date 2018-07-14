@@ -5,7 +5,17 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
 	<script>
-    function load_component(target, url) {
+    function post_component(target, url, params) {
+      $(target).html('<div class="spinner"></div>');
+      $.post(url, params, {
+      }).done(function(response) {
+        $(target).html(response);
+      }).fail(function() {
+        $(target).text("{{ 'Error: Could not contact server.' }}");
+      });
+    }
+
+    function get_component(target, url) {
       $(target).html('<div class="spinner"></div>');
       $.get(url, {
       }).done(function(response) {
@@ -21,21 +31,20 @@
 <section class="content">
 	<header class='app_header'>
     <div>
-      <a class='app_title' href="javascript:load_component('#main', '{{ url_for('events') }}')">
+      <a class='app_title' href="javascript:get_component('#main', '{{ url_for('events') }}')">
         {% block header %}EventFinder{% endblock %}
       </a>
     </div>
 		<div class='app_login'>
 			{% if session.user %}
-			    {% if session.user.image_url %}
-			      <a href="javascript:load_component('#main', '{{ url_for('events_interested') }}')">
+			    <a href="{{ url_for('logout') }}">{{ session.user.username }}</a>
+          {% if session.user.image_url %}
+			      <a href="javascript:get_component('#main', '{{ url_for('events_interested') }}')">
               <img class="user_profile_img" src="{{ session.user.image_url }}"></img>
             </a>
 			    {% endif %}
-			    <!-- <a href="{{ url_for('logout') }}">{{ session.user.username }}</a> -->
 			{% else %}
 			  <a href="{{ url_for('oauth2.authorize') }}">
-			  	<!-- <img class="user_profile_img"></img> -->
 			  	Sign In
 			  </a>
 			{% endif %}

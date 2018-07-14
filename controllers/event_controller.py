@@ -2,7 +2,7 @@ import datetime
 import traceback
 
 from flask import session
-from sqlalchemy import and_
+from sqlalchemy import and_, desc
 from sqlalchemy.sql import func
 
 from controllers.user_controller import UserController
@@ -67,7 +67,7 @@ class EventController:
 		).group_by(
 			Event.event_id
 		).order_by(
-			'ct DESC', Event.start_time.asc(), Event.event_id.desc()
+			desc('ct'), Event.start_time.asc(), Event.event_id.desc()
 		).limit(
 			self.PAGE_SIZE
 		).offset(
@@ -108,7 +108,7 @@ class EventController:
 			).group_by(
 				Event.event_id
 			).order_by(
-				'ct DESC', Event.start_time.asc(), Event.event_id.desc()
+				desc('ct'), Event.start_time.asc(), Event.event_id.desc()
 			).limit(
 				self.PAGE_SIZE
 			).offset(

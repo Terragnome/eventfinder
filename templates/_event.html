@@ -1,11 +1,11 @@
 <div class='event'>
   <div class='event_header'>
     <div>
-      <a class='event_title' href="javascript:load_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
+      <a class='event_title' href="javascript:get_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
         {{ event.name }}
       </a>
     </div>
-    <a href="javascript:load_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
+    <a href="javascript:get_component('#main', '{{ url_for('event', event_id=event.event_id) }}')">
       {% if event.img_url %}
         <img class="event_img" src="{{ event.img_url }}"></img>
       {% endif %}
@@ -28,22 +28,22 @@
   {% if not card %}
     <p class="event_description">{{ event.description }}</p>
   {% endif %}
-  <form class='event_choices' name='event_choices' action="{{ url_for('event_update', event_id=event.event_id) }}" method='post'>
+  <div>
     {%if not event.current_user_event or event.current_user_interested %} 
-      <input class='link' type="submit" name="choice" value="Skip"/>
+      <a href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Remove</a>
     {% else %}
-      <span>Skip</span>
+      <span>Remove</span>
     {% endif %}
     {%if not event.current_user_interested %}
-      <input class='link' type="submit" name="choice" value="Interested"/>
+      <a href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', p=page) }}'})">Interested</a>
     {% else %}
       <span>Interested</span>
     {% endif %}
-  </form>
+  </div>
   <div class='event_users'>
     {% for user_event in event.user_events %}
       {% if user_event.interested %}
-        <a href="javascript:load_component('#main', '{{ url_for('user', identifier=user_event.user.username) }}')">
+        <a class='link_img' href="javascript:get_component('#main', '{{ url_for('user', identifier=user_event.user.username) }}')">
           <img class="user_profile_img" title="{{ user_event.user.username}}" src="{{ user_event.user.image_url }}"></img>
         </a>
       {% endif %}

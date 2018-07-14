@@ -4,97 +4,101 @@
 }
 
 body{
-	font-family: Roboto,sans-serif;
+  font-family: Roboto,sans-serif;
 }
 
 .link{
-	 background: none;
-     border: none;
-     font-size: 16px;
-     text-decoration: underline;
-     cursor: pointer; 
+  background: none;
+  border: none;
+  font-size: 16px;
+  text-decoration: underline;
+  cursor: pointer; 
+}
+
+.link_img{
+  text-decoration: none;
 }
 
 .app_header{
-	overflow: auto;
+  overflow: auto;
 }
 
 .app_login{
-	float: right;
-	margin: 10px 0 0 0;
+  float: right;
+  margin: 10px 0 0 0;
 }
 
 .app_nav{
-	margin: 5px 0 10px 0;
+  margin: 5px 0 10px 0;
 }
 
 .app_title{
-	color: black;
-	float: left;
-	font-size: 24px;
-	margin: 10px 0 0 0;
-	text-decoration: none;
+  color: black;
+  float: left;
+  font-size: 24px;
+  margin: 10px 0 0 0;
+  text-decoration: none;
 }
 
 .event{
-	padding: 5px 10px 15px 10px;
-	text-align: center;
+  padding: 5px 10px 15px 10px;
+  text-align: center;
 }
 
 .events_list{}
 
 .list_event{
-	border: 1px solid black;
-	margin: 0 10px 50px 10px;
-	padding: 5px 10px 15px 10px;
-	text-align: center;
-	width: 480px;
+  border: 1px solid black;
+  margin: 0 10px 50px 10px;
+  padding: 5px 10px 15px 10px;
+  text-align: center;
+  width: 480px;
 }
 
 .event_address{
-	margin: 5px 0 0px 0;
-	text-align: center;
+  margin: 5px 0 0px 0;
+  text-align: center;
 }
 
 .event_choice{
-	margin: 0 10px 0 10px;
+  margin: 0 10px 0 10px;
 }
 
 .event_choices{
-	margin: 10px 0 0 0;
+  margin: 10px 0 0 0;
 }
 
 .event_description{
-	text-align: left;
+  text-align: left;
 }
 
 .event_img{
-	/*max-width: 480px;*/
-	margin: 5px 0 5px 0;
+  /*max-width: 480px;*/
+  margin: 5px 0 5px 0;
 }
 
 .event_time{
-	font-size: 18px;
-	margin: 10px 0 0 0;
+  font-size: 18px;
+  margin: 10px 0 0 0;
 }
 
 .event_title{
-	color: black;
-	font-size: 24px;
-	font-weight: bold;
-	text-decoration: none;
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .event_users{
-	margin:10px 0 0 0;
+  margin:10px 0 0 0;
 }
 
 .event_venue{
-	font-size: 20px;
-	font-weight: bold;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .user_profile_img{
-	border-radius: 25px;
-	width: 50px;
+  border-radius: 25px;
+  width: 50px;
 }
