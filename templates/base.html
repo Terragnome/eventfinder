@@ -23,6 +23,8 @@
       $(target).html('<div class="spinner"></div>');
       $.get(url, {
       }).done(function(response) {
+        // stateObj = {'hello': 'world'};
+        history.pushState(null, null, url);
         $(target).html(response);
       }).fail(function(xhr, status, error) {
         $(target).text("Error: "+error);

@@ -48,19 +48,27 @@ TEMPLATE_USER = "_user.html"
 def paginated(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
+    if 'page' in kwargs: del kwargs['page']
+    if 'prev_page_url' in kwargs: del kwargs['prev_page_url']
+    if 'next_page_url' in kwargs: del kwargs['next_page_url']
+
     page = request.args.get('page', default=1, type=int)
     if page <= 0: page = 1
-    kwargs['page'] = page
 
-    kwargs['prev_page_url'] = None
+    prev_page_url = None
     if page > 1:
       prev_kwargs = dict(kwargs)
       prev_kwargs['page'] = page-1
-      kwargs['prev_page_url'] = url_for(fn.__name__, *args, **prev_kwargs)
+      prev_page_url = url_for(fn.__name__, *args, **prev_kwargs)
 
+    next_page_url = None
     next_kwargs = dict(kwargs)
     next_kwargs['page'] = page+1
-    kwargs['next_page_url'] = url_for(fn.__name__, *args, **next_kwargs)
+    next_page_url = url_for(fn.__name__, *args, **next_kwargs)
+
+    kwargs['page'] = page
+    kwargs['next_page_url'] = next_page_url
+    kwargs['prev_page_url'] = prev_page_url
 
     return fn(*args, **kwargs)
   return decorated_fn
@@ -82,6 +90,7 @@ def events(page=1, next_page_url=None, prev_page_url=None):
 
   vargs = {
     'events': events,
+    'page': page,
     'next_page_url': next_page_url,
     'prev_page_url': prev_page_url,
   }
@@ -132,6 +141,7 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
   if user:
     vargs = {
       'events': events,
+      'page': page,
       'next_page_url': next_page_url,
       'prev_page_url': prev_page_url
     }

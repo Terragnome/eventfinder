@@ -1,16 +1,9 @@
 {% set events=events or (vargs.events if vargs else None) %}
-{% set next_page_url=next_page_url or (vargs.next_page_url if vargs else None) %}
-{% set prev_page_url=prev_page_url or (vargs.prev_page_url if vargs else None) %}
 
 <div id='events_list'>
-  <div class='pagination'>
-    <div class='float_container'>
-      <div class='float_center'><div class='float_child'>
-        {% if prev_page_url %}<a class='pagination_link' href="javascript:get_component('#main', '{{ prev_page_url }}')">Prev</a>{% endif %}
-        {% if next_page_url %}<a class='pagination_link' href="javascript:get_component('#main', '{{ next_page_url }}')">Next</a>{% endif %}
-      </div></div>
-    </div>
-  </div>
+  {% with vargs=vargs %}
+    {% include "_events_pagination.html" %}
+  {% endwith %}
   <div class='float_container'>
     {% for event in events %}
       <div class='event_card'>
@@ -24,12 +17,7 @@
       </div>
     {% endfor %}
   </div>
-  <div class='pagination'>
-    <div class='float_container'>
-      <div class='float_center'><div class='float_child'>
-        {% if prev_page_url %}<a class='pagination_link' href="javascript:get_component('#main', '{{ prev_page_url }}')">Prev</a>{% endif %}
-        {% if next_page_url %}<a class='pagination_link' href="javascript:get_component('#main', '{{ next_page_url }}')">Next</a>{% endif %}
-      </div></div>
-    </div>
-  </div>
+  {% with vargs=vargs %}
+    {% include "_events_pagination.html" %}
+  {% endwith %}
 </div>

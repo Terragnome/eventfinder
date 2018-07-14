@@ -236,8 +236,8 @@ class ConnectorEB:
                 if event_description:
                     lower_event_description = self.tokenize(event_description)
                     if (
-                        "wine" in lower_event_description
-                        and "shuttle" in lower_event_description
+                        ("wine" in lower_event_description and "shuttle" in lower_event_description)
+                        or ('cash' in lower_event_description and 'app' in lower_event_description)
                     ):
                         continue
 

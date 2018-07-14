@@ -31,7 +31,7 @@
       <span class='event_choice'>Skip</span>
     {% endif %}
     {%if not event.current_user_interested %}
-      <a class='event_choice' href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', p=page) }}'})">Interested</a>
+      <a class='event_choice' href="javascript:post_component('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', page=page) }}'})">Interested</a>
     {% else %}
       <span class='event_choice'>Interested</span>
     {% endif %}
