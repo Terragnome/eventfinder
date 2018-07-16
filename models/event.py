@@ -10,6 +10,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import relationship
 
 from .base import Base
+from .user_event import UserEvent
 
 class Event(Base):
   __tablename__ = 'events'
@@ -34,8 +35,11 @@ class Event(Base):
 
   connector_events = relationship('ConnectorEvent')
   user_events = relationship('UserEvent')
-  # Need to filter this only down to interested people
-  users = relationship('User', secondary='user_events')
+  users = relationship(
+    'User',
+    secondary='user_events',
+    lazy='dynamic'
+  )
 
   @orm.reconstructor
   def init_on_load(self):
@@ -100,11 +104,15 @@ class Event(Base):
     return self.venue_name if self.venue_name and len(self.venue_name)<=45 else self.display_city or ""  
 
   @property
-  def interested_user_count(self):
-    return self._interested_user_count
-  @interested_user_count.setter
-  def interested_user_count(self, value):
-    self._interested_user_count = value
+  def interested_users(self):
+    return self.users.filter(UserEvent.interested)
+
+  # @property
+  # def interested_user_count(self):
+  #   return self._interested_user_count
+  # @interested_user_count.setter
+  # def interested_user_count(self, value):
+  #   self._interested_user_count = value
   
   @property
   def is_free(self):

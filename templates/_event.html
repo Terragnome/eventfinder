@@ -38,18 +38,13 @@
   </div>
   <div class='float_container event_users'>
     <div class='float_center'><div class='float_child'>
-      {% if card %}
-        {% set max_user_icons = 8 %}
-      {% else %}
-        {% set max_user_icons = 20 %}
-      {% endif %}
-      {% for user in event.users[:max_user_icons] %}
+      {% for user in event.interested_users %}
         <a class='link_img' href="javascript:get_component('#main', '{{ url_for('user', identifier=user.username) }}')">
           <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
         </a>
       {% endfor %}
-      {% if event.interested_user_count and event.interested_user_count>max_user_icons %}
-        <a class='link_img'><div class='event_users_count'>+{{ event.interested_user_count-max_user_icons }}</div></a>
+      {% if event.interested_user_count %}
+        <a class='link_img'><div class='event_users_count'>+{{ event.interested_user_count }}</div></a>
       {% endif %}
     </div></div>
   </div>

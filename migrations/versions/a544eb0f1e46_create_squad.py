@@ -5,11 +5,10 @@ Revises: b11e2c61a68a
 Create Date: 2018-07-01 19:20:43.368809
 
 """
-from sqlalchemy.sql import func
-
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import ForeignKey
+from sqlalchemy.sql import func
 
 # revision identifiers, used by Alembic.
 revision = 'a544eb0f1e46'

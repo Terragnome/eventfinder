@@ -6,6 +6,8 @@ from sqlalchemy import and_, or_
 
 from models.base import db_session
 from models.auth import Auth
+from models.block import Block
+from models.follow import Follow
 from models.user import User
 from models.user_auth import UserAuth
 
@@ -13,6 +15,14 @@ from utils.config_utils import load_config
 from utils.get_from import get_from
 
 class UserController:
+  #TODO: Make sure that you can't set your username to a number to get another person's account
+  def _get_user(self, identifier):
+    if identifier.__class__ is int:
+      user = db_session.query(User).filter(User.user_id==identifier).first()
+    else:
+      user = db_session.query(User).filter(User.username==identifier).first()
+    return user
+
   def _logout(self):
     from app import oauth2
     if 'user' in session:
@@ -73,6 +83,20 @@ class UserController:
 
     session['user'] = row_user.to_json()
 
+  def block_user(self, identifier, active):
+    current_user = self.current_user
+    user = self._get_user(identifier)
+
+    row_block = Block(
+      user_id = current_user.user_id,
+      block_id = user.user_id,
+      active = active
+    )
+    db_session.merge(row_block)
+    db_session.commit()
+
+    return user
+
   @property
   def current_user_id(self):
     user_id = None
@@ -88,12 +112,22 @@ class UserController:
       user = db_session.query(User).filter(User.user_id == user_id).first()
     return user
 
-  def get_user(self, identifier):
-    if identifier.__class__ is int:
-      user = db_session.query(User).filter(User.user_id==identifier).first()
-    else:
-      user = db_session.query(User).filter(User.username==identifier).first()
+  def follow_user(self, identifier, active):
+    current_user = self.current_user
+    user = self._get_user(identifier)
+
+    row_follow = Follow(
+      user_id = current_user.user_id,
+      follow_id = user.user_id,
+      active = active
+    )
+    db_session.merge(row_follow)
+    db_session.commit()
+
     return user
+
+  def get_user(self, identifier):
+    return self._get_user(identifier)
 
   def get_users(self):
     return db_session.query(User).all()

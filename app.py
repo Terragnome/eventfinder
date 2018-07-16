@@ -10,12 +10,15 @@ from flask import session
 from flask import url_for
 from flask_session import Session
 from oauth2client.contrib.flask_util import UserOAuth2
+from sqlalchemy import and_
 import redis
 
 from config.app_config import app_config
 
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
+from models.block import Block
+from models.follow import Follow
 
 from utils.config_utils import load_config
 
@@ -54,17 +57,8 @@ def paginated(fn):
 
     page = request.args.get('page', default=1, type=int)
     if page <= 0: page = 1
-
-    prev_page_url = None
-    if page > 1:
-      prev_kwargs = dict(kwargs)
-      prev_kwargs['page'] = page-1
-      prev_page_url = url_for(fn.__name__, *args, **prev_kwargs)
-
-    next_page_url = None
-    next_kwargs = dict(kwargs)
-    next_kwargs['page'] = page+1
-    next_page_url = url_for(fn.__name__, *args, **next_kwargs)
+    prev_page_url = url_for(fn.__name__, *args, page=page-1, **kwargs) if page>1 else None
+    next_page_url = url_for(fn.__name__, *args, page=page+1, **kwargs)
 
     kwargs['page'] = page
     kwargs['next_page_url'] = next_page_url
@@ -131,38 +125,85 @@ def event_update(event_id):
 @app.route("/user/<identifier>/", methods=['GET'])
 @paginated
 def user(identifier, page=1, next_page_url=None, prev_page_url=None):
+  current_user_id = UserController().current_user_id
+
   user = UserController().get_user(identifier)
-  events = EventController().get_events_for_user_by_interested(
-    user=user,
-    interested=True,
-    page=page
-  )
 
-  if user:
-    vargs = {
-      'events': events,
-      'page': page,
-      'next_page_url': next_page_url,
-      'prev_page_url': prev_page_url
-    }
+  if not user.blocks_user_id(current_user_id):
+    events = EventController().get_events_for_user_by_interested(
+      user=user,
+      interested=True,
+      page=page
+    )
 
-    if user.user_id == UserController().current_user_id:
-      template = TEMPLATE_EVENTS
+    if user:
+      vargs = {
+        'events': events,
+        'page': page,
+        'next_page_url': next_page_url,
+        'prev_page_url': prev_page_url
+      }
 
-      if request.is_xhr:
-        return render_template(template, vargs=vargs, **vargs)
+      if user.user_id == UserController().current_user_id:
+        template = TEMPLATE_EVENTS
+
+        if request.is_xhr:
+          return render_template(template, vargs=vargs, **vargs)
+        else:
+          return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
       else:
-        return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
-    else:
-      template = TEMPLATE_USER
-      vargs['user'] = user
+        current_user = UserController().current_user
+        is_follow = UserController().current_user.followed_users.filter(
+          and_(
+            Follow.follow_id==user.user_id,
+            Follow.active
+          )
+        ).first()
 
-      if request.is_xhr:        
-        return render_template(template, vargs=vargs, **vargs)
-      else:
-        return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+        is_block = UserController().current_user.blocked_users.filter(
+          and_(
+            Block.block_id==user.user_id,
+            Block.active
+          )
+        ).first()
+
+        template = TEMPLATE_USER
+        vargs['user'] = user
+        vargs['is_block'] = is_block
+        vargs['is_follow'] = is_follow
+
+        if request.is_xhr:        
+          return render_template(template, vargs=vargs, **vargs)
+        else:
+          return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
   return redirect(request.referrer or '/')    
+
+@app.route("/users/<identifier>/block/", methods=['POST'])
+@oauth2.required(scopes=oauth2_scopes)
+def user_block(identifier):
+  active = request.form.get('active') == 'true'
+  callback = request.form.get('cb')
+
+  user = UserController().block_user(identifier, active)
+  if user:
+    return redirect(callback)
+  return redirect(request.referrer or '/')
+
+@app.route("/users/<identifier>/follow/", methods=['POST'])
+@oauth2.required(scopes=oauth2_scopes)
+def user_follow(identifier):
+  active = request.form.get('active') == 'true'
+  callback = request.form.get('cb')
+
+  user = UserController().follow_user(identifier, active)
+  if user:
+    return redirect(callback)
+  return redirect(request.referrer or '/')
+
+# @app.route("/users/<identifier>/follows/", methods=['GET'])
+# def user_follows(identifier):
+#   pass
 
 if __name__ == '__main__':
   app.run(debug=True, host='0.0.0.0', port=5000)

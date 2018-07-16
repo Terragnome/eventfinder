@@ -17,8 +17,10 @@ class Base:
 Base = declarative_base(cls=Base)
 
 from .auth import Auth
+from .block import Block
 from .connector_event import ConnectorEvent
 from .event import Event
+from .follow import Follow
 from .squad import Squad
 from .squad_invite import SquadInvite
 from .squad_user import SquadUser

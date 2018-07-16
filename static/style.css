@@ -5,6 +5,7 @@
 
 body{
   font-family: Roboto,sans-serif;
+  min-width: 480px;
 }
 
 a{
@@ -78,6 +79,15 @@ img{
 .app_login{
   float: right;
   margin: 10px 0 0 0;
+}
+
+.app_login_name{
+  font-size: 16px;
+  margin: 5px 0 0 0;
+}
+
+.app_login_img{
+  margin: 0 0 0 10px;
 }
 
 .app_nav{
@@ -190,6 +200,21 @@ img{
   font-weight: bold;
 }
 
+.placeholder_profile_img{
+  background-color: #BEBEBE;
+  border-radius: 25px;
+  height: 50px;
+  width: 50px;
+}
+
+.user_feed_choice{
+  margin: 0 5px 0 5px;
+}
+
+.user_feed_choices{
+  margin: 3px 0 0 0;
+}
+
 .user_feed_profile{
   font-size: 16px;
   margin: 20px 0px 10px 0;
@@ -205,6 +230,7 @@ img{
 
 .user_profile_img{
   border-radius: 25px;
+  height: 50px;
   width: 50px;
 }
 

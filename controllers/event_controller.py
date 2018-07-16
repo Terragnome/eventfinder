@@ -17,7 +17,7 @@ from models.user_event import UserEvent
 from utils.get_from import get_from
 
 class EventController:
-  PAGE_SIZE=12
+  PAGE_SIZE = 24
 
   def get_event(self, event_id):
     event = db_session.query(Event).filter(Event.event_id == event_id).first()
@@ -119,7 +119,7 @@ class EventController:
         user_event = get_from(user_events_by_event_id, [event.event_id])
         if user_event:
           event.current_user_event = user_event
-          event.user_count = user_event_count
+          event.interested_user_count = user_event_count
         results.append(event)
       return results
     return None

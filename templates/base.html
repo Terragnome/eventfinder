@@ -15,7 +15,7 @@
       }).done(function(response) {
         $(target).html(response);
       }).fail(function(xhr, status, error) {
-        $(target).text("Error: "+error);
+        // $(target).text("Error: "+error);
       });
     }
 
@@ -27,7 +27,7 @@
         history.pushState(stateObj, null, url);
         $(target).html(response);
       }).fail(function(xhr, status, error) {
-        $(target).text("Error: "+error);
+        // $(target).text("Error: "+error);
       });
     }
   </script>
@@ -43,16 +43,15 @@
     </div>
 		<div class='app_login'>
 			{% if session.user %}
-			    <a href="{{ url_for('logout') }}">{{ session.user.username }}</a>
-          {% if session.user.image_url %}
-			      <a href="javascript:get_component('#main', '{{ url_for('user', identifier=session.user.username) }}')">
-              <img class="user_profile_img" src="{{ session.user.image_url }}"></img>
-            </a>
-			    {% endif %}
+		    {% if session.user.image_url %}
+          <a class="right" href="javascript:get_component('#main', '{{ url_for('user', identifier=session.user.username) }}')">
+            <img class="app_login_img user_profile_img" src="{{ session.user.image_url }}"></img>
+          </a>
+        {% endif %}
+        <a class="app_login_name right" href="{{ url_for('logout') }}">{{ session.user.username }}</a>
 			{% else %}
-			  <a href="{{ url_for('oauth2.authorize') }}">
-			  	Sign In
-			  </a>
+        <a class="app_login_img placeholder_profile_img right" href="{{ url_for('oauth2.authorize') }}"></a>
+        <a class="app_login_name right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
 			{% endif %}
 		</div>
 	</header>
