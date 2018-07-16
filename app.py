@@ -129,53 +129,54 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
 
   user = UserController().get_user(identifier)
 
-  if not user.blocks_user_id(current_user_id):
-    events = EventController().get_events_for_user_by_interested(
-      user=user,
-      interested=True,
-      page=page
-    )
+  if user:
+    events = []
+    if not Block.blocks(user.user_id, current_user_id):
+      events = EventController().get_events_for_user_by_interested(
+        user=user,
+        interested=True,
+        page=page
+      )
 
-    if user:
-      vargs = {
-        'events': events,
-        'page': page,
-        'next_page_url': next_page_url,
-        'prev_page_url': prev_page_url
-      }
+    vargs = {
+      'events': events,
+      'page': page,
+      'next_page_url': next_page_url,
+      'prev_page_url': prev_page_url
+    }
 
-      if user.user_id == UserController().current_user_id:
-        template = TEMPLATE_EVENTS
+    if user.user_id == UserController().current_user_id:
+      template = TEMPLATE_EVENTS
 
-        if request.is_xhr:
-          return render_template(template, vargs=vargs, **vargs)
-        else:
-          return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+      if request.is_xhr:
+        return render_template(template, vargs=vargs, **vargs)
       else:
-        current_user = UserController().current_user
-        is_follow = UserController().current_user.followed_users.filter(
-          and_(
-            Follow.follow_id==user.user_id,
-            Follow.active
-          )
-        ).first()
+        return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+    else:
+      current_user = UserController().current_user
+      is_follow = UserController().current_user.followed_users.filter(
+        and_(
+          Follow.follow_id==user.user_id,
+          Follow.active
+        )
+      ).first()
 
-        is_block = UserController().current_user.blocked_users.filter(
-          and_(
-            Block.block_id==user.user_id,
-            Block.active
-          )
-        ).first()
+      is_block = UserController().current_user.blocked_users.filter(
+        and_(
+          Block.block_id==user.user_id,
+          Block.active
+        )
+      ).first()
 
-        template = TEMPLATE_USER
-        vargs['user'] = user
-        vargs['is_block'] = is_block
-        vargs['is_follow'] = is_follow
+      template = TEMPLATE_USER
+      vargs['user'] = user
+      vargs['is_block'] = is_block
+      vargs['is_follow'] = is_follow
 
-        if request.is_xhr:        
-          return render_template(template, vargs=vargs, **vargs)
-        else:
-          return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+      if request.is_xhr:        
+        return render_template(template, vargs=vargs, **vargs)
+      else:
+        return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
   return redirect(request.referrer or '/')    
 

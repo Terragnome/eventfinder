@@ -54,6 +54,6 @@ class User(Base):
         Block.block_id == user_id,
         Block.active
       )
-    ):
+    ).first():
       return True
     return False
