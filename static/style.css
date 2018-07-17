@@ -5,6 +5,7 @@ body{
 
 a{
   color: #FF0000;
+  cursor: pointer;
   text-decoration: none;
   text-transform: uppercase;
 }
@@ -68,6 +69,10 @@ img{
 
 .float_container{
   overflow: auto;
+}
+
+.hide{
+  display: none;
 }
 
 .left{

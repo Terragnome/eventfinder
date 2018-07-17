@@ -1,11 +1,11 @@
 {% set next_page_url=next_page_url or (vargs.next_page_url if vargs else None) %}
 {% set prev_page_url=prev_page_url or (vargs.prev_page_url if vargs else None) %}
 
-<div class='pagination'>
+<div class='hide pagination'>
   <div class='float_container'>
     <div class='float_center'><div class='float_child'>
-      {% if prev_page_url %}<a class='next pagination_link' href="{{ prev_page_url }}">Prev</a>{% endif %}
       {% if next_page_url %}<a class='pagination_link prev' href="{{ next_page_url }}">Next</a>{% endif %}
+      {% if prev_page_url %}<a class='next pagination_link' href="{{ prev_page_url }}">Prev</a>{% endif %}
     </div></div>
   </div>
 </div>

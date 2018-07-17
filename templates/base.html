@@ -4,50 +4,22 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='_animation.css', v=(range(1, 100000) | random)) }}"></link>
   <link rel="stylesheet" href="{{ url_for('static', filename='_fonts.css', v=(range(1, 100000) | random)) }}"></link>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v=(range(1, 100000) | random)) }}"></link>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="//unpkg.com/jscroll/dist/jquery.jscroll.min.js"></script>
-	<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
-	<script>
-    function remove_elem(target) {
-      $(target).remove();
-    }
-
-    function post_component(target, url, params) {
-      $(target).html('<div class="spinner"></div>');
-      $.post(url, params, {
-      }).done(function(response) {
-        $(target).html(response);
-      }).fail(function(xhr, status, error) {
-        // $(target).text("Error: "+error);
-      });
-    }
-
-    function get_component(target, url) {
-      $(target).html('<div class="spinner"></div>');
-      $.get(url, {
-      }).done(function(response) {
-        stateObj = {};
-        history.pushState(stateObj, null, url);
-        $(target).html(response);
-      }).fail(function(xhr, status, error) {
-        // $(target).text("Error: "+error);
-      });
-    }
-  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=(range(1, 100000) | random)) }}"></script>
   {% block scripts %}{% endblock %}
 </head>
 <title>{% block title %}EventFinder{% endblock %}</title>
 <section class="content">
 	<header class='app_header'>
     <div>
-      <a class='app_title' href="javascript:get_component('#main', '{{ url_for('events') }}')">
+      <a class='app_title' onclick="Application.get_elem('#main', '{{ url_for('events') }}')">
         {% block header %}EventFinder{% endblock %}
       </a>
     </div>
 		<div class='app_login'>
 			{% if session.user %}
 		    {% if session.user.image_url %}
-          <a class="right" href="javascript:get_component('#main', '{{ url_for('user', identifier=session.user.username) }}')">
+          <a class="right" onclick="Application.get_elem('#main', '{{ url_for('user', identifier=session.user.username) }}')">
             <img class="app_login_img user_profile_img" src="{{ session.user.image_url }}"></img>
           </a>
         {% endif %}

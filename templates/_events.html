@@ -1,6 +1,6 @@
 {% set events=events or (vargs.events if vargs else None) %}
 
-<div id='events_list' class='anim_fade_in'>
+<div id='events_list' onload="">
   <div class='float_container'>
     {% for event in events %}
       <div class='box_shadow event_card'>
@@ -18,3 +18,7 @@
     {% include "_events_pagination.html" %}
   {% endwith %}
 </div>
+
+<script type='application/javascript'>
+  Application.enableScrollEvent();
+</script>
