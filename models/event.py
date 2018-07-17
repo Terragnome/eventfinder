@@ -69,7 +69,7 @@ class Event(Base):
 
   @property
   def display_name(self):
-    return self.name[:80]
+    return self.name[:94]
 
   @property
   def display_time(self):
@@ -104,16 +104,23 @@ class Event(Base):
     return self.venue_name if self.venue_name and len(self.venue_name)<=45 else self.display_city or ""  
 
   @property
+  def interested_follows(self):
+    return self._interested_follows
+  @interested_follows.setter
+  def interested_follows(self, value):
+    self._interested_follows = value
+
+  @property
   def interested_users(self):
     return self.users.filter(UserEvent.interested)
 
-  # @property
-  # def interested_user_count(self):
-  #   return self._interested_user_count
-  # @interested_user_count.setter
-  # def interested_user_count(self, value):
-  #   self._interested_user_count = value
-  
+  @property
+  def interested_user_count(self):
+    return self._interested_user_count
+  @interested_user_count.setter
+  def interested_user_count(self, value):
+    self._interested_user_count = value
+
   @property
   def is_free(self):
     return self.cost == 0

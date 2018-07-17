@@ -11,6 +11,7 @@ from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.data.connector_eb import ConnectorEB, EBEventType
 from models.event import Event
+from models.follow import Follow
 from models.user import User
 from models.user_event import UserEvent
 
@@ -22,12 +23,12 @@ class EventController:
   def get_event(self, event_id):
     event = db_session.query(Event).filter(Event.event_id == event_id).first()
 
-    user_id = UserController().current_user_id
-    if user_id:
+    user = UserController().current_user
+    if user:
       user_event = db_session.query(UserEvent).filter(
         and_(
           UserEvent.event_id==event.event_id,
-          UserEvent.user_id==user_id
+          UserEvent.user_id==user.user_id
         )
       ).first()
 
@@ -40,7 +41,12 @@ class EventController:
         UserEvent.interested
       )
     ).count()
+
     event.interested_user_count = user_event_count
+    # if user:
+    #   event.interested_follows = event.interested_users.filter(
+    #     User.user_id.in_([x.user_id for x in user.followed_users])
+    #   )
 
     return event
 
@@ -77,20 +83,36 @@ class EventController:
     results = []
     for event, user_event_count in events_with_counts:
       event.interested_user_count = user_event_count
+      # if user:
+      #   event.interested_follows = event.interested_users.filter(
+      #     User.user_id.in_([x.user_id for x in user.followed_users])
+      #   )
       results.append(event)
     return results
 
   def get_events_for_user_by_interested(self, interested, user=None, page=1):
-    if not user: user = UserController().current_user
+    current_user = UserController().current_user
+    if not user: user = current_user
 
     if user:
-      user_events = db_session.query(UserEvent).filter(
+      current_user_events = db_session.query(UserEvent).filter(
         and_(
-          UserEvent.user_id == user.user_id,
+          UserEvent.user_id == current_user.user_id,
           UserEvent.interested == interested
         )
       ).all()
 
+      if current_user:
+        user_events = db_session.query(UserEvent).filter(
+          and_(
+            UserEvent.user_id == user.user_id,
+            UserEvent.interested == interested
+          )
+        ).all()
+      else:
+        user_events = current_user_events
+
+      current_user_events_by_event_id = { x.event_id: x for x in current_user_events }
       user_events_by_event_id = { x.event_id: x for x in user_events }
 
       events_with_counts = db_session.query(
@@ -118,8 +140,12 @@ class EventController:
       for event, user_event_count in events_with_counts:
         user_event = get_from(user_events_by_event_id, [event.event_id])
         if user_event:
-          event.current_user_event = user_event
+          event.current_user_event = get_from(current_user_events_by_event_id, [event.event_id])
           event.interested_user_count = user_event_count
+          # if user:
+          #   event.interested_follows = event.interested_users.filter(
+          #     User.user_id.in_([x.user_id for x in user.followed_users])
+          #   )
         results.append(event)
       return results
     return None

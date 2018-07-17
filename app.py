@@ -96,9 +96,12 @@ def events(page=1, next_page_url=None, prev_page_url=None):
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):
   event = EventController().get_event(event_id=event_id)
+
   if event:
     template = TEMPLATE_EVENT
-    vargs = {'event': event}
+    vargs = {
+      'event': event
+    }
 
     if request.is_xhr:
       return render_template(template, vargs=vargs, **vargs)
@@ -125,6 +128,7 @@ def event_update(event_id):
 @app.route("/user/<identifier>/", methods=['GET'])
 @paginated
 def user(identifier, page=1, next_page_url=None, prev_page_url=None):
+  current_user = UserController().current_user
   current_user_id = UserController().current_user_id
 
   user = UserController().get_user(identifier)
@@ -139,13 +143,14 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
       )
 
     vargs = {
+      'current_user': current_user,
       'events': events,
       'page': page,
       'next_page_url': next_page_url,
       'prev_page_url': prev_page_url
     }
 
-    if user.user_id == UserController().current_user_id:
+    if not current_user or user.user_id == current_user_id:
       template = TEMPLATE_EVENTS
 
       if request.is_xhr:
@@ -153,15 +158,14 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
       else:
         return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
     else:
-      current_user = UserController().current_user
-      is_follow = UserController().current_user.followed_users.filter(
+      is_follow =current_user.followed_users.filter(
         and_(
           Follow.follow_id==user.user_id,
           Follow.active
         )
       ).first()
 
-      is_block = UserController().current_user.blocked_users.filter(
+      is_block = current_user.blocked_users.filter(
         and_(
           Block.block_id==user.user_id,
           Block.active
