@@ -3,14 +3,10 @@ import json
 import os
 
 from flask import Flask
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import session
+from flask import redirect, render_template, request
 from flask import url_for
 from flask_session import Session
 from oauth2client.contrib.flask_util import UserOAuth2
-from sqlalchemy import and_
 import redis
 
 from config.app_config import app_config
@@ -150,7 +146,7 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
       'prev_page_url': prev_page_url
     }
 
-    if not current_user or user.user_id == current_user_id:
+    if user.user_id == current_user_id:
       template = TEMPLATE_EVENTS
 
       if request.is_xhr:
@@ -158,24 +154,15 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
       else:
         return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
     else:
-      is_follow =current_user.followed_users.filter(
-        and_(
-          Follow.follow_id==user.user_id,
-          Follow.active
-        )
-      ).first()
-
-      is_block = current_user.blocked_users.filter(
-        and_(
-          Block.block_id==user.user_id,
-          Block.active
-        )
-      ).first()
-
       template = TEMPLATE_USER
       vargs['user'] = user
-      vargs['is_block'] = is_block
-      vargs['is_follow'] = is_follow
+
+      if current_user:
+        is_follow = current_user.is_follows_user(user)
+        is_block = current_user.is_blocks_user(user)
+
+        vargs['is_block'] = is_block
+        vargs['is_follow'] = is_follow
 
       if request.is_xhr:        
         return render_template(template, vargs=vargs, **vargs)

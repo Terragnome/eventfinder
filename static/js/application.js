@@ -1,14 +1,28 @@
 var Application = Application || {};
 
 Application.init = function() {
+  Application.enableScrollEvent();
+
+  $(window).on('popstate', Application.backButton);
+}
+
+Application.backButton = function(e){
+  Application.disableScrollEvent();
+  var state = e.originalEvent.state;
+  if (state !== null) {
+    // document.title = state.title;
+    Application.get_elem('#main', state.url);
+  }
 }
 
 Application.get_elem = function(target, url) {
   Application.disableScrollEvent();
   $.get(url, {
   }).done(function(response) {
-    stateObj = {};
-    history.pushState(stateObj, null, url);
+    Application.enableScrollEvent();
+    var data = {};
+    var title = null;
+    history.pushState(data, title, url);
     $(target).html(response);
   }).fail(function(xhr, status, error) {
   });
@@ -31,8 +45,10 @@ Application.replace_get_elem = function(target, url) {
   Application.disableScrollEvent();
   $.get(url, {
   }).done(function(response) {
-    stateObj = {};
-    history.pushState(stateObj, null, url);
+    Application.enableScrollEvent();
+    var data = {};
+    var title = null;
+    history.pushState(data, title, url);
     $(target).replaceWith(response);
   }).fail(function(xhr, status, error) {
   });

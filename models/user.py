@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 from .base import Base
 from .block import Block
+from .follow import Follow
 from .user_event import UserEvent
 
 class User(Base):
@@ -47,13 +48,18 @@ class User(Base):
   def interested_events(self):
     return self.events.filter(UserEvent.interested)
 
-  def blocks_user_id(self, user_id):
-    if self.blocked_users.filter(
+  def is_blocks_user(self, user):
+    return self.blocked_users.filter(
       and_(
-        Block.user_id == self.user_id,
-        Block.block_id == user_id,
+        Block.block_id==user.user_id,
         Block.active
       )
-    ).first():
-      return True
-    return False
+    ).first()
+
+  def is_follows_user(self, user):
+    return self.followed_users.filter(
+      and_(
+        Follow.follow_id==user.user_id,
+        Follow.active
+      )
+    ).first()
