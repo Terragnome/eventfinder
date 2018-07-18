@@ -22,7 +22,7 @@ class User(Base):
   squads = relationship('Squad', secondary='squad_users')
   squad_users = relationship('SquadUser', cascade="all, delete-orphan")
 
-  user_events = relationship(
+  _user_events = relationship(
     'UserEvent',
     cascade="all, delete-orphan",
     lazy='dynamic'
@@ -43,10 +43,14 @@ class User(Base):
     secondaryjoin='User.user_id==Follow.follow_id',
     lazy='dynamic'
   )
-
+  
   @property
   def interested_events(self):
     return self.events.filter(UserEvent.interested)
+
+  @property
+  def user_events(self):
+    return self._user_events.filter(UserEvent.interested != None)
 
   def is_blocks_user(self, user):
     return self.blocked_users.filter(

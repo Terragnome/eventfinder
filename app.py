@@ -108,7 +108,13 @@ def event(event_id):
 @app.route("/event/<int:event_id>/", methods=['POST'])
 @oauth2.required(scopes=oauth2_scopes)
 def event_update(event_id):
-  interested = request.form.get('go') == 'true'
+  interested = None
+  go_value = request.form.get('go')
+  if go_value == 'true':
+    interested = True
+  elif go_value == 'false':
+    interested = False
+
   callback = request.form.get('cb')
   if callback == "/": callback = 'events'
 

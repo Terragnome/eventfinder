@@ -27,13 +27,9 @@
   </div>
   {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
   <div class='event_choices'>
-    {%if not event.current_user_event %} 
-      <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Skip</a>
-    {% else %}
-      <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ request.path }}'})">Skip</a>
-    {% endif %}
+    <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Skip</a>
     {%if event.current_user_event %}
-      <a class='cap_button cap_selected event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ url_for('events', page=page) }}'})">Going</a>
+      <a class='cap_button cap_selected event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': null, 'cb': '{{ url_for('events', page=page) }}'})">Going</a>
     {% else %}
       <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', page=page) }}'})">Going</a>
     {% endif %}
