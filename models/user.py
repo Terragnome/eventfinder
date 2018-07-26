@@ -52,6 +52,13 @@ class User(Base):
   def user_events(self):
     return self._user_events.filter(UserEvent.interested != None)
 
+  @property
+  def is_blocked(self):
+    return self._is_blocked
+  @is_blocked.setter
+  def is_blocked(self, value):
+    self._is_blocked = value
+
   def is_blocks_user(self, user):
     return self.blocked_users.filter(
       and_(
@@ -59,6 +66,13 @@ class User(Base):
         Block.active
       )
     ).first()
+
+  @property
+  def is_followed(self):
+    return self._is_followed
+  @is_followed.setter
+  def is_followed(self, value):
+    self._is_followed = value
 
   def is_follows_user(self, user):
     return self.followed_users.filter(

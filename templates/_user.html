@@ -3,24 +3,9 @@
 
 <div id="user_feed" class='user_feed'>
   {% if user %}
-    <div class='box_shadow float_container user_feed_profile'>
-      <img class="left user_feed_profile_img user_profile_img" src="{{ user.image_url }}"></img>
-      <div class='left user_feed_profile_data'>
-        <div>{{ user.username }} ({{ user.display_name }})</div>
-        <div class='user_feed_choices'>
-            {% if vargs.is_block %}
-              <a class='user_feed_choice' onclick="Application.post_elem('#main', '{{ url_for('user_block', identifier=user.username) }}', {'active': false, 'cb': '{{ request.path }}'})">Unblock</a>
-            {% else %}
-              {% if vargs.is_follow %}
-                <a class='user_feed_choice' onclick="Application.post_elem('#main', '{{ url_for('user_follow', identifier=user.username) }}', {'active': false, 'cb': '{{ request.path }}'})">Unfollow</a>
-              {% else %}
-                <a class='user_feed_choice' onclick="Application.post_elem('#main', '{{ url_for('user_follow', identifier=user.username) }}', {'active': true, 'cb': '{{ request.path }}'})">Follow</a>
-                <a class='user_feed_choice' onclick="Application.post_elem('#main', '{{ url_for('user_block', identifier=user.username) }}', {'active': true, 'cb': '{{ request.path }}'})">Block</a>
-              {% endif %}
-            {% endif %}
-        </div>
-      </div>
-    </div>
+    {% with vargs=vargs %}
+      {% include "_user_card.html" %}
+    {% endwith %}
   {% endif %}
   {% with vargs=vargs %}
     {% include "_events.html" %}

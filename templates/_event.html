@@ -1,12 +1,14 @@
 {% set event=event or (vargs.event if vargs else None) %}
 
-<div class='anim_fade_in event'>
+<div class='event'>
   <div class='event_header'>
     {% if card %}<a onclick="Application.get_elem('#main', '{{ url_for('event', event_id=event.event_id) }}')">{% endif %}
       <div class="event_title">{{ event.display_name }}</div>
-      {% if event.img_url %}
-        <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.remove_elem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
-      {% endif %}
+      <div class="event_img_placeholder">
+        {% if event.img_url %}
+          <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.remove_elem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
+        {% endif %}
+      </div>
     {% if card %}</a>{% endif %}
     <div class='float_container, event_venue'>
       <div class='float_center'><div class='float_child'>
@@ -29,9 +31,9 @@
   <div class='event_choices'>
     <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Skip</a>
     {%if event.current_user_event %}
-      <a class='cap_button cap_selected event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': null, 'cb': '{{ url_for('events', page=page) }}'})">Going</a>
+      <a class='cap_button cap_selected event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': null, 'cb': '{{ url_for('events', page=page) }}'})">Go</a>
     {% else %}
-      <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', page=page) }}'})">Going</a>
+      <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', page=page) }}'})">Go</a>
     {% endif %}
   </div>
   <div class='float_container event_users'>

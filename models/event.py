@@ -74,7 +74,7 @@ class Event(Base):
   @property
   def display_time(self):
     def format_date(t):
-      return t.strftime("%a, %B %-d")
+      return t.strftime("%a, %b %-d")
 
     def format_time(t):
       return t.strftime("%-I:%M%p").replace(":00", "")

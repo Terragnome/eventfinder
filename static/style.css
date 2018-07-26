@@ -98,6 +98,7 @@ img{
 
 .app_header{
   overflow: auto;
+  margin: 0 0 20px 0;
 }
 
 .app_login{
@@ -106,7 +107,7 @@ img{
 
 .app_login_name{
   font-size: 14px;
-  margin: 17px 0 0 0;
+  margin: 16px 0 0 0;
 }
 
 .app_login_img{
@@ -117,12 +118,18 @@ img{
   margin: 5px 0 10px 0;
 }
 
+.app_nav_link{
+  float: left;
+  font-size: 14px;
+  margin: 16px 10px 0 0;
+}
+
 .app_title{
   color: black;
   float: left;
   font-size: 22px;
   font-weight: bold;
-  margin: 10px 0 0 10px;
+  margin: 10px 10px 0 10px;
   text-decoration: none;
 }
 
@@ -154,7 +161,7 @@ img{
 }
 */
 .event_address{
-  font-size: 16px;
+  font-size: 15px;
   margin: 5px 0 0px 0;
   text-align: center;
 }
@@ -177,7 +184,14 @@ img{
 }
 
 .event_img{
-  margin: 5px 0 5px 0;
+  background-color: #DEDEDE;
+  border-radius: 4px;
+  width: 400px;
+  height: 200px;
+}
+
+.event_img_placeholder{
+  margin: 5px 0 10px 0;
 }
 
 .events_none{
@@ -196,21 +210,21 @@ img{
   float: left;
   font-size: 10px;
   font-weight: bold;
-  margin: 1px 0 0 5px;
-  padding: 3px;
+  margin: 2px 0 0 5px;
+  padding: 2px 4px 2px 4px;
   text-transform: uppercase;
 }
 
 .event_time{
-  font-size: 18px;
-  margin: 10px 0 0 0;
+  font-size: 13px;
+  margin: 5px 0 0 0;
 }
 
 .event_title{
   color: black;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
-  margin: 10px 0 0 0;
+  margin: 15px 10px 0 10px;
   min-height: 45px;
   text-decoration: none;
   text-transform: none;
@@ -230,7 +244,7 @@ img{
   font-weight: none;
   font-size: 12px;
   height: 26px;
-  margin: 0 3px 0 3px;
+  margin: 2px 3px 2px 3px;
   padding: 12px 0 0 0;
   text-align: center;
   width: 38px;
@@ -258,11 +272,10 @@ img{
 }
 
 .user_feed_choices{
-  margin: 3px 0 0 0;
+  margin: 12px 0 0 0;
 }
 
 .user_feed{
-  font-size: 16px;
   margin: 20px 0px 10px 0;
 }
 
@@ -275,7 +288,8 @@ img{
 }
 
 .user_feed_profile_data{
-  margin: 5px 0 0 0;
+  font-size: 14px;
+  margin: 0 0 0 0;
 }
 
 .user_feed_profile_img{

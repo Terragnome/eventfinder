@@ -42,6 +42,7 @@ TEMPLATE_MAIN = "main.html"
 TEMPLATE_EVENT = "_event.html"
 TEMPLATE_EVENTS = "_events.html"
 TEMPLATE_USER = "_user.html"
+TEMPLATE_USERS = "_users.html"
 
 # TODO: Need to fix showing next button with no next pages
 def paginated(fn):
@@ -86,8 +87,13 @@ def events(page=1, next_page_url=None, prev_page_url=None):
   }
 
   if request.is_xhr:
-    return render_template(TEMPLATE_EVENTS, vargs=vargs, **vargs)
-  return render_template(TEMPLATE_MAIN, template=TEMPLATE_EVENTS, vargs=vargs, **vargs)
+    if events:
+      return render_template(TEMPLATE_EVENTS, vargs=vargs, **vargs)
+    else:
+      return ''
+  if events:
+    return render_template(TEMPLATE_MAIN, template=TEMPLATE_EVENTS, vargs=vargs, **vargs)
+  return redirect(request.referrer or '/')
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):
@@ -127,6 +133,25 @@ def event_update(event_id):
     return redirect(callback)
   return redirect(request.referrer or '/')
 
+@app.route("/following/", methods=['GET'])
+@oauth2.required(scopes=oauth2_scopes)
+def following():
+  current_user = UserController().current_user
+  following = UserController().get_following()
+
+  vargs = {
+    'users': following
+  }
+
+  for user in following:
+    user.is_followed = current_user.is_follows_user(user)
+    user.is_blocked = current_user.is_blocks_user(user)
+
+  template = TEMPLATE_USERS
+  if request.is_xhr:        
+    return render_template(template, vargs=vargs, **vargs)
+  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+
 @app.route("/user/<identifier>/", methods=['GET'])
 @paginated
 def user(identifier, page=1, next_page_url=None, prev_page_url=None):
@@ -156,19 +181,20 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
       template = TEMPLATE_EVENTS
 
       if request.is_xhr:
-        return render_template(template, vargs=vargs, **vargs)
+        if events:
+          return render_template(template, vargs=vargs, **vargs)
+        else:
+          return ''
       else:
         return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
     else:
       template = TEMPLATE_USER
+
       vargs['user'] = user
 
       if current_user:
-        is_follow = current_user.is_follows_user(user)
-        is_block = current_user.is_blocks_user(user)
-
-        vargs['is_block'] = is_block
-        vargs['is_follow'] = is_follow
+        user.is_followed = current_user.is_follows_user(user)
+        user.is_blocked = current_user.is_blocks_user(user)
 
       if request.is_xhr:        
         return render_template(template, vargs=vargs, **vargs)

@@ -129,5 +129,8 @@ class UserController:
   def get_user(self, identifier):
     return self._get_user(identifier)
 
+  def get_following(self):
+    return self.current_user.followed_users.filter(Follow.active)
+
   def get_users(self):
     return db_session.query(User).all()
