@@ -41,6 +41,7 @@ oauth2.init_app(
 TEMPLATE_MAIN = "main.html"
 TEMPLATE_EVENT = "_event.html"
 TEMPLATE_EVENTS = "_events.html"
+TEMPLATE_EVENTS_LIST = "_events_list.html"
 TEMPLATE_USER = "_user.html"
 TEMPLATE_USERS = "_users.html"
 
@@ -88,7 +89,7 @@ def events(page=1, next_page_url=None, prev_page_url=None):
 
   if request.is_xhr:
     if events:
-      return render_template(TEMPLATE_EVENTS, vargs=vargs, **vargs)
+      return render_template(TEMPLATE_EVENTS_LIST, vargs=vargs, **vargs)
     else:
       return ''
   if events:

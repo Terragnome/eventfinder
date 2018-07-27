@@ -37,6 +37,14 @@ Application.post_elem = function(target, url, params) {
   });
 }
 
+Application.animate_elems = function() {
+  new AnimOnScroll(document.getElementById('event_list'), {
+    minDuration : 0.4,
+    maxDuration : 0.7,
+    viewportFactor : 0.2
+  } );
+}
+
 Application.remove_elem = function(target) {
   $(target).remove();
 }

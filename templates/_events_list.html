@@ -1,0 +1,14 @@
+{% for event in events %}
+  <li class='box_shadow event_card'>
+    {% with event=event, card=True %}
+      {% include "_event.html"%}
+    {% endwith %}
+  </li>
+{% else %}
+  <div class='box_shadow events_none'>
+    No Events
+  </div>
+{% endfor %}
+{% with vargs=vargs %}
+  {% include "_events_pagination.html" %}
+{% endwith %}
