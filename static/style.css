@@ -161,6 +161,7 @@ img{
 .event_list li {
   display: block;
   float: left;
+  max-width: 100%;
   opacity: 0;
 }
 
@@ -170,7 +171,6 @@ img{
   opacity: 1;
 }
 
-.event_list li,
 .event_list li img {
   display: block;
   max-width: 100%;
