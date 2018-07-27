@@ -4,11 +4,9 @@
   <div class='event_header'>
     {% if card %}<a onclick="Application.get_elem('#main', '{{ url_for('event', event_id=event.event_id) }}')">{% endif %}
       <div class="event_title">{{ event.display_name }}</div>
-      <div class="event_img_placeholder">
-        {% if event.img_url %}
-          <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.remove_elem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
-        {% endif %}
-      </div>
+      {% if event.img_url %}
+        <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.remove_elem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
+      {% endif %}
     {% if card %}</a>{% endif %}
     <div class='float_container, event_venue'>
       <div class='float_center'><div class='float_child'>

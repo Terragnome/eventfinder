@@ -1,20 +1,26 @@
 {% set events=events or (vargs.events if vargs else None) %}
 
-<div id='events_list' onload="">
-  <div class='float_container'>
-    {% for event in events %}
-      <div class='box_shadow event_card'>
-        {% with event=event, card=True %}
-          {% include "_event.html"%}
-        {% endwith %}
-      </div>
-    {% else %}
-      <div class='box_shadow events_none'>
-        No Events
-      </div>
-    {% endfor %}
-  </div>
+<ul id='event_list' class='event_list effect_in'>
+  {% for event in events %}
+    <li class='box_shadow event_card'>
+      {% with event=event, card=True %}
+        {% include "_event.html"%}
+      {% endwith %}
+    </li>
+  {% else %}
+    <div class='box_shadow events_none'>
+      No Events
+    </div>
+  {% endfor %}
   {% with vargs=vargs %}
     {% include "_events_pagination.html" %}
   {% endwith %}
-</div>
+</ul>
+
+<script>
+  new AnimOnScroll(document.getElementById('event_list'), {
+    minDuration : 0.4,
+    maxDuration : 0.7,
+    viewportFactor : 0.2
+  } );
+</script>

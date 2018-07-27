@@ -69,7 +69,7 @@ class Event(Base):
 
   @property
   def display_name(self):
-    return self.name[:94]
+    return self.name
 
   @property
   def display_time(self):

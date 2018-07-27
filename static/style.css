@@ -1,6 +1,21 @@
-body{
-  font-family: Roboto,sans-serif;
-  min-width: 480px;
+@-webkit-keyframes fadeIn {
+  0% { }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0% { }
+  100% { opacity: 1; }
+}
+
+@-webkit-keyframes moveUp {
+  0% { }
+  100% { -webkit-transform: translateY(0); opacity: 1; }
+}
+
+@keyframes moveUp {
+  0% { }
+  100% { -webkit-transform: translateY(0); transform: translateY(0); opacity: 1; }
 }
 
 a{
@@ -10,12 +25,54 @@ a{
   text-transform: uppercase;
 }
 
+body{
+  font-family: Roboto,sans-serif;
+  min-width: 480px;
+}
+
 img{
   border: 0px;
   color: #DEDEDE;
   font-size: 12px;
   margin: 0px;
   padding: 0px;
+}
+
+.app_header{
+  overflow: auto;
+  margin: 0 0 20px 0;
+}
+
+.app_login{
+  float: right;
+}
+
+.app_login_name{
+  font-size: 14px;
+  margin: 16px 0 0 0;
+}
+
+.app_login_img{
+  margin: 0 0 0 10px;
+}
+
+.app_nav{
+  margin: 5px 0 10px 0;
+}
+
+.app_nav_link{
+  float: left;
+  font-size: 14px;
+  margin: 16px 10px 0 0;
+}
+
+.app_title{
+  color: black;
+  float: left;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 10px 10px 0 10px;
+  text-decoration: none;
 }
 
 .box_shadow{
@@ -50,6 +107,145 @@ img{
   font-size: 0;
   height: 0;
   visibility: hidden;
+}
+
+.event{
+  padding: 5px 10px 15px 10px;
+  text-align: center;
+}
+
+.event_card{
+  background-color: white;
+  border: 1px solid #DEDEDE;
+  border-radius: 5px;
+  margin: 0 10px 30px 10px;
+  text-align: center;
+  width: 420px;
+}
+
+.event_address{
+  font-size: 15px;
+  margin: 5px 0 0px 0;
+  text-align: center;
+}
+
+.event_choice{
+  margin: 0 5px 0 5px;
+}
+
+.event_choices{
+  margin: 15px 0 15px 0;
+}
+
+.event_description{
+  font-size: 14px;
+  text-align: left;
+  text-indent: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+}
+
+.event_img{
+  background-color: #DEDEDE;
+  border-radius: 4px;
+  margin: 5px 0 10px 0px;
+  width: 400px;
+  height: 200px;
+}
+
+.event_list {
+  list-style: none;
+}
+
+.event_list li {
+  display: block;
+  float: left;
+  opacity: 0;
+}
+
+.event_list li.shown,
+.no-js .event_list li,
+.no-cssanimations .event_list li {
+  opacity: 1;
+}
+
+.event_list li,
+.event_list li img {
+  display: block;
+  max-width: 100%;
+}
+
+.event_list.effect_in li.animate {
+  -webkit-transform: translateY(200px);
+  transform: translateY(200px);
+  -webkit-animation: moveUp 0.65s ease forwards;
+  animation: moveUp 0.65s ease forwards;
+}
+
+.events_none{
+  border: 1px solid #DEDEDE;
+  border-radius: 5px;
+  color: #BEBEBE;
+  margin: 50px 30px 50px 30px;
+  padding: 100px 0 100px 0;
+  text-align: center;
+}
+
+.event_paid{
+  color: white;
+  cursor: default;
+  background-color: red;
+  float: left;
+  font-size: 10px;
+  font-weight: bold;
+  margin: 2px 0 0 5px;
+  padding: 2px 4px 2px 4px;
+  text-transform: uppercase;
+}
+
+.event_time{
+  font-size: 13px;
+  margin: 5px 0 0 0;
+}
+
+.event_title{
+  color: black;
+  font-size: 17px;
+  font-weight: bold;
+  margin: 15px 10px 10px 10px;
+  text-decoration: none;
+  text-transform: none;
+}
+
+.event_users{
+  margin: 20px 0 0 0;
+}
+
+.event_users_count{
+  border: 1px solid #BEBEBE;
+  border-radius: 20px;
+  color: #BEBEBE;
+  cursor: pointer;
+  display: inline-block;
+  float: left;
+  font-weight: none;
+  font-size: 12px;
+  height: 26px;
+  margin: 2px 3px 2px 3px;
+  padding: 12px 0 0 0;
+  text-align: center;
+  width: 38px;
+}
+
+.event_venue{
+  overflow: auto;
+}
+
+.event_venue_name{
+  float: left;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .float_center{
@@ -94,170 +290,6 @@ img{
 
 .right{
   float: right;
-}
-
-.app_header{
-  overflow: auto;
-  margin: 0 0 20px 0;
-}
-
-.app_login{
-  float: right;
-}
-
-.app_login_name{
-  font-size: 14px;
-  margin: 16px 0 0 0;
-}
-
-.app_login_img{
-  margin: 0 0 0 10px;
-}
-
-.app_nav{
-  margin: 5px 0 10px 0;
-}
-
-.app_nav_link{
-  float: left;
-  font-size: 14px;
-  margin: 16px 10px 0 0;
-}
-
-.app_title{
-  color: black;
-  float: left;
-  font-size: 22px;
-  font-weight: bold;
-  margin: 10px 10px 0 10px;
-  text-decoration: none;
-}
-
-.event{
-  padding: 5px 10px 15px 10px;
-  text-align: center;
-}
-
-.event_card{
-  border: 1px solid #DEDEDE;
-  border-radius: 5px;
-  float: left;
-  margin: 0 10px 30px 10px;
-  text-align: center;
-  width: 430px;
-  height: 480px;
-}
-/*
-@media (max-width: 100px){
-  .event_card{ width: 32%; }
-}
-
-@media (max-width: 200px){
-  .event_card{ width: 48%; }
-}
-
-@media (max-width: 300px){
-  .event_card{ width: 100%; }
-}
-*/
-.event_address{
-  font-size: 15px;
-  margin: 5px 0 0px 0;
-  text-align: center;
-}
-
-.event_choice{
-  margin: 0 5px 0 5px;
-}
-
-.event_choices{
-  margin: 15px 0 15px 0;
-}
-
-.event_description{
-  font-size: 14px;
-  text-align: left;
-  text-indent: 30px;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 800px;
-}
-
-.event_img{
-  background-color: #DEDEDE;
-  border-radius: 4px;
-  width: 400px;
-  height: 200px;
-}
-
-.event_img_placeholder{
-  margin: 5px 0 10px 0;
-}
-
-.events_none{
-  border: 1px solid #DEDEDE;
-  border-radius: 5px;
-  color: #BEBEBE;
-  margin: 50px 30px 50px 30px;
-  padding: 100px 0 100px 0;
-  text-align: center;
-}
-
-.event_paid{
-  color: white;
-  cursor: default;
-  background-color: red;
-  float: left;
-  font-size: 10px;
-  font-weight: bold;
-  margin: 2px 0 0 5px;
-  padding: 2px 4px 2px 4px;
-  text-transform: uppercase;
-}
-
-.event_time{
-  font-size: 13px;
-  margin: 5px 0 0 0;
-}
-
-.event_title{
-  color: black;
-  font-size: 17px;
-  font-weight: bold;
-  margin: 15px 10px 0 10px;
-  min-height: 45px;
-  text-decoration: none;
-  text-transform: none;
-}
-
-.event_users{
-  margin: 20px 0 0 0;
-}
-
-.event_users_count{
-  border: 1px solid #BEBEBE;
-  border-radius: 20px;
-  color: #BEBEBE;
-  cursor: pointer;
-  display: inline-block;
-  float: left;
-  font-weight: none;
-  font-size: 12px;
-  height: 26px;
-  margin: 2px 3px 2px 3px;
-  padding: 12px 0 0 0;
-  text-align: center;
-  width: 38px;
-}
-
-.event_venue{
-  overflow: auto;
-}
-
-.event_venue_name{
-  float: left;
-  font-size: 16px;
-  font-weight: bold;
 }
 
 .placeholder_profile_img{
