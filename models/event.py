@@ -101,7 +101,7 @@ class Event(Base):
 
   @property
   def display_venue_name(self):
-    return self.venue_name if self.venue_name and len(self.venue_name)<=45 else self.display_city or ""  
+    return "" if self.venue_name in self.display_title else self.venue_name
 
   @property
   def interested_follows(self):

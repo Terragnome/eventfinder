@@ -1,56 +1,60 @@
 {% set event=event or (vargs.event if vargs else None) %}
 
-<div class='event'>
-  <div class='event_header'>
-    {% if card %}<a onclick="Application.get_elem('#main', '{{ url_for('event', event_id=event.event_id) }}')">{% endif %}
-      <div class="event_title">{{ event.display_name }}</div>
+<div id="event_{{ event.event_id }}" class='event'>
+  {% if card %}<a class='nav_link' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
+    <div class='event_img_wrapper'>
+      {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
       {% if event.img_url %}
-        <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.remove_elem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
+        <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
       {% endif %}
-    {% if card %}</a>{% endif %}
-    <div class='float_container, event_venue'>
+    </div>
+    <div class='event_header'>  
+      <div class='event_title'>
+        <span class="event_title">{{ event.display_name }}</span>
+      </div>
+      {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
+      <div class="event_time">{{ event.display_time }}</div>
+      <div class="event_address">
+        {% if card %}
+          <div>{{ event.display_city }}</div>
+        {% else %}
+          {% for addr_line in event.address %}
+            <div>{{ addr_line }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  {% if card %}</a>{% endif %}
+  <div class='event_body'>
+    {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
+    <div class='event_choices'>
+      <a class='cap_button event_choice' href="{{ url_for('event', event_id=event.event_id) }}" onclick="Application.postElem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Skip</a>
+      {%if event.current_user_event %}
+        <a class='cap_button cap_selected event_choice' href="{{ url_for('event', event_id=event.event_id) }}" onclick="Application.postElem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': null, 'cb': '{{ url_for('events', page=page) }}'})">Go</a>
+      {% else %}
+        <a class='cap_button event_choice' href="{{ url_for('event', event_id=event.event_id) }}" onclick="Application.postElem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', page=page) }}'})">Go</a>
+      {% endif %}
+    </div>
+    <div class='float_container event_users'>
       <div class='float_center'><div class='float_child'>
-        {% if event.display_venue_name %}<span class='event_venue_name'>{{ event.display_venue_name }}</span>{% endif %}
-        {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
+        <a class='link_img'>
+          <span class='event_users_count'>
+            {% if event.interested_user_count %}
+              <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
+            {% endif %}
+          </span>
+        </a>
+        {% if card %}
+          {% set interested_users = event.interested_users.limit(5) %}
+        {% else %}
+          {% set interested_users = event.interested_users %}
+        {% endif %}
+        {% for user in interested_users %}
+          <a class='link_img nav_link' href="{{ url_for('user', identifier=user.username) }}">
+            <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
+          </a>
+        {% endfor %}
       </div></div>
     </div>
-    <div class="event_time">{{ event.display_time }}</div>
-  </div>
-  <div class="event_address">
-    {% if card %}
-      <div>{{ event.display_city }}</div>
-    {% else %}
-      {% for addr_line in event.address %}
-        <div>{{ addr_line }}</div>
-      {% endfor %}
-    {% endif %}
-  </div>
-  {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
-  <div class='event_choices'>
-    <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Skip</a>
-    {%if event.current_user_event %}
-      <a class='cap_button cap_selected event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': null, 'cb': '{{ url_for('events', page=page) }}'})">Go</a>
-    {% else %}
-      <a class='cap_button event_choice' onclick="Application.post_elem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', page=page) }}'})">Go</a>
-    {% endif %}
-  </div>
-  <div class='float_container event_users'>
-    <div class='float_center'><div class='float_child'>
-      <a class='link_img'>
-        <div class='event_users_count'>
-          {% if event.interested_user_count %}{{ event.interested_user_count }}{% endif %}
-        </div>
-      </a>
-      {% if card %}
-        {% set interested_users = event.interested_users.limit(5) %}
-      {% else %}
-        {% set interested_users = event.interested_users %}
-      {% endif %}
-      {% for user in interested_users %}
-        <a class='link_img' onclick="Application.get_elem('#main', '{{ url_for('user', identifier=user.username) }}')">
-          <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
-        </a>
-      {% endfor %}
-    </div></div>
   </div>
 </div>

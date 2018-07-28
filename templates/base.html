@@ -17,25 +17,24 @@
 <section class="content">
 	<header class='app_header'>
     <div>
-      <a class='app_title' onclick="Application.get_elem('#main', '{{ url_for('events') }}')">
+      <a class='app_title' onclick="Application.getElem('#main', '{{ url_for('events') }}')">
         {% block header %}WeGo{% endblock %}
       </a>
-      <a class='app_nav_link' onclick="Application.get_elem('#main', '{{ url_for('events') }}')">Explore</a>
       {% if session.user %}
-        <a class='app_nav_link' onclick="Application.get_elem('#main', '{{ url_for('user', identifier=session.user.username) }}')">Home</a>
-        <a class='app_nav_link' onclick="Application.get_elem('#main', '{{ url_for('following') }}')">Following</a>
+        <a class='app_nav_link' href="{{ url_for('user', identifier=session.user.username) }}">Home</a>
+        <a class='app_nav_link' href="{{ url_for('following') }}">Following</a>
       {% endif %}
     </div>
 		<div class='app_login'>
 			{% if session.user %}
 		    {% if session.user.image_url %}
-          <a class="right" onclick="Application.get_elem('#main', '{{ url_for('user', identifier=session.user.username) }}')">
+          <a class="right" href="{{ url_for('user', identifier=session.user.username) }}">
             <img class="app_login_img user_profile_img" src="{{ session.user.image_url }}"></img>
           </a>
         {% endif %}
         <a class="app_login_name right" href="{{ url_for('logout') }}">{{ session.user.username }}</a>
 			{% else %}
-        <a class="app_login_img placeholder_profile_img right" href="{{ url_for('oauth2.authorize') }}"></a>
+        <a class="app_login_img right user_profile_img_placeholder" href="{{ url_for('oauth2.authorize') }}"></a>
         <a class="app_login_name right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
 			{% endif %}
 		</div>

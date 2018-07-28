@@ -49,15 +49,25 @@ TEMPLATE_USERS = "_users.html"
 def paginated(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
+    page = request.args.get('page', default=1, type=int)
+    if page <= 1:
+        page = 1
+        prev_page = None
+    else:
+        prev_page = page-1
+    next_page = page+1
+
+    scroll = request.args.get('scroll', default=False, type=bool)
+
+    if 'scroll' in kwargs: del kwargs['scroll']
     if 'page' in kwargs: del kwargs['page']
     if 'prev_page_url' in kwargs: del kwargs['prev_page_url']
     if 'next_page_url' in kwargs: del kwargs['next_page_url']
 
-    page = request.args.get('page', default=1, type=int)
-    if page <= 0: page = 1
-    prev_page_url = url_for(fn.__name__, *args, page=page-1, **kwargs) if page>1 else None
-    next_page_url = url_for(fn.__name__, *args, page=page+1, **kwargs)
+    prev_page_url = url_for(fn.__name__, *args, page=prev_page, **kwargs)
+    next_page_url = url_for(fn.__name__, *args, page=next_page, **kwargs)
 
+    kwargs['scroll'] = scroll
     kwargs['page'] = page
     kwargs['next_page_url'] = next_page_url
     kwargs['prev_page_url'] = prev_page_url
@@ -77,7 +87,7 @@ def logout():
 @app.route("/", methods=['GET'])
 @app.route("/events/", methods=['GET'])
 @paginated
-def events(page=1, next_page_url=None, prev_page_url=None):
+def events(page=1, next_page_url=None, prev_page_url=None, scroll=False):
   events = EventController().get_events(page=page)
 
   vargs = {
@@ -89,7 +99,10 @@ def events(page=1, next_page_url=None, prev_page_url=None):
 
   if request.is_xhr:
     if events:
-      return render_template(TEMPLATE_EVENTS_LIST, vargs=vargs, **vargs)
+      if scroll:
+        return render_template(TEMPLATE_EVENTS_LIST, vargs=vargs, **vargs)
+      else:
+        return render_template(TEMPLATE_EVENTS, vargs=vargs, **vargs)
     else:
       return ''
   if events:
@@ -155,7 +168,7 @@ def following():
 
 @app.route("/user/<identifier>/", methods=['GET'])
 @paginated
-def user(identifier, page=1, next_page_url=None, prev_page_url=None):
+def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=False):
   current_user = UserController().current_user
   current_user_id = UserController().current_user_id
 
@@ -179,28 +192,27 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None):
     }
 
     if user.user_id == current_user_id:
-      template = TEMPLATE_EVENTS
-
       if request.is_xhr:
         if events:
-          return render_template(template, vargs=vargs, **vargs)
+          if scroll:
+            return render_template(TEMPLATE_EVENT_LIST, vargs=vargs, **vargs)
+          else:
+            return render_template(TEMPLATE_EVENTS, vargs=vargs, **vargs)
         else:
           return ''
       else:
-        return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+        return render_template(TEMPLATE_MAIN, template=TEMPLATE_EVENTS, vargs=vargs, **vargs)
     else:
-      template = TEMPLATE_USER
-
       vargs['user'] = user
 
       if current_user:
         user.is_followed = current_user.is_follows_user(user)
         user.is_blocked = current_user.is_blocks_user(user)
 
-      if request.is_xhr:        
-        return render_template(template, vargs=vargs, **vargs)
+      if request.is_xhr:
+        return render_template(TEMPLATE_USER, vargs=vargs, **vargs)
       else:
-        return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+        return render_template(TEMPLATE_MAIN, template=TEMPLATE_USER, vargs=vargs, **vargs)
 
   return redirect(request.referrer or '/')    
 
@@ -225,10 +237,6 @@ def user_follow(identifier):
   if user:
     return redirect(callback)
   return redirect(request.referrer or '/')
-
-# @app.route("/users/<identifier>/follows/", methods=['GET'])
-# def user_follows(identifier):
-#   pass
 
 if __name__ == '__main__':
   app.run(debug=True, host='0.0.0.0', port=5000)

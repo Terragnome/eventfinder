@@ -30,12 +30,20 @@ body{
   min-width: 480px;
 }
 
+div{
+  text-transform: uppercase;
+}
+
 img{
   border: 0px;
   color: #DEDEDE;
   font-size: 12px;
   margin: 0px;
   padding: 0px;
+}
+
+span{
+  text-transform: uppercase;
 }
 
 .app_header{
@@ -48,8 +56,8 @@ img{
 }
 
 .app_login_name{
-  font-size: 14px;
-  margin: 16px 0 0 0;
+  font-size: 12px;
+  margin: 18px 0 0 0;
 }
 
 .app_login_img{
@@ -62,15 +70,14 @@ img{
 
 .app_nav_link{
   float: left;
-  font-size: 14px;
-  margin: 16px 10px 0 0;
+  font-size: 12px;
+  margin: 18px 10px 0 0;
 }
 
 .app_title{
   color: black;
   float: left;
   font-size: 22px;
-  font-weight: bold;
   margin: 10px 10px 0 10px;
   text-decoration: none;
 }
@@ -89,6 +96,7 @@ img{
 .cap_button:hover{
   background-color: red;
   color: white;
+  transition: 0.3s;
 }
 
 .cap_selected{
@@ -110,8 +118,10 @@ img{
 }
 
 .event{
-  padding: 5px 10px 15px 10px;
+  position: relative;
   text-align: center;
+  top: -25px;
+  z-index: 1;
 }
 
 .event_card{
@@ -120,25 +130,27 @@ img{
   border-radius: 5px;
   margin: 0 10px 30px 10px;
   text-align: center;
-  width: 420px;
+  width: 400px;
 }
 
 .event_address{
-  font-size: 15px;
+  font-size: 12px;
   margin: 5px 0 0px 0;
   text-align: center;
 }
 
+.event_body{}
+
 .event_choice{
-  margin: 0 5px 0 5px;
+  margin: 0 2px 0 2px;
 }
 
 .event_choices{
-  margin: 15px 0 15px 0;
+  margin: 8px 0 20px 0;
 }
 
 .event_description{
-  font-size: 14px;
+  font-size: 12px;
   text-align: left;
   text-indent: 30px;
   margin-left: auto;
@@ -146,12 +158,24 @@ img{
   max-width: 800px;
 }
 
+.event_header{
+  color: black;
+  padding: 0 15px 8px 15px;
+}
+
 .event_img{
   background-color: #DEDEDE;
-  border-radius: 4px;
-  margin: 5px 0 10px 0px;
-  width: 400px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   height: 200px;
+  position: relative;
+  top: 0px;
+  width: 400px;
+  z-index: 1;
+}
+
+.event_img_wrapper{
+  min-height: 40px;
 }
 
 .event_list {
@@ -177,10 +201,10 @@ img{
 }
 
 .event_list.effect_in li.animate {
-  -webkit-transform: translateY(200px);
-  transform: translateY(200px);
-  -webkit-animation: moveUp 0.65s ease forwards;
-  animation: moveUp 0.65s ease forwards;
+  -webkit-transform: translateY(100px);
+  transform: translateY(100px);
+  -webkit-animation: moveUp 0.5s ease forwards;
+  animation: moveUp 0.5s ease forwards;
 }
 
 .events_none{
@@ -195,72 +219,72 @@ img{
 .event_paid{
   color: white;
   cursor: default;
+  display: inline-block;
   background-color: red;
+  border-radius: 1px;
   float: left;
   font-size: 10px;
-  font-weight: bold;
-  margin: 2px 0 0 5px;
+  margin: 8px 0 0 6px;
   padding: 2px 4px 2px 4px;
-  text-transform: uppercase;
+  position: relative;
+  top: 20px;
+  z-index: 2;
 }
 
 .event_time{
-  font-size: 13px;
+  font-size: 12px;
   margin: 5px 0 0 0;
 }
 
 .event_title{
   color: black;
-  font-size: 17px;
-  font-weight: bold;
-  margin: 15px 10px 10px 10px;
+  display: inline-block;
+  font-size: 15px;
+  margin: 8px 0 0 0;
+  text-align: center;
   text-decoration: none;
-  text-transform: none;
 }
 
 .event_users{
-  margin: 20px 0 0 0;
+  margin: 10px 0 0 0;
 }
 
 .event_users_count{
   border: 1px solid #BEBEBE;
-  border-radius: 20px;
+  border-radius: 17px;
   color: #BEBEBE;
   cursor: pointer;
   display: inline-block;
   float: left;
-  font-weight: none;
-  font-size: 12px;
-  height: 26px;
+  font-size: 12px;  
+  height: 34px;
   margin: 2px 3px 2px 3px;
-  padding: 12px 0 0 0;
   text-align: center;
-  width: 38px;
+  width: 34px;
 }
 
-.event_venue{
-  overflow: auto;
+.event_users_count_number{
+  position: relative;
+  top: 10px;
 }
 
 .event_venue_name{
-  float: left;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 13px;
+  margin: 5px 0 0 0;
 }
 
 .float_center{
   float: right;
-  position: relative;
   left: -50%;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
   text-align: left;
-
 }
 
 .float_child{
-  position: relative;
   left: 50%;
+  position: relative;
 }
 
 .float_container{
@@ -292,13 +316,6 @@ img{
   float: right;
 }
 
-.placeholder_profile_img{
-  background-color: #DEDEDE;
-  border-radius: 25px;
-  height: 50px;
-  width: 50px;
-}
-
 .user_feed_choice{
   margin: 0 5px 0 5px;
 }
@@ -320,7 +337,7 @@ img{
 }
 
 .user_feed_profile_data{
-  font-size: 14px;
+  font-size: 12px;
   margin: 0 0 0 0;
 }
 
@@ -334,10 +351,17 @@ img{
   width: 50px;
 }
 
+.user_profile_img_placeholder{
+  background-color: #DEDEDE;
+  border-radius: 25px;
+  height: 50px;
+  width: 50px;
+}
+
 .user_profile_mini_img{
-  border-radius: 20px;
+  border-radius: 18px;
   display: inline-block;
   float: left;
   margin: 2px 3px 2px 3px;
-  width: 40px;
+  width: 36px;
 }
