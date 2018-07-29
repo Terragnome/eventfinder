@@ -100,7 +100,9 @@ def events(page=1, next_page_url=None, prev_page_url=None, scroll=False):
   }
 
   if request.is_xhr:
-    if scroll: template = TEMPLATE_EVENTS_LIST
+    if scroll:
+      template = TEMPLATE_EVENTS_LIST
+      if not events: return ''
     return render_template(template, vargs=vargs, **vargs)
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
