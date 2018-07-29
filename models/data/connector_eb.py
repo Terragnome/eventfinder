@@ -188,7 +188,7 @@ class ConnectorEB:
                 connector_event_id = event['id']
                 print(json.dumps(event, indent=4))
 
-                row_connector_event = db_session.query(ConnectorEvent).filter(
+                row_connector_event = ConnectorEvent.query.filter(
                     and_(
                         ConnectorEvent.connector_event_id == connector_event_id,
                         ConnectorEvent.connector_type == self.CONNECTOR_TYPE
@@ -242,7 +242,7 @@ class ConnectorEB:
                         continue
 
                 if row_connector_event.event_id:
-                    row_event = db_session.query(Event).filter(Event.event_id == row_connector_event.event_id).first()
+                    row_event = Event.query.filter(Event.event_id == row_connector_event.event_id).first()
                     row_event.name = event_name
                     row_event.description = event_description
                     row_event.short_name = event['name']['text']

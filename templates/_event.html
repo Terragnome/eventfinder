@@ -31,11 +31,15 @@
   <div class='event_body'>
     {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
     <div class='event_choices'>
-      <a class='cap_button event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": false, "card": "{{ is_card_json }}"}'>Skip</a>
-      {%if event.current_user_event %}
+      {% if event.current_user_event and event.current_user_event.interested == False %}
+        <a class='cap_button cap_selected event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Skip</a>
+      {% else %}
+        <a class='cap_button event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": false, "card": "{{ is_card_json }}"}'>Skip</a>
+      {% endif %}
+      {% if event.current_user_event and event.current_user_event.interested == True %}
         <a class='cap_button cap_selected event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Go</a>
       {% else %}
-        <a class='cap_button event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": true, "card": "{{ is_card_json }}"}'>Go</a>
+        <a class='cap_button event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": true, "card": "{{ is_card_json }}"}'>Go</a>  
       {% endif %}
     </div>
     <div class='float_container event_users'>

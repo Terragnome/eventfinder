@@ -126,7 +126,14 @@ def event(event_id):
 @oauth2.required(scopes=oauth2_scopes)
 def event_update(event_id):
   is_card = request.form.get('card') == 'true'
-  interested = request.form.get('go') == 'true'
+  go_value = request.form.get('go')
+
+  if go_value == 'true':
+    interested = True
+  elif go_value == 'false':
+    interested = False
+  else:
+    interested = None
 
   callback = request.form.get('cb')
   if callback == "/": callback = 'events'

@@ -3,7 +3,6 @@ from sqlalchemy import and_, or_
 from sqlalchemy.orm import relationship
 
 from .base import Base
-from .base import db_session
 
 class Block(Base):
   __tablename__ = 'blocks'
@@ -13,7 +12,7 @@ class Block(Base):
 
   @classmethod
   def blocks(klass, user_id_a, user_id_b):
-    return db_session.query(Block).filter(
+    return Block.query.filter(
       and_(
         Block.active,
         or_(

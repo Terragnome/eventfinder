@@ -19,22 +19,21 @@ class EventController:
   PAGE_SIZE = 6
 
   def get_event(self, event_id):
-    event = db_session.query(Event).filter(Event.event_id == event_id).first()
+    event = Event.query.filter(Event.event_id == event_id).first()
 
     user = UserController().current_user
     if user:
-      user_event = db_session.query(UserEvent).filter(
+      user_event = UserEvent.query.filter(
         and_(
           UserEvent.event_id==event.event_id,
-          UserEvent.user_id==user.user_id,
-          UserEvent.interested
+          UserEvent.user_id==user.user_id
         )
       ).first()
 
       if user_event:
         event.current_user_event=user_event
 
-    user_event_count = db_session.query(UserEvent).filter(
+    user_event_count = UserEvent.query.filter(
       and_(
         UserEvent.event_id==event_id,
         UserEvent.interested
@@ -94,7 +93,7 @@ class EventController:
     if not user: user = current_user
 
     if user:
-      user_events = db_session.query(UserEvent).filter(
+      user_events = UserEvent.query.filter(
         and_(
           UserEvent.user_id == user.user_id,
           UserEvent.interested == interested
@@ -103,7 +102,7 @@ class EventController:
       user_events_by_event_id = { x.event_id: x for x in user_events }
 
       if current_user:
-        current_user_events = db_session.query(UserEvent).filter(
+        current_user_events = UserEvent.query.filter(
           and_(
             UserEvent.user_id == current_user.user_id,
             UserEvent.interested == interested
@@ -148,7 +147,7 @@ class EventController:
   def update_event(self, event_id, interested):
     user_id = UserController().current_user_id
     if user_id:
-      user_event = db_session.query(UserEvent).filter(
+      user_event = UserEvent.query.filter(
         and_(
           UserEvent.user_id==user_id,
           UserEvent.event_id==event_id
@@ -166,5 +165,6 @@ class EventController:
         )
         db_session.add(user_event)
       db_session.commit()
+
       return self.get_event(event_id)
     return None

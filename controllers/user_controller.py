@@ -18,9 +18,9 @@ class UserController:
   #TODO: Make sure that you can't set your username to a number to get another person's account
   def _get_user(self, identifier):
     if identifier.__class__ is int:
-      user = db_session.query(User).filter(User.user_id==identifier).first()
+      user = User.query.filter(User.user_id==identifier).first()
     else:
-      user = db_session.query(User).filter(User.username==identifier).first()
+      user = User.query.filter(User.username==identifier).first()
     return user
 
   def _logout(self):
@@ -56,7 +56,7 @@ class UserController:
       'image_url': get_from(profile, ['image', 'url']),
     }
 
-    row_user_auth = db_session.query(UserAuth).filter(
+    row_user_auth = UserAuth.query.filter(
       and_(
         UserAuth.auth_key==Auth.GOOGLE,
         UserAuth.auth_id==google_auth_id
@@ -109,7 +109,7 @@ class UserController:
     user_id = self.current_user_id
     user = None
     if user_id:
-      user = db_session.query(User).filter(User.user_id == user_id).first()
+      user = User.query.filter(User.user_id == user_id).first()
     return user
 
   def follow_user(self, identifier, active):
@@ -133,4 +133,4 @@ class UserController:
     return self.current_user.followed_users.filter(Follow.active)
 
   def get_users(self):
-    return db_session.query(User).all()
+    return User.query.all()

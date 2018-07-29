@@ -1,12 +1,14 @@
 from alembic.config import Config
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 alembic_cfg = Config("./alembic.ini")
-engine = create_engine(alembic_cfg.get_main_option("sqlalchemy.url"))
-Session = sessionmaker(bind=engine)
-db_session = Session()
+engine = create_engine(
+  alembic_cfg.get_main_option("sqlalchemy.url"),
+  convert_unicode = True
+)
+db_session = scoped_session(sessionmaker(bind=engine))
 
 class Base:
   def to_json(self):
@@ -15,6 +17,7 @@ class Base:
     }
 
 Base = declarative_base(cls=Base)
+Base.query = db_session.query_property()
 
 from .auth import Auth
 from .block import Block
