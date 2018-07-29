@@ -221,6 +221,7 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
         user.is_blocked = current_user.is_blocks_user(user)
 
       if request.is_xhr:
+        if scroll: template = TEMPLATE_EVENTS_LIST
         return render_template(template, vargs=vargs, **vargs)
       return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')    
