@@ -14,28 +14,35 @@ Application.init = function() {
   $(document).ajaxComplete(Application.enableScrollEvent);
 }
 
+Application.ajaxHistory = function(e){
+  var targetData = $(e.target).attr('data');
+  var data = {};
+
+  if(targetData){ data = JSON.parse(targetData); }
+  if(!data.target){ data.target = '#main' }
+
+  return data;
+}
+
+Application.ajaxGet = function(e){
+  e.preventDefault();
+  var data = Application.ajaxHistory(e);
+  $(this).click(Application.getElem(data.target, $(this).attr('href')));  
+}
+
+Application.ajaxPost = function(e){
+  e.preventDefault();
+  var data = Application.ajaxHistory(e);
+  $(this).click(Application.postElem(data.target, $(this).attr('href'), data));
+}
+
 Application.ajaxifyLinks = function() {
   Application.animateElems();
 
-  $('a.nav_link_get').click(function(e){
-    e.preventDefault();
-    var targetData = $(e.target).attr('data');
-    var data = {};
-    if(targetData){ data = JSON.parse(targetData); }
-    if(!data.target){ data.target = '#main' }
-
-    $(this).click(Application.getElem(data.target, $(this).attr('href')));
-  });
-
-  $('a.nav_link_post').click(function(e){
-    e.preventDefault();
-    var targetData = $(e.target).attr('data');
-    var data = {};
-    if(targetData){ data = JSON.parse(targetData); }
-    if(!data.target){ data.target = '#main' }
-
-    $(this).click(Application.postElem(data.target, $(this).attr('href'), data));
-  });
+  $('a.nav_link_get').unbind('click', Application.ajaxGet);
+  $('a.nav_link_get').click(Application.ajaxGet);
+  $('a.nav_link_post').unbind('click', Application.ajaxPost);
+  $('a.nav_link_post').click(Application.ajaxPost);
 }
 
 Application.animateElems = function() {

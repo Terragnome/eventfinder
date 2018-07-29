@@ -17,12 +17,12 @@
 <section class="content">
 	<header class='app_header'>
     <div>
-      <a class='app_title' onclick="Application.getElem('#main', '{{ url_for('events') }}')">
+      <a class='app_title  nav_link_get' href="{{ url_for('events') }}">
         {% block header %}WeGo{% endblock %}
       </a>
       {% if session.user %}
-        <a class='app_nav_link' href="{{ url_for('user', identifier=session.user.username) }}">Home</a>
-        <a class='app_nav_link' href="{{ url_for('following') }}">Following</a>
+        <a class='app_nav_link nav_link_get' href="{{ url_for('user', identifier=session.user.username) }}">Home</a>
+        <a class='app_nav_link nav_link_get' href="{{ url_for('following') }}">Following</a>
       {% endif %}
     </div>
 		<div class='app_login'>
