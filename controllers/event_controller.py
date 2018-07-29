@@ -6,7 +6,6 @@ from sqlalchemy import and_, desc
 from sqlalchemy.sql import func
 
 from controllers.user_controller import UserController
-
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.data.connector_eb import ConnectorEB, EBEventType
@@ -14,7 +13,6 @@ from models.event import Event
 from models.follow import Follow
 from models.user import User
 from models.user_event import UserEvent
-
 from utils.get_from import get_from
 
 class EventController:

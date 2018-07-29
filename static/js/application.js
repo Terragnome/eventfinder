@@ -6,7 +6,10 @@ Application.init = function() {
   $(window).on('popstate', Application.backButton);
 
   $(document).ready(Application.ajaxifyLinks);
-  $(document).ajaxStart(Application.disableScrollEvent);
+  $(document).ajaxStart(function(e){
+    $('#main').removeClass('anim_fade_in');
+    Application.disableScrollEvent();
+  });
   $(document).ajaxSuccess(Application.ajaxifyLinks);
   $(document).ajaxComplete(Application.enableScrollEvent);
 }
@@ -14,9 +17,24 @@ Application.init = function() {
 Application.ajaxifyLinks = function() {
   Application.animateElems();
 
-  $('a.nav_link').click(function(e){
-  e.preventDefault();
-    $(this).click(Application.getElem('#main', $(this).attr('href')));
+  $('a.nav_link_get').click(function(e){
+    e.preventDefault();
+    var targetData = $(e.target).attr('data');
+    var data = {};
+    if(targetData){ data = JSON.parse(targetData); }
+    if(!data.target){ data.target = '#main' }
+
+    $(this).click(Application.getElem(data.target, $(this).attr('href')));
+  });
+
+  $('a.nav_link_post').click(function(e){
+    e.preventDefault();
+    var targetData = $(e.target).attr('data');
+    var data = {};
+    if(targetData){ data = JSON.parse(targetData); }
+    if(!data.target){ data.target = '#main' }
+
+    $(this).click(Application.postElem(data.target, $(this).attr('href'), data));
   });
 }
 
@@ -54,6 +72,7 @@ Application.enableScrollEvent = function() {
 Application.getElem = function(target, url, push_state=true) {
   $.get(url, {
   }).done(function(response) {
+    $('#main').addClass('anim_fade_in');
     if(push_state){ history.pushState({'url':url}, null, url); }
     $(target).html(response);
   }).fail(function(xhr, status, error) {

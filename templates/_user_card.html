@@ -2,20 +2,20 @@
 {% set user=user or (vargs.user if vargs else None) %}
 
 <div class='box_shadow float_container user_feed_profile'>
-  <a class='nav_link' href="{{ url_for('user', identifier=user.username) }}">
+  <a class='nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
     <img class="left user_feed_profile_img user_profile_img" src="{{ user.image_url }}"></img>
   </a>
   <div class='left user_feed_profile_data'>
     <div>{{ user.username }} ({{ user.display_name }})</div>
     <div class='user_feed_choices'>
         {% if user.is_blocked %}
-          <a class='cap_button cap_selected user_feed_choice' onclick="Application.postElem('#main', '{{ url_for('user_block', identifier=user.username) }}', {'active': false, 'cb': '{{ request.path }}'})">Unblock</a>
+          <a class='cap_button cap_selected user_feed_choice' href="{{ url_for('user_block', identifier=user.username) }}" data='{"active": false, "cb": "{{ request.path }}"}'>Unblock</a>
         {% else %}
           {% if user.is_followed %}
-            <a class='cap_button cap_selected user_feed_choice' onclick="Application.postElem('#main', '{{ url_for('user_follow', identifier=user.username) }}', {'active': false, 'cb': '{{ request.path }}'})">Unfollow</a>
+            <a class='cap_button cap_selected user_feed_choice' href="{{ url_for('user_follow', identifier=user.username) }}" data='{"active": false, "cb": "{{ request.path }}"}'>Unfollow</a>
           {% else %}
-            <a class='cap_button user_feed_choice' onclick="Application.postElem('#main', '{{ url_for('user_follow', identifier=user.username) }}', {'active': true, 'cb': '{{ request.path }}'})">Follow</a>
-            <a class='cap_button user_feed_choice' onclick="Application.postElem('#main', '{{ url_for('user_block', identifier=user.username) }}', {'active': true, 'cb': '{{ request.path }}'})">Block</a>
+            <a class='cap_button user_feed_choice' href="{{ url_for('user_follow', identifier=user.username) }}" data='{"active": true, "cb": "{{ request.path }}"}'>Follow</a>
+            <a class='cap_button user_feed_choice' href="{{ url_for('user_block', identifier=user.username) }}" data='{"active": true, "cb": "{{ request.path }}"}'>Block</a>
           {% endif %}
         {% endif %}
     </div>

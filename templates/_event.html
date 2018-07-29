@@ -1,7 +1,7 @@
 {% set event=event or (vargs.event if vargs else None) %}
 
 <div id="event_{{ event.event_id }}" class='event'>
-  {% if card %}<a class='nav_link' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
+  {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
     <div class='event_img_wrapper'>
       {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
       {% if event.img_url %}
@@ -28,11 +28,11 @@
   <div class='event_body'>
     {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
     <div class='event_choices'>
-      <a class='cap_button event_choice' href="{{ url_for('event', event_id=event.event_id) }}" onclick="Application.postElem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': false, 'cb': '{{ request.path }}'})">Skip</a>
+      <a class='cap_button event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#main", "go": false, "cb": "{{ request.path }}"}'>Skip</a>
       {%if event.current_user_event %}
-        <a class='cap_button cap_selected event_choice' href="{{ url_for('event', event_id=event.event_id) }}" onclick="Application.postElem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': null, 'cb': '{{ url_for('events', page=page) }}'})">Go</a>
+        <a class='cap_button cap_selected event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#main", "go": null, "cb": "{{ url_for("events", page=page) }}"}'>Go</a>
       {% else %}
-        <a class='cap_button event_choice' href="{{ url_for('event', event_id=event.event_id) }}" onclick="Application.postElem('#main', '{{ url_for('event', event_id=event.event_id) }}', {'go': true, 'cb': '{{ url_for('events', page=page) }}'})">Go</a>
+        <a class='cap_button event_choice nav_link_post' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#main", "go": true, "cb": "{{ url_for("events", page=page) }}"}'>Go</a>
       {% endif %}
     </div>
     <div class='float_container event_users'>
@@ -50,7 +50,7 @@
           {% set interested_users = event.interested_users %}
         {% endif %}
         {% for user in interested_users %}
-          <a class='link_img nav_link' href="{{ url_for('user', identifier=user.username) }}">
+          <a class='link_img nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
             <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
           </a>
         {% endfor %}
