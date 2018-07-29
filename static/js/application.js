@@ -72,7 +72,7 @@ Application.enableScrollEvent = function() {
 Application.getElem = function(target, url, push_state=true) {
   $.get(url, {
   }).done(function(response) {
-    $('#main').addClass('anim_fade_in');
+    $(target).addClass('anim_fade_in');
     if(push_state){ history.pushState({'url':url}, null, url); }
     $(target).html(response);
   }).fail(function(xhr, status, error) {
@@ -82,7 +82,7 @@ Application.getElem = function(target, url, push_state=true) {
 Application.postElem = function(target, url, params) {
   $.post(url, params, {
   }).done(function(response) {
-    $(target).html(response);
+    $(target).replaceWith(response);
   }).fail(function(xhr, status, error) {
   });
 }

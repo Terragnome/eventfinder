@@ -26,7 +26,8 @@ class EventController:
       user_event = db_session.query(UserEvent).filter(
         and_(
           UserEvent.event_id==event.event_id,
-          UserEvent.user_id==user.user_id
+          UserEvent.user_id==user.user_id,
+          UserEvent.interested
         )
       ).first()
 
@@ -56,11 +57,11 @@ class EventController:
 
     user = UserController().current_user
     if user:
-      user_events = user.user_events
-      user_event_ids = [x.event_id for x in user_events]
+      interested_events = user.interested_events
+      interested_event_ids = [x.event_id for x in interested_events]
       events_with_count_query = events_with_count_query.filter(
         and_(
-          ~Event.event_id.in_(user_event_ids)
+          ~Event.event_id.in_(interested_event_ids)
         )
       )
 
@@ -163,9 +164,10 @@ class EventController:
           interested=interested
         )
         db_session.add(user_event)
+
       try:
         db_session.commit()
-        return user_event
+        return self.get_event(event_id)
       except Exception as e:
         print(e)
         traceback.print_exc()

@@ -90,23 +90,20 @@ def logout():
 def events(page=1, next_page_url=None, prev_page_url=None, scroll=False):
   events = EventController().get_events(page=page)
 
-  vargs = {
-    'events': events,
-    'page': page,
-    'next_page_url': next_page_url,
-    'prev_page_url': prev_page_url,
-  }
-
-  if request.is_xhr:
-    if events:
-      if scroll:
-        return render_template(TEMPLATE_EVENTS_LIST, vargs=vargs, **vargs)
-      else:
-        return render_template(TEMPLATE_EVENTS, vargs=vargs, **vargs)
-    else:
-      return ''
   if events:
-    return render_template(TEMPLATE_MAIN, template=TEMPLATE_EVENTS, vargs=vargs, **vargs)
+    template = TEMPLATE_EVENTS
+
+    vargs = {
+      'events': events,
+      'page': page,
+      'next_page_url': next_page_url,
+      'prev_page_url': prev_page_url,
+    }
+
+    if request.is_xhr:
+      if scroll: template = TEMPLATE_EVENTS_LIST
+      return render_template(template, vargs=vargs, **vargs)
+    return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
@@ -115,25 +112,21 @@ def event(event_id):
 
   if event:
     template = TEMPLATE_EVENT
+
     vargs = {
       'event': event
     }
 
     if request.is_xhr:
       return render_template(template, vargs=vargs, **vargs)
-    else:
-      return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+    return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
 @app.route("/event/<int:event_id>/", methods=['POST'])
 @oauth2.required(scopes=oauth2_scopes)
 def event_update(event_id):
-  interested = None
-  go_value = request.form.get('go')
-  if go_value == 'true':
-    interested = True
-  elif go_value == 'false':
-    interested = False
+  is_card = request.form.get('card') == 'true'
+  interested = request.form.get('go') == 'true'
 
   callback = request.form.get('cb')
   if callback == "/": callback = 'events'
@@ -144,7 +137,17 @@ def event_update(event_id):
   )
 
   if event:
-    return redirect(callback)
+    template = TEMPLATE_EVENT
+
+    vargs = {
+      'event': event,
+      'card': is_card
+    }
+
+    if request.is_xhr:
+      return render_template(template, vargs=vargs, **vargs)
+    return redirect(callback)    
+    # return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
 @app.route("/following/", methods=['GET'])
@@ -153,18 +156,21 @@ def following():
   current_user = UserController().current_user
   following = UserController().get_following()
 
-  vargs = {
-    'users': following
-  }
+  if following:
+    template = TEMPLATE_USERS
 
-  for user in following:
-    user.is_followed = current_user.is_follows_user(user)
-    user.is_blocked = current_user.is_blocks_user(user)
+    vargs = {
+      'users': following
+    }
 
-  template = TEMPLATE_USERS
-  if request.is_xhr:        
-    return render_template(template, vargs=vargs, **vargs)
-  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+    for user in following:
+      user.is_followed = current_user.is_follows_user(user)
+      user.is_blocked = current_user.is_blocks_user(user)
+
+    if request.is_xhr:        
+      return render_template(template, vargs=vargs, **vargs)
+    return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+  return redirect(request.referrer or '/')    
 
 @app.route("/user/<identifier>/", methods=['GET'])
 @paginated
@@ -192,17 +198,15 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
     }
 
     if user.user_id == current_user_id:
+      template = TEMPLATE_EVENTS
+
       if request.is_xhr:
-        if events:
-          if scroll:
-            return render_template(TEMPLATE_EVENT_LIST, vargs=vargs, **vargs)
-          else:
-            return render_template(TEMPLATE_EVENTS, vargs=vargs, **vargs)
-        else:
-          return ''
-      else:
-        return render_template(TEMPLATE_MAIN, template=TEMPLATE_EVENTS, vargs=vargs, **vargs)
+        if scroll: template = TEMPLATE_EVENTS_LIST
+        return render_template(template, vargs=vargs, **vargs)
+      return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
     else:
+      template = TEMPLATE_USER
+
       vargs['user'] = user
 
       if current_user:
@@ -210,10 +214,8 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
         user.is_blocked = current_user.is_blocks_user(user)
 
       if request.is_xhr:
-        return render_template(TEMPLATE_USER, vargs=vargs, **vargs)
-      else:
-        return render_template(TEMPLATE_MAIN, template=TEMPLATE_USER, vargs=vargs, **vargs)
-
+        return render_template(template, vargs=vargs, **vargs)
+      return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')    
 
 @app.route("/user/<identifier>/", methods=['POST'])
@@ -229,7 +231,12 @@ def user_action(identifier):
     user = UserController().follow_user(identifier, active)
   
   if user:
+    template=TEMPLATE_USER
+
+    if request.is_xhr:
+      return render_template(template, vargs=vargs, **vargs)
     return redirect(callback)
+    # return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
 if __name__ == '__main__':
