@@ -150,13 +150,14 @@ class EventController:
     if user_id:
       user_event = db_session.query(UserEvent).filter(
         and_(
-          UserEvent.event_id==event_id,
-          UserEvent.user_id==user_id
+          UserEvent.user_id==user_id,
+          UserEvent.event_id==event_id
         )
       ).first()
 
       if user_event:
         user_event.interested=interested
+        db_session.merge(user_event)
       else:
         user_event = UserEvent(
           user_id=user_id,
@@ -164,11 +165,6 @@ class EventController:
           interested=interested
         )
         db_session.add(user_event)
-
-      try:
-        db_session.commit()
-        return self.get_event(event_id)
-      except Exception as e:
-        print(e)
-        traceback.print_exc()
+      db_session.commit()
+      return self.get_event(event_id)
     return None
