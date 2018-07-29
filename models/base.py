@@ -11,6 +11,10 @@ engine = create_engine(
 db_session = scoped_session(sessionmaker(bind=engine))
 
 class Base:
+  @property
+  def json(self):
+    return self.to_json()
+
   def to_json(self):
     return {
       col.name: getattr(self, col.name) for col in self.__table__.columns

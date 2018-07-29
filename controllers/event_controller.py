@@ -71,7 +71,7 @@ class EventController:
     ).group_by(
       Event.event_id
     ).order_by(
-      desc('ct'), Event.start_time.asc(), Event.event_id.desc()
+      desc('ct'), Event.start_time.asc(), Event.event_id.asc()
     ).limit(
       self.PAGE_SIZE
     ).offset(
@@ -124,7 +124,7 @@ class EventController:
       ).group_by(
         Event.event_id
       ).order_by(
-        desc('ct'), Event.start_time.asc(), Event.event_id.desc()
+        desc('ct'), Event.start_time.asc(), Event.event_id.asc()
       ).limit(
         self.PAGE_SIZE
       ).offset(

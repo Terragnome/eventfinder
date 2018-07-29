@@ -153,8 +153,9 @@ def event_update(event_id):
 
     if request.is_xhr:
       return render_template(template, vargs=vargs, **vargs)
-    return redirect(callback)
-    # return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+    if callback:
+      return redirect(callback)
+    return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
 @app.route("/following/", methods=['GET'])
@@ -208,7 +209,9 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
       template = TEMPLATE_EVENTS
 
       if request.is_xhr:
-        if scroll: template = TEMPLATE_EVENTS_LIST
+        if scroll:
+          template = TEMPLATE_EVENTS_LIST
+          if not events: return ''
         return render_template(template, vargs=vargs, **vargs)
       return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
     else:
@@ -221,7 +224,9 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
         user.is_blocked = current_user.is_blocks_user(user)
 
       if request.is_xhr:
-        if scroll: template = TEMPLATE_EVENTS_LIST
+        if scroll:
+          template = TEMPLATE_EVENTS_LIST
+          if not events: return ''
         return render_template(template, vargs=vargs, **vargs)
       return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')    
@@ -242,11 +247,20 @@ def user_action(identifier):
     user = UserController().follow_user(identifier, active)
 
   if user:
-    template=TEMPLATE_USER
+    events = []
+    if not Block.blocks(user.user_id, current_user_id):
+      events = EventController().get_events_for_user_by_interested(
+        user=user,
+        interested=True
+      )
 
     vargs = {
-      'user': user
+      'current_user': current_user,
+      'user': user,
+      'events': events,
     }
+
+    template=TEMPLATE_USER
 
     if current_user:
       user.is_followed = current_user.is_follows_user(user)
@@ -254,8 +268,9 @@ def user_action(identifier):
 
     if request.is_xhr:
       return render_template(template, vargs=vargs, **vargs)
-    return redirect(callback)
-    # return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+    if callback:
+      return redirect(callback)
+    return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
 if __name__ == '__main__':

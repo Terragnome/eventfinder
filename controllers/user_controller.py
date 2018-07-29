@@ -95,7 +95,7 @@ class UserController:
     db_session.merge(row_block)
     db_session.commit()
 
-    return user
+    return self._get_user(identifier)
 
   @property
   def current_user_id(self):
@@ -124,7 +124,7 @@ class UserController:
     db_session.merge(row_follow)
     db_session.commit()
 
-    return user
+    return self._get_user(identifier)
 
   def get_user(self, identifier):
     return self._get_user(identifier)
