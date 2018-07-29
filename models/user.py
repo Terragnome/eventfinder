@@ -65,7 +65,7 @@ class User(Base):
         Block.block_id==user.user_id,
         Block.active
       )
-    ).first()
+    ).first() != None
 
   @property
   def is_followed(self):
@@ -80,4 +80,4 @@ class User(Base):
         Follow.follow_id==user.user_id,
         Follow.active
       )
-    ).first()
+    ).first() != None
