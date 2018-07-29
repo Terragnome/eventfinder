@@ -56,11 +56,11 @@ class EventController:
 
     user = UserController().current_user
     if user:
-      interested_events = user.interested_events
-      interested_event_ids = [x.event_id for x in interested_events]
+      user_events = user.user_events
+      user_event_ids = [x.event_id for x in user_events]
       events_with_count_query = events_with_count_query.filter(
         and_(
-          ~Event.event_id.in_(interested_event_ids)
+          ~Event.event_id.in_(user_event_ids)
         )
       )
 
