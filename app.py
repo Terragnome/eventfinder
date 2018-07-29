@@ -216,24 +216,18 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
 
   return redirect(request.referrer or '/')    
 
-@app.route("/users/<identifier>/block/", methods=['POST'])
+@app.route("/user/<identifier>/", methods=['POST'])
 @oauth2.required(scopes=oauth2_scopes)
-def user_block(identifier):
+def user_action(identifier):
+  action = request.form.get('action')
   active = request.form.get('active') == 'true'
   callback = request.form.get('cb')
 
-  user = UserController().block_user(identifier, active)
-  if user:
-    return redirect(callback)
-  return redirect(request.referrer or '/')
-
-@app.route("/users/<identifier>/follow/", methods=['POST'])
-@oauth2.required(scopes=oauth2_scopes)
-def user_follow(identifier):
-  active = request.form.get('active') == 'true'
-  callback = request.form.get('cb')
-
-  user = UserController().follow_user(identifier, active)
+  if action == 'block':
+    user = UserController().block_user(identifier, active)
+  elif action == 'follow':
+    user = UserController().follow_user(identifier, active)
+  
   if user:
     return redirect(callback)
   return redirect(request.referrer or '/')
