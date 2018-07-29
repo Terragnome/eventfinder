@@ -90,21 +90,19 @@ def logout():
 def events(page=1, next_page_url=None, prev_page_url=None, scroll=False):
   events = EventController().get_events(page=page)
 
-  if events:
-    template = TEMPLATE_EVENTS
+  template = TEMPLATE_EVENTS
 
-    vargs = {
-      'events': events,
-      'page': page,
-      'next_page_url': next_page_url,
-      'prev_page_url': prev_page_url,
-    }
+  vargs = {
+    'events': events,
+    'page': page,
+    'next_page_url': next_page_url,
+    'prev_page_url': prev_page_url,
+  }
 
-    if request.is_xhr:
-      if scroll: template = TEMPLATE_EVENTS_LIST
-      return render_template(template, vargs=vargs, **vargs)
-    return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
-  return redirect(request.referrer or '/')
+  if request.is_xhr:
+    if scroll: template = TEMPLATE_EVENTS_LIST
+    return render_template(template, vargs=vargs, **vargs)
+  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):

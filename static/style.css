@@ -134,6 +134,7 @@ span{
 }
 
 .event{
+  background-color: white;
   position: relative;
   text-align: center;
   top: -25px;
@@ -225,6 +226,7 @@ span{
 }
 
 .events_none{
+  background-color: white;
   border: 1px solid #DEDEDE;
   border-radius: 5px;
   color: #BEBEBE;
@@ -346,6 +348,7 @@ span{
 }
 
 .user_feed_profile{
+  background-color: white;
   border: 1px solid #DEDEDE;
   border-radius: 5px;
   margin: 0 10px 30px 10px;
