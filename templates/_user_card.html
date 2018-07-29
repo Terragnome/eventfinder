@@ -1,7 +1,7 @@
 {% set current_user=user or (vargs.current_user if vargs else None) %}
 {% set user=user or (vargs.user if vargs else None) %}
 
-<div class='box_shadow float_container user_feed_profile'>
+<div id="user_{{ user.user_id }}" class='box_shadow float_container user_feed_profile'>
   <a class='nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
     <img class="left user_feed_profile_img user_profile_img" src="{{ user.image_url }}"></img>
   </a>
@@ -9,13 +9,13 @@
     <div>{{ user.username }} ({{ user.display_name }})</div>
     <div class='user_feed_choices'>
         {% if user.is_blocked %}
-          <a class='cap_button cap_selected nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"action": "block", "active": false, "cb": "{{ request.path }}"}'>Unblock</a>
+          <a class='cap_button cap_selected nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"action": "block", "active": false}'>Unblock</a>
         {% else %}
           {% if user.is_followed %}
-            <a class='cap_button cap_selected nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"action": "follow", "active": false, "cb": "{{ request.path }}"}'>Unfollow</a>
+            <a class='cap_button cap_selected nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"action": "follow", "active": false}'>Unfollow</a>
           {% else %}
-            <a class='cap_button nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"action": "follow", "active": true, "cb": "{{ request.path }}"}'>Follow</a>
-            <a class='cap_button nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"action": "block", "active": true, "cb": "{{ request.path }}"}'>Block</a>
+            <a class='cap_button nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"action": "follow", "active": true}'>Follow</a>
+            <a class='cap_button nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"action": "block", "active": true}'>Block</a>
           {% endif %}
         {% endif %}
     </div>

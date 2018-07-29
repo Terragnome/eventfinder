@@ -146,7 +146,7 @@ def event_update(event_id):
 
     if request.is_xhr:
       return render_template(template, vargs=vargs, **vargs)
-    return redirect(callback)    
+    return redirect(callback)
     # return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
@@ -221,6 +221,9 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
 @app.route("/user/<identifier>/", methods=['POST'])
 @oauth2.required(scopes=oauth2_scopes)
 def user_action(identifier):
+  current_user = UserController().current_user
+  current_user_id = UserController().current_user_id
+
   action = request.form.get('action')
   active = request.form.get('active') == 'true'
   callback = request.form.get('cb')
@@ -229,9 +232,17 @@ def user_action(identifier):
     user = UserController().block_user(identifier, active)
   elif action == 'follow':
     user = UserController().follow_user(identifier, active)
-  
+
   if user:
     template=TEMPLATE_USER
+
+    vargs = {
+      'user': user
+    }
+
+    if current_user:
+      user.is_followed = current_user.is_follows_user(user)
+      user.is_blocked = current_user.is_blocks_user(user)
 
     if request.is_xhr:
       return render_template(template, vargs=vargs, **vargs)
