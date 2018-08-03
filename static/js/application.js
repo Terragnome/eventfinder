@@ -53,10 +53,13 @@ Application.ajaxifyLinks = function() {
 
   $('a.nav_link_get').unbind('click', Application.ajaxGet);
   $('a.nav_link_get').click(Application.ajaxGet);
+
   $('a.nav_link_get_replace').unbind('click', Application.ajaxGetReplace);
   $('a.nav_link_get_replace').click(Application.ajaxGetReplace);
+
   $('a.nav_link_post').unbind('click', Application.ajaxPost);
   $('a.nav_link_post').click(Application.ajaxPost);
+
   $('a.nav_link_post_replace').unbind('click', Application.ajaxPostReplace);
   $('a.nav_link_post_replace').click(Application.ajaxPostReplace);
 }
