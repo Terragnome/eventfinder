@@ -30,10 +30,22 @@ Application.ajaxGet = function(e){
   $(this).click(Application.getElem(data.target, $(this).attr('href')));  
 }
 
+Application.ajaxGetReplace = function(e){
+  e.preventDefault();
+  var data = Application.ajaxHistory(e);
+  $(this).click(Application.getElem(data.target, $(this).attr('href'), true));
+}
+
 Application.ajaxPost = function(e){
   e.preventDefault();
   var data = Application.ajaxHistory(e);
   $(this).click(Application.postElem(data.target, $(this).attr('href'), data));
+}
+
+Application.ajaxPostReplace = function(e){
+  e.preventDefault();
+  var data = Application.ajaxHistory(e);
+  $(this).click(Application.postElem(data.target, $(this).attr('href'), data, true));
 }
 
 Application.ajaxifyLinks = function() {
@@ -41,8 +53,12 @@ Application.ajaxifyLinks = function() {
 
   $('a.nav_link_get').unbind('click', Application.ajaxGet);
   $('a.nav_link_get').click(Application.ajaxGet);
+  $('a.nav_link_get_replace').unbind('click', Application.ajaxGetReplace);
+  $('a.nav_link_get_replace').click(Application.ajaxGetReplace);
   $('a.nav_link_post').unbind('click', Application.ajaxPost);
   $('a.nav_link_post').click(Application.ajaxPost);
+  $('a.nav_link_post_replace').unbind('click', Application.ajaxPostReplace);
+  $('a.nav_link_post_replace').click(Application.ajaxPostReplace);
 }
 
 Application.animateElems = function() {
@@ -76,35 +92,34 @@ Application.enableScrollEvent = function() {
   $(window).on("scroll", Application.scrollNext);
 }
 
-Application.getElem = function(target, url, push_state=true) {
+Application.getElem = function(target, url, push_state=false, replace=false) {
   $.get(url, {
   }).done(function(response) {
     $(target).addClass('anim_fade_in');
     if(push_state){ history.pushState({'url':url}, null, url); }
-    $(target).html(response);
+    if(replace){
+      $(target).replaceWith(response);  
+    }else{
+      $(target).html(response);
+    }
   }).fail(function(xhr, status, error) {
   });
 }
 
-Application.postElem = function(target, url, params) {
+Application.postElem = function(target, url, params, replace=false) {
   $.post(url, params, {
   }).done(function(response) {
-    $(target).replaceWith(response);
+    if(replace){
+      $(target).replaceWith(response);  
+    }else{
+      $(target).html(response);  
+    }
   }).fail(function(xhr, status, error) {
   });
 }
 
 Application.removeElem = function(target) {
   $(target).remove();
-}
-
-Application.replaceGetElem = function(target, url, push_state=true) {
-  $.get(url, {
-  }).done(function(response) {
-    if(push_state){ history.pushState({'url':url}, null, url); }
-    $(target).replaceWith(response);
-  }).fail(function(xhr, status, error) {
-  });
 }
 
 Application.scrollNext = function(){
@@ -116,7 +131,7 @@ Application.scrollNext = function(){
     var next_url = $('.pagination:last').find('a:first').attr('href');
     if(next_url && next_url != current_url){
       history.pushState({'url':next_url}, null, next_url);
-      Application.replaceGetElem('.pagination:last', next_url+'&scroll=true', false);
+      Application.getElemReplace('.pagination:last', next_url+'&scroll=true', false, true);
     }
   }
 }

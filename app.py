@@ -45,6 +45,20 @@ TEMPLATE_EVENTS_LIST = "_events_list.html"
 TEMPLATE_USER = "_user.html"
 TEMPLATE_USERS = "_users.html"
 
+def _render_events_list(
+  request,
+  events,
+  vargs,
+  scroll=False,
+  template=TEMPLATE_EVENTS
+):
+  if request.is_xhr:
+    if scroll:
+      template = TEMPLATE_EVENTS_LIST
+      if not events: return ''
+    return render_template(template, vargs=vargs, **vargs)
+  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+
 # TODO: Need to fix showing next button with no next pages
 def paginated(fn):
   @functools.wraps(fn)
@@ -89,22 +103,13 @@ def logout():
 @paginated
 def events(page=1, next_page_url=None, prev_page_url=None, scroll=False):
   events = EventController().get_events(page=page)
-
-  template = TEMPLATE_EVENTS
-
   vargs = {
     'events': events,
     'page': page,
     'next_page_url': next_page_url,
     'prev_page_url': prev_page_url,
   }
-
-  if request.is_xhr:
-    if scroll:
-      template = TEMPLATE_EVENTS_LIST
-      if not events: return ''
-    return render_template(template, vargs=vargs, **vargs)
-  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+  return _render_events_list(request, events, vargs, scroll=scroll)
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):
@@ -206,29 +211,15 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
     }
 
     if user.user_id == current_user_id:
-      template = TEMPLATE_EVENTS
-
-      if request.is_xhr:
-        if scroll:
-          template = TEMPLATE_EVENTS_LIST
-          if not events: return ''
-        return render_template(template, vargs=vargs, **vargs)
-      return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+      return _render_events_list(request, events, vargs, scroll=scroll)
     else:
-      template = TEMPLATE_USER
-
       vargs['user'] = user
 
       if current_user:
         user.is_followed = current_user.is_follows_user(user)
         user.is_blocked = current_user.is_blocks_user(user)
 
-      if request.is_xhr:
-        if scroll:
-          template = TEMPLATE_EVENTS_LIST
-          if not events: return ''
-        return render_template(template, vargs=vargs, **vargs)
-      return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+      return _render_events_list(request, events, vargs, template=TEMPLATE_USER, scroll=scroll)
   return redirect(request.referrer or '/')    
 
 @app.route("/user/<identifier>/", methods=['POST'])
@@ -242,35 +233,25 @@ def user_action(identifier):
   callback = request.form.get('cb')
 
   if action == 'block':
-    user = UserController().block_user(identifier, active)
+    u = UserController().block_user(identifier, active)
   elif action == 'follow':
-    user = UserController().follow_user(identifier, active)
+    u = UserController().follow_user(identifier, active)
 
-  if user:
+  if u:
     events = []
-    if not Block.blocks(user.user_id, current_user_id):
+    if not Block.blocks(u.user_id, current_user_id):
       events = EventController().get_events_for_user_by_interested(
-        user=user,
+        user=u,
         interested=True
       )
 
-    vargs = {
-      'current_user': current_user,
-      'user': user,
-      'events': events,
-    }
+    if 'following' in callback:
+      return following()
+    elif 'events' in callback:
+      return events()
+    elif 'user':
+      return user(identifier=identifier)
 
-    template=TEMPLATE_USER
-
-    if current_user:
-      user.is_followed = current_user.is_follows_user(user)
-      user.is_blocked = current_user.is_blocks_user(user)
-
-    if request.is_xhr:
-      return render_template(template, vargs=vargs, **vargs)
-    if callback:
-      return redirect(callback)
-    return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
 if __name__ == '__main__':
