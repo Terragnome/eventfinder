@@ -49,7 +49,7 @@ class ConnectorEB:
         klass,
         address=None,
         distance=None,
-        categories=None,
+        categories=EBEventType.FOOD_DRINK,
         sort_by='date'
     ):
         params = {

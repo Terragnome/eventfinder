@@ -33,7 +33,7 @@ Application.ajaxGet = function(e){
 Application.ajaxGetReplace = function(e){
   e.preventDefault();
   var data = Application.ajaxHistory(e);
-  $(this).click(Application.getElem(data.target, $(this).attr('href'), true));
+  $(this).click(Application.getElem(data.target, $(this).attr('href')));
 }
 
 Application.ajaxPost = function(e){
@@ -95,7 +95,7 @@ Application.enableScrollEvent = function() {
   $(window).on("scroll", Application.scrollNext);
 }
 
-Application.getElem = function(target, url, push_state=false, replace=false) {
+Application.getElem = function(target, url, push_state=true, replace=false) {
   $.get(url, {
   }).done(function(response) {
     $(target).addClass('anim_fade_in');
@@ -134,7 +134,7 @@ Application.scrollNext = function(){
     var next_url = $('.pagination:last').find('a:first').attr('href');
     if(next_url && next_url != current_url){
       history.pushState({'url':next_url}, null, next_url);
-      Application.getElemReplace('.pagination:last', next_url+'&scroll=true', false, true);
+      Application.getElem('.pagination:last', next_url+'&scroll=true', false, true);
     }
   }
 }

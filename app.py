@@ -13,6 +13,7 @@ from config.app_config import app_config
 
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
+from models.base import db_session
 from models.block import Block
 from models.follow import Follow
 
@@ -44,6 +45,10 @@ TEMPLATE_EVENTS = "_events.html"
 TEMPLATE_EVENTS_LIST = "_events_list.html"
 TEMPLATE_USER = "_user.html"
 TEMPLATE_USERS = "_users.html"
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 def _render_events_list(
   request,
