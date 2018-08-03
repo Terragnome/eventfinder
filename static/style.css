@@ -141,6 +141,11 @@ span{
   z-index: 1;
 }
 
+.event_free{
+  top: 0px;
+  margin-bottom: 25px;
+}
+
 .event_card{
   background-color: white;
   border: 1px solid #DEDEDE;
