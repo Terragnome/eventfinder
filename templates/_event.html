@@ -3,7 +3,7 @@
 
 {% set is_card_json = 'true' if card else 'false' %}
 
-<div id="event_{{ event.event_id }}" class='event {{ 'event_free' if event.is_free else '' }}'>
+<div id="event_{{ event.event_id }}" class='event'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
     <div class='event_img_wrapper'>
       {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
