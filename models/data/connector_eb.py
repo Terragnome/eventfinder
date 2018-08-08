@@ -293,8 +293,8 @@ class ConnectorEB:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--address', default='13960 Lynde Ave, Saratoga, CA 95070')
-    parser.add_argument('--distance', default='30mi')
+    parser.add_argument('--address', default='San Francisco, CA')
+    parser.add_argument('--distance', default='50mi')
     parser.add_argument('--categories', default=EBEventType.FOOD_DRINK)
     parser.add_argument('--sort_by', default="distance")
     group = parser.add_mutually_exclusive_group()
