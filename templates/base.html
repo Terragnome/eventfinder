@@ -11,6 +11,13 @@
   <script type='application/javascript' src="{{ url_for('static', filename='js/classie.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/AnimOnScroll.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=(range(1, 100000) | random)) }}"></script>
+  <script>
+    Application.init({
+      'urls': {
+        'auth': "{{ url_for('oauth2.authorize') }}"
+      }
+    });
+  </script>
   {% block scripts %}{% endblock %}
 </head>
 <title>{% block title %}WeGo{% endblock %}</title>

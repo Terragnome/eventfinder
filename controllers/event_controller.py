@@ -16,7 +16,7 @@ from models.user_event import UserEvent
 from utils.get_from import get_from
 
 class EventController:
-  PAGE_SIZE = 6
+  PAGE_SIZE = 12
 
   def get_event(self, event_id):
     event = Event.query.filter(Event.event_id == event_id).first()

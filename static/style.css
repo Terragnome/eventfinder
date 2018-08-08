@@ -161,7 +161,9 @@ span{
   text-align: center;
 }
 
-.event_body{}
+.event_body{
+  padding: 0 10px 0 10px;
+}
 
 .event_choice{
   margin: 0 2px 0 2px;
@@ -175,8 +177,7 @@ span{
   font-size: 13px;
   text-align: left;
   text-indent: 30px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 0 auto;
   max-width: 800px;
   text-transform: none;
 }

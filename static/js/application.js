@@ -1,6 +1,9 @@
 var Application = Application || {};
 
-Application.init = function() {
+Application.init = function(params) {
+  var urls = params['urls'];
+  Application.url_auth = urls['auth'];
+
   Application.enableScrollEvent();
 
   $(window).on('popstate', Application.backButton);
@@ -106,6 +109,7 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
       $(target).html(response);
     }
   }).fail(function(xhr, status, error) {
+    window.location.replace(url);
   });
 }
 
@@ -118,6 +122,7 @@ Application.postElem = function(target, url, params, replace=false) {
       $(target).html(response);  
     }
   }).fail(function(xhr, status, error) {
+    window.location.replace(Application.url_auth);
   });
 }
 
@@ -138,5 +143,3 @@ Application.scrollNext = function(){
     }
   }
 }
-
-Application.init();
