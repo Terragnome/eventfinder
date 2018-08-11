@@ -2,7 +2,8 @@ import datetime
 import traceback
 
 from flask import session
-from sqlalchemy import and_, desc, or_
+from sqlalchemy import alias, case, desc, nullslast
+from sqlalchemy import and_, or_
 from sqlalchemy.sql import func
 
 from controllers.user_controller import UserController
@@ -45,9 +46,24 @@ class EventController:
     return event
 
   def get_events(self, page=1):
+    event_scores = alias(
+      db_session.query(
+        UserEvent.event_id.label('event_id'),
+        func.count(UserEvent.interest>0).label('ct'),
+        func.sum(UserEvent.interest).label('score')
+      ).group_by(
+        UserEvent.event_id
+      ),
+      'event_scores'
+    )
+
     events_with_count_query = db_session.query(
       Event,
-      func.count(Event.user_events).filter(UserEvent.interest>0).label('ct')
+      event_scores.c.ct,
+      event_scores.c.score
+    ).outerjoin(
+      event_scores,
+      Event.event_id == event_scores.c.event_id
     )
 
     user = UserController().current_user
@@ -60,17 +76,16 @@ class EventController:
         )
       )
 
-    events_with_counts = events_with_count_query.outerjoin(
-      Event.user_events
-    ).filter(
+    events_with_counts = events_with_count_query.filter(
       or_(
         Event.start_time >= datetime.datetime.now(),
         Event.end_time >= datetime.datetime.now()
       )
-    ).group_by(
-      Event.event_id
     ).order_by(
-      desc('ct'), Event.start_time.asc(), Event.event_id.asc()
+      nullslast(desc(event_scores.c.ct)),
+      nullslast(desc(event_scores.c.ct)),
+      Event.start_time.asc(),
+      Event.event_id.asc()
     ).limit(
       self.PAGE_SIZE
     ).offset(
@@ -78,8 +93,8 @@ class EventController:
     )
 
     results = []
-    for event, user_event_count in events_with_counts:
-      event.interested_user_count = user_event_count
+    for event, user_count, event_score in events_with_counts:
+      event.interested_user_count = user_count
       results.append(event)
 
     return results
@@ -135,10 +150,6 @@ class EventController:
         if current_user:
           event.current_user_event = get_from(current_user_events_by_event_id, [event.event_id])
         event.interested_user_count = user_event_count
-        # if user:
-        #   event.interested_follows = event.interested_users.filter(
-        #     User.user_id.in_([x.user_id for x in user.followed_users])
-        #   )
         results.append(event)
       return results
     return None

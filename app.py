@@ -114,6 +114,7 @@ def events(page=1, next_page_url=None, prev_page_url=None, scroll=False):
     'next_page_url': next_page_url,
     'prev_page_url': prev_page_url,
   }
+
   return _render_events_list(request, events, vargs, scroll=scroll)
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
