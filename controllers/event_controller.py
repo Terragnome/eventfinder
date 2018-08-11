@@ -41,18 +41,13 @@ class EventController:
     ).count()
 
     event.interested_user_count = user_event_count
-    # if user:
-    #   event.interested_follows = event.interested_users.filter(
-    #     User.user_id.in_([x.user_id for x in user.followed_users])
-    #   )
 
     return event
 
   def get_events(self, page=1):
     events_with_count_query = db_session.query(
       Event,
-      Event.event_id.label('ct')
-      # func.sum(Event.user_events.interest).label('ct')
+      func.count(Event.user_events).filter(UserEvent.interest>0).label('ct')
     )
 
     user = UserController().current_user
@@ -85,11 +80,8 @@ class EventController:
     results = []
     for event, user_event_count in events_with_counts:
       event.interested_user_count = user_event_count
-      # if user:
-      #   event.interested_follows = event.interested_users.filter(
-      #     User.user_id.in_([x.user_id for x in user.followed_users])
-      #   )
       results.append(event)
+
     return results
 
   def get_events_for_user_by_interested(self, interested, user=None, page=1):
