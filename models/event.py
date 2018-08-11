@@ -54,7 +54,7 @@ class Event(Base):
 
   @property
   def current_user_interested(self):
-    return self.current_user_event and self.current_user_event.interested
+    return self.current_user_event and self.current_user_event.interest>0
 
   @property
   def display_city(self):
@@ -112,7 +112,7 @@ class Event(Base):
 
   @property
   def interested_users(self):
-    return self.users.filter(UserEvent.interested)
+    return self.users.filter(UserEvent.interest>0)
 
   @property
   def interested_user_count(self):

@@ -2,7 +2,7 @@ import datetime
 import traceback
 
 from flask import session
-from sqlalchemy import and_, desc
+from sqlalchemy import and_, desc, or_
 from sqlalchemy.sql import func
 
 from controllers.user_controller import UserController
@@ -36,7 +36,7 @@ class EventController:
     user_event_count = UserEvent.query.filter(
       and_(
         UserEvent.event_id==event_id,
-        UserEvent.interested
+        UserEvent.interest>0
       )
     ).count()
 
@@ -51,7 +51,8 @@ class EventController:
   def get_events(self, page=1):
     events_with_count_query = db_session.query(
       Event,
-      func.count(Event.user_events).filter(UserEvent.interested).label('ct')
+      Event.event_id.label('ct')
+      # func.sum(Event.user_events.interest).label('ct')
     )
 
     user = UserController().current_user
@@ -67,7 +68,10 @@ class EventController:
     events_with_counts = events_with_count_query.outerjoin(
       Event.user_events
     ).filter(
-      Event.start_time > datetime.datetime.now()
+      or_(
+        Event.start_time >= datetime.datetime.now(),
+        Event.end_time >= datetime.datetime.now()
+      )
     ).group_by(
       Event.event_id
     ).order_by(
@@ -96,7 +100,7 @@ class EventController:
       user_events = UserEvent.query.filter(
         and_(
           UserEvent.user_id == user.user_id,
-          UserEvent.interested == interested
+          UserEvent.interest > 0 if interested else UserEvent<=0
         )
       ).all()
       user_events_by_event_id = { x.event_id: x for x in user_events }
@@ -105,7 +109,7 @@ class EventController:
         current_user_events = UserEvent.query.filter(
           and_(
             UserEvent.user_id == current_user.user_id,
-            UserEvent.interested == interested
+            UserEvent.interest>0
           )
         ).all()
         current_user_events_by_event_id = { x.event_id: x for x in current_user_events }      
@@ -116,8 +120,11 @@ class EventController:
       ).filter(
         and_(
           Event.event_id.in_(user_events_by_event_id.keys()),
-          Event.start_time > datetime.datetime.now(),
-          UserEvent.interested
+          or_(
+            Event.start_time >= datetime.datetime.now(),
+            Event.end_time >= datetime.datetime.now()
+          ),
+          UserEvent.interest>0
         )
       ).join(
         Event.user_events
@@ -144,7 +151,7 @@ class EventController:
       return results
     return None
 
-  def update_event(self, event_id, interested):
+  def update_event(self, event_id, interest):
     user_id = UserController().current_user_id
     if user_id:
       user_event = UserEvent.query.filter(
@@ -155,13 +162,13 @@ class EventController:
       ).first()
 
       if user_event:
-        user_event.interested=interested
+        user_event.interest=interest
         db_session.merge(user_event)
       else:
         user_event = UserEvent(
           user_id=user_id,
           event_id=event_id,
-          interested=interested
+          interest=interest
         )
         db_session.add(user_event)
       db_session.commit()

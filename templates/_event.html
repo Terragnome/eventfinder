@@ -21,9 +21,11 @@
         {% if card %}
           <div>{{ event.display_city }}</div>
         {% else %}
-          {% for addr_line in event.address %}
-            <div>{{ addr_line }}</div>
-          {% endfor %}
+          {% if event.address %}
+            {% for addr_line in event.address %}
+              <div>{{ addr_line }}</div>
+            {% endfor %}
+          {% endif %}
         {% endif %}
       </div>
     </div>
@@ -31,15 +33,20 @@
   <div class='event_body'>
     {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
     <div class='event_choices'>
-      {% if event.current_user_event and event.current_user_event.interested == False %}
+      {% if event.current_user_event and event.current_user_event.interest == 0 %}
         <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Skip</a>
       {% else %}
-        <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": false, "card": "{{ is_card_json }}"}'>Skip</a>
+        <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 0, "card": "{{ is_card_json }}"}'>Skip</a>
       {% endif %}
-      {% if event.current_user_event and event.current_user_event.interested == True %}
+      {% if event.current_user_event and event.current_user_event.interest == 1 %}
+        <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Maybe</a>
+      {% else %}
+        <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 1, "card": "{{ is_card_json }}"}'>Maybe</a>  
+      {% endif %}
+      {% if event.current_user_event and event.current_user_event.interest == 2 %}
         <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Go</a>
       {% else %}
-        <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": true, "card": "{{ is_card_json }}"}'>Go</a>  
+        <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 2, "card": "{{ is_card_json }}"}'>Go</a>  
       {% endif %}
     </div>
     <div class='float_container event_users'>

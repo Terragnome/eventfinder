@@ -9,3 +9,4 @@ postgres == 2.2.1
 psycopg2-binary == 2.7.5
 redis == 2.10.6
 sqlalchemy == 1.2.8
+tmdbsimple == 2.2.0

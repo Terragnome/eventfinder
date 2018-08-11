@@ -234,7 +234,6 @@ span{
   background-color: #DEDEDE;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  height: 200px;
   position: relative;
   top: 0px;
   width: 400px;
@@ -279,6 +278,7 @@ span{
   border: 1px solid #DEDEDE;
   border-radius: 5px;
   color: #BEBEBE;
+  font-size: 12px;
   margin: 50px 30px 50px 30px;
   padding: 100px 0 100px 0;
   text-align: center;

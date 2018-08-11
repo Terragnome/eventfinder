@@ -138,19 +138,17 @@ def event_update(event_id):
   is_card = request.form.get('card') == 'true'
   go_value = request.form.get('go')
 
-  if go_value == 'true':
-    interested = True
-  elif go_value == 'false':
-    interested = False
+  if go_value in ('2','1','0'):
+    interest = str(go_value)
   else:
-    interested = None
+    interest = None
 
   callback = request.form.get('cb')
   if callback == "/": callback = 'events'
 
   event = EventController().update_event(
     event_id=event_id,
-    interested=interested
+    interest=interest
   )
 
   if event:
@@ -247,7 +245,7 @@ def user_action(identifier):
     if not Block.blocks(u.user_id, current_user_id):
       events = EventController().get_events_for_user_by_interested(
         user=u,
-        interested=True
+        interest=True
       )
 
     if 'following' in callback:

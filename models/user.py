@@ -46,11 +46,11 @@ class User(Base):
   
   @property
   def interested_events(self):
-    return self.events.filter(UserEvent.interested)
+    return self.events.filter(UserEvent.interest>0)
 
   @property
   def user_events(self):
-    return self._user_events.filter(UserEvent.interested != None)
+    return self._user_events.filter(UserEvent.interest != None)
 
   @property
   def is_blocked(self):

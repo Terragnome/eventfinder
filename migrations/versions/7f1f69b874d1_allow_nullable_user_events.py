@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.alter_column('user_events', 'interested', nullable=True)
+    op.alter_column('user_events', 'interest', nullable=True)
 
 def downgrade():
-    op.alter_column('user_events', 'interested', nullable=False)
+    op.alter_column('user_events', 'interest', nullable=False)

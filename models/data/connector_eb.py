@@ -136,7 +136,7 @@ class ConnectorEB:
 
     @classmethod
     def tokenize(klass, t):
-        return re.sub(r'[^a-z ]', '', t.lower()).split(" ")
+        return " ".join([x for x in re.sub(r'[^a-z ]', ' ', t.lower()).split(" ") if x])
 
     def __init__(self):
         self.client = Eventbrite(self.API_KEY)
@@ -216,7 +216,7 @@ class ConnectorEB:
                 if event_name:
                     lower_event_name = self.tokenize(event_name)
                     if (
-                        ("speed dating" in lower_event_name)
+                        ("speed dat" in lower_event_name)
                         or ("high" in lower_event_name and 'school' in lower_event_name)
                         or ("kindergarten" in lower_event_name)
                         or ("gluten" in lower_event_name)
@@ -294,7 +294,7 @@ class ConnectorEB:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--address', default='San Francisco, CA')
-    parser.add_argument('--distance', default='50mi')
+    parser.add_argument('--distance', default='30mi')
     parser.add_argument('--categories', default=EBEventType.FOOD_DRINK)
     parser.add_argument('--sort_by', default="distance")
     group = parser.add_mutually_exclusive_group()
@@ -309,5 +309,6 @@ if __name__ == '__main__':
 
     e = ConnectorEB()
     events = e.get_events(**vars(args))
-    for i, event in enumerate(events):
-        print(i, event.name)
+    if events:
+      for i, event in enumerate(events):
+          print(i, event.name)

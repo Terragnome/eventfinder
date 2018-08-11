@@ -62,11 +62,11 @@ def upgrade():
 		'user_events',
 		sa.Column('event_id', sa.Integer, ForeignKey('events.event_id'), primary_key=True),
 		sa.Column('user_id', sa.Integer, ForeignKey('users.user_id'), primary_key=True),
-		sa.Column('interested', sa.Boolean, nullable=False),
+		sa.Column('interest', sa.Integer, nullable=False),
 		sa.Column('created_at', sa.DateTime(timezone=True), server_default=func.now()),
 		sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=func.now()),
 	)
-	op.create_index('user_events_by_interest', 'user_events', ['event_id', 'user_id', 'interested'])
+	op.create_index('user_events_by_interest', 'user_events', ['event_id', 'user_id', 'interest'])
 
 def downgrade():
 	op.drop_table('user_auths')
