@@ -246,7 +246,7 @@ def user_action(identifier):
     if not Block.blocks(u.user_id, current_user_id):
       events = EventController().get_events_for_user_by_interested(
         user=u,
-        interest=True
+        interested=True
       )
 
     if 'following' in callback:
