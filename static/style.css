@@ -155,7 +155,7 @@ span{
 .cap_button{
   border: 1px solid red;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   height: 20px;
   padding: 5px 8px 5px 8px;
 }
@@ -190,7 +190,7 @@ span{
 }
 
 .event_address{
-  font-size: 12px;
+  font-size: 11px;
   margin: 5px 0 0px 0;
   text-align: center;
 }
@@ -205,7 +205,7 @@ span{
   border-radius: 5px;
   margin: 0 10px 30px 10px;
   text-align: center;
-  width: 400px;
+  width: 315px;
 }
 
 .event_choice{
@@ -213,7 +213,29 @@ span{
 }
 
 .event_choices{
-  margin: 8px 0 20px 0;
+  margin: 10px 0 20px 0;
+}
+
+.event_date{
+  position: relative;
+  border: 1px solid black;
+  border-radius: 5px;
+  color: black;
+  cursor: default;
+  display: inline-block;
+  height: 40px;
+  margin: 10px 0 5px 0;
+  text-align: center;
+  width: 30px;
+}
+
+.event_date .event_day{
+  font-size: 14px;
+}
+
+.event_date .event_month{
+  font-size: 9px;
+  margin: 5px 0 2px 0;
 }
 
 .event_description{
@@ -227,7 +249,7 @@ span{
 
 .event_header{
   color: black;
-  padding: 0 15px 8px 15px;
+  margin: 0 15px 8px 15px;
 }
 
 .event_img{
@@ -236,7 +258,7 @@ span{
   border-top-right-radius: 4px;
   position: relative;
   top: 0px;
-  width: 400px;
+  width: 315px;
   z-index: 1;
 }
 
@@ -300,21 +322,21 @@ span{
 }
 
 .event_time{
-  font-size: 12px;
+  font-size: 11px;
   margin: 5px 0 0 0;
 }
 
 .event_title{
   color: black;
   display: inline-block;
-  font-size: 15px;
+  font-size: 13px;
   margin: 8px 0 0 0;
   text-align: center;
   text-decoration: none;
 }
 
 .event_users{
-  margin: 10px 0 0 0;
+  margin: 5px 0 5px 0;
 }
 
 .event_users_count{

@@ -54,7 +54,11 @@ class Event(Base):
 
   @property
   def current_user_interested(self):
-    return self.current_user_event and self.current_user_event.interest>0
+    return (
+      self.current_user_event
+      and self.current_user_event.interest != None
+      and self.current_user_event.interest>0
+    )
 
   @property
   def display_city(self):
@@ -66,6 +70,22 @@ class Event(Base):
     elif self.state:
       return self.state
     return response
+
+  @property
+  def display_end_date_day(self):
+    return self.end_time.day
+
+  @property
+  def display_end_date_month(self):
+    return self.end_time.strftime("%b")
+
+  @property
+  def display_start_date_day(self):
+    return self.start_time.day
+
+  @property
+  def display_start_date_month(self):
+    return self.start_time.strftime("%b")
 
   @property
   def display_name(self):
@@ -102,6 +122,14 @@ class Event(Base):
   @property
   def display_venue_name(self):
     return "" if self.venue_name in self.display_title else self.venue_name
+
+  @property
+  def start_date(self):
+    return self.start_time.date()
+
+  @property
+  def end_date(self):
+    return self.end_time.date()
 
   @property
   def interested_follows(self):

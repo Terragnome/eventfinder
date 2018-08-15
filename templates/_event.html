@@ -2,22 +2,35 @@
 {% set card=card or (vargs.card if vargs else None) %}
 
 {% set is_card_json = 'true' if card else 'false' %}
+{% set is_skipped = event.current_user_event and event.current_user_event.interest == 0 %}
+{% set is_maybe = event.current_user_event and event.current_user_event.interest == 1 %}
+{% set is_go = event.current_user_event and event.current_user_event.interest == 2 %}
 
 <div id="event_{{ event.event_id }}" class='event'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
-    <div class='event_img_wrapper'>
+    <div class='event_img_wrapper {{ "hide" if is_skipped else ""}}'>
       {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
       {% if event.img_url %}
         <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
       {% endif %}
     </div>
     <div class='event_header'>  
-      <div class='event_title'>
-        <span class="event_title">{{ event.display_name }}</span>
-      </div>
+      <div class='event_title'>{{ event.display_name }}</div>
       {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
-      <div class="event_time">{{ event.display_time }}</div>
-      <div class="event_address">
+      <div class='event_time {{ "hide" if is_skipped else ""}}'>{{ event.display_time }}</div>
+      <div class='{{ "hide" if is_skipped else ""}}'>
+        <div class="event_date">
+          <div class="event_month">{{ event.display_start_date_month }}</div>
+          <div class="event_day">{{ event.display_start_date_day }}</div>
+        </div>
+        {% if event.start_date != event.end_date %}
+          <div class="event_date">
+            <div class="event_month">{{ event.display_end_date_month }}</div>
+            <div class="event_day">{{ event.display_end_date_day }}</div>
+          </div>
+        {% endif %}
+      </div>
+      <div class='event_address {{ "hide" if is_skipped else ""}}'>
         {% if card %}
           <div>{{ event.display_city }}</div>
         {% else %}
@@ -31,44 +44,46 @@
     </div>
   {% if card %}</a>{% endif %}
   <div class='event_body'>
-    {% if not card %}<p class="event_description">{{ event.description }}</p>{% endif %}
+    {% if not card %}
+      <p class='event_description {{ "hide" if is_skipped else ""}}'>{{ event.description }}</p>
+    {% endif %}
     <div class='event_choices'>
-      {% if event.current_user_event and event.current_user_event.interest == 0 %}
+      {% if is_skipped %}
         <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Skip</a>
       {% else %}
         <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 0, "card": "{{ is_card_json }}"}'>Skip</a>
       {% endif %}
-      {% if event.current_user_event and event.current_user_event.interest == 1 %}
+      {% if is_maybe %}
         <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Maybe</a>
       {% else %}
         <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 1, "card": "{{ is_card_json }}"}'>Maybe</a>  
       {% endif %}
-      {% if event.current_user_event and event.current_user_event.interest == 2 %}
+      {% if is_go %}
         <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Go</a>
       {% else %}
         <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 2, "card": "{{ is_card_json }}"}'>Go</a>  
       {% endif %}
     </div>
-    <div class='float_container event_users'>
-      <div class='float_center'><div class='float_child'>
-        <a class='link_img'>
-          <span class='event_users_count'>
-            {% if event.interested_user_count %}
+    {% if event.interested_user_count %}
+      <div class='float_container event_users {{ "hide" if is_skipped else ""}}'>
+        <div class='float_center'><div class='float_child'>
+          <a class='link_img'>
+            <span class='event_users_count'>
               <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
-            {% endif %}
-          </span>
-        </a>
-        {% if card %}
-          {% set interested_users = event.interested_users.limit(5) %}
-        {% else %}
-          {% set interested_users = event.interested_users %}
-        {% endif %}
-        {% for user in interested_users %}
-          <a class='link_img nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
-            <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
+            </span>
           </a>
-        {% endfor %}
-      </div></div>
-    </div>
+          {% if card %}
+            {% set interested_users = event.interested_users.limit(5) %}
+          {% else %}
+            {% set interested_users = event.interested_users %}
+          {% endif %}
+          {% for user in interested_users %}
+            <a class='link_img nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
+              <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
+            </a>
+          {% endfor %}
+        </div></div>
+      </div>
+    {% endif %}
   </div>
 </div>
