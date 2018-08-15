@@ -1,0 +1,4 @@
+<div class='event_date {{"event_date_weekend" if d.weekday()>=5 else ""}}'>
+  <div class="event_month">{{ d.strftime("%b") }}</div>
+  <div class="event_day">{{ d.day }}</div>
+</div>

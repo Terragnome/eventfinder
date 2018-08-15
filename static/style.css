@@ -1,3 +1,62 @@
+@-webkit-keyframes anim-collapse {
+  to{ opacity: 0; }
+}
+
+@-webkit-keyframes anim-collapse
+@keyframes anim-collapse {
+  to{ opacity: 0; }
+}
+
+@-webkit-keyframes anim-expand {
+  to{ opacity: 1; }
+}
+
+@keyframes anim-expand {
+  to{ opacity: 1; }
+}
+
+@-webkit-keyframes anim-fade-in {
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
+
+@keyframes anim-fade-in {
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
+
+@-webkit-keyframes anim-move-up {
+  from{}
+  to{
+      -webkit-transform: translateY(0);
+      opacity: 1;
+  }
+}
+
+@keyframes anim-move-up {
+  from{}
+  to{
+    -webkit-transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes anim-stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes anim-stretchdelay {
+  0%, 40%, 100% { 
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% { 
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
+
 .spinner {
   text-align: center;
   font-size: 10px;
@@ -9,8 +68,8 @@
   height: 100%;
   width: 6px;
 
-  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
-  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  -webkit-animation: anim-stretchdelay 1.2s infinite ease-in-out;
+  animation: anim-stretchdelay 1.2s infinite ease-in-out;
 }
 
 .spinner .rect1 {
@@ -31,52 +90,6 @@
 .spinner .rect4 {
   -webkit-animation-delay: -0.8s;
   animation-delay: -0.8s;
-}
-
-@-webkit-keyframes sk-stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
-  20% { -webkit-transform: scaleY(1.0) }
-}
-
-@keyframes sk-stretchdelay {
-  0%, 40%, 100% { 
-    transform: scaleY(0.4);
-    -webkit-transform: scaleY(0.4);
-  }  20% { 
-    transform: scaleY(1.0);
-    -webkit-transform: scaleY(1.0);
-  }
-}
-
-@-webkit-keyframes fadeIn {
-  from{
-    opacity: 0;
-  }
-  to{
-    opacity: 1;
-  }
-}
-
-@keyframes fadeIn {
-  from{ opacity: 0; }
-  to{ opacity: 1; }
-}
-
-@-webkit-keyframes moveUp {
-  from{}
-  to{
-      -webkit-transform: translateY(0);
-      opacity: 1;
-  }
-}
-
-@keyframes moveUp {
-  from{}
-  to{
-    -webkit-transform: translateY(0);
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 a{
@@ -108,8 +121,8 @@ span{
 }
 
 .anim_fade_in{
-  -webkit-animation: fadeIn 0.6s ease forwards;
-  animation: fadeIn 0.6s ease forwards;  
+  -webkit-animation: anim-fade-in 0.6s ease forwards;
+  animation: anim-fade-in 0.6s ease forwards;  
 }
 
 .app_header{
@@ -216,8 +229,15 @@ span{
   margin: 10px 0 20px 0;
 }
 
+.event_collapse{
+  -webkit-animation: anim-collapse 0.2s ease forwards;
+}
+
+.event_expand{
+  -webkit-animation: anim-expand 0.2s ease forwards; 
+}
+
 .event_date{
-  position: relative;
   border: 1px solid black;
   border-radius: 5px;
   color: black;
@@ -236,6 +256,12 @@ span{
 .event_date .event_month{
   font-size: 9px;
   margin: 5px 0 2px 0;
+}
+
+.event_date_weekend{
+  background-color: #808080;
+  color: white;
+  border-color: #808080;
 }
 
 .event_description{
@@ -291,8 +317,8 @@ span{
 .event_list.effect_in li.animate {
   -webkit-transform: translateY(100px);
   transform: translateY(100px);
-  -webkit-animation: moveUp 0.3s ease forwards;
-  animation: moveUp 0.3s ease forwards;
+  -webkit-animation: anim-move-up 0.3s ease forwards;
+  animation: anim-move-up 0.3s ease forwards;
 }
 
 .events_none{
