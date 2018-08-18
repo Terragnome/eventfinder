@@ -8,23 +8,23 @@
 
 <div id="event_{{ event.event_id }}" class='event'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
-    <div class='event_img_wrapper {{ "hide" if is_skipped else ""}}'>
+    <div class='event_img_wrapper {{ "event_skipped" if is_skipped else ""}}'>
       {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
       {% if event.img_url %}
         <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
       {% endif %}
     </div>
-    <div class='event_header'>  
+    <div class='event_header {{ "event_skipped" if is_skipped else ""}}'>  
       <div class='event_title'>{{ event.display_name }}</div>
       {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
-      <div class='event_time {{ "hide" if is_skipped else ""}}'>{{ event.display_time }}</div>
-      <div class='{{ "hide" if is_skipped else ""}}'>
+      <div class='event_time'>{{ event.display_time }}</div>
+      <div class='event_dates'>
         {% with d=event.start_date %}{% include "_date_card.html" %}{% endwith %}
         {% if event.start_date != event.end_date %}
           {% with d=event.end_date %}{% include "_date_card.html" %}{% endwith %}
         {% endif %}
       </div>
-      <div class='event_address {{ "hide" if is_skipped else ""}}'>
+      <div class='event_address'>
         {% if card %}
           <div>{{ event.display_city }}</div>
         {% else %}
@@ -37,9 +37,9 @@
       </div>
     </div>
   {% if card %}</a>{% endif %}
-  <div class='event_body'>
+  <div class='event_body {{ "event_skipped" if is_skipped else ""}}'>
     {% if not card %}
-      <p class='event_description {{ "hide" if is_skipped else ""}}'>{{ event.description }}</p>
+      <p class='event_description'>{{ event.description }}</p>
     {% endif %}
     <div class='event_choices'>
       {% if is_skipped %}
@@ -59,24 +59,26 @@
       {% endif %}
     </div>
     {% if event.interested_user_count %}
-      <div class='float_container event_users {{ "hide" if is_skipped else ""}}'>
-        <div class='float_center'><div class='float_child'>
-          <a class='link_img'>
-            <span class='event_users_count'>
-              <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
-            </span>
-          </a>
-          {% if card %}
-            {% set interested_users = event.interested_users.limit(5) %}
-          {% else %}
-            {% set interested_users = event.interested_users %}
-          {% endif %}
-          {% for user in interested_users %}
-            <a class='link_img nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
-              <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
+      <div class='float_container event_users}'>
+        <div class='float_center'>
+          <div class='float_child'>
+            <a class='link_img'>
+              <span class='event_users_count'>
+                <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
+              </span>
             </a>
-          {% endfor %}
-        </div></div>
+            {% if card %}
+              {% set interested_users = event.interested_users.limit(5) %}
+            {% else %}
+              {% set interested_users = event.interested_users %}
+            {% endif %}
+            {% for user in interested_users %}
+              <a class='link_img nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
+                <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     {% endif %}
   </div>

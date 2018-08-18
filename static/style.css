@@ -93,15 +93,17 @@
 }
 
 a{
-  color: #FF0000;
+  color: red;
   cursor: pointer;
   text-decoration: none;
   text-transform: uppercase;
 }
 
 body{
+  border: 0px;
   font-family: Roboto,sans-serif;
-  min-width: 480px;
+  margin: 0px;
+  padding: 0px;
 }
 
 div{
@@ -127,16 +129,16 @@ span{
 
 .app_header{
   overflow: auto;
-  margin: 0 0 20px 0;
 }
 
 .app_login{
   float: right;
+  margin: 8px;
 }
 
 .app_login_name{
   font-size: 12px;
-  margin: 18px 0 0 0;
+  margin: 15px 0 0 0;
 }
 
 .app_login_img{
@@ -151,6 +153,38 @@ span{
   float: left;
   font-size: 12px;
   margin: 18px 10px 0 0;
+}
+
+.app_panel_blocker{
+  opacity: 0.2;
+  background-color: black;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+}
+
+.app_panel_overlay{
+  display: none;
+  z-index: 2;
+}
+
+.app_panel_overlay > .button_close{
+  color: black;
+  cursor: pointer;
+  font-size: 40px;
+  margin: 8px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  z-index: 10;
+}
+
+.app_panel_main{
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
 }
 
 .app_title{
@@ -209,7 +243,7 @@ span{
 }
 
 .event_body{
-  padding: 0 10px 25px 10px;
+  padding: 0 10px 5px 10px;
 }
 
 .event_card{
@@ -227,6 +261,48 @@ span{
 
 .event_choices{
   margin: 10px 0 20px 0;
+}
+
+.event_skipped > .event_address{
+  display: none;
+}
+
+.event_skipped > .event_choices > .cap_button{
+  border-color: #DEDEDE;
+  color: #DEDEDE;
+}
+
+.event_skipped > .event_choices > .cap_selected{
+  background-color: #DEDEDE;
+  color: white;
+}
+
+.event_skipped > .event_dates{
+  display: none;
+}
+
+.event_skipped > .event_description{
+  display: none;
+}
+
+.event_skipped > .event_img{
+  display: none;
+}
+
+.event_skipped > .event_paid{
+  display: none;
+}
+
+.event_skipped > .event_time{
+  display: none;
+}
+
+.event_skipped > .event_title{
+  color: #DEDEDE;
+}
+
+.event_skipped > .event_users{
+  display: none;
 }
 
 .event_collapse{
@@ -259,9 +335,11 @@ span{
 }
 
 .event_date_weekend{
-  background-color: #808080;
-  color: white;
-  border-color: #808080;
+  /*background-color: #900C3F;
+  border-color: #900C3F;
+  color: white;*/
+  border-color: #BA55D3;
+  color: #BA55D3;
 }
 
 .event_description{
@@ -282,14 +360,11 @@ span{
   background-color: #DEDEDE;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+  min-height: 40px;
   position: relative;
   top: 0px;
   width: 315px;
   z-index: 1;
-}
-
-.event_img_wrapper{
-  min-height: 40px;
 }
 
 .event_list {
@@ -345,6 +420,43 @@ span{
   padding: 2px 4px 2px 4px;
   position: absolute;
   z-index: 2;
+}
+
+.event_section{
+  border-radius: 5px;
+  color: black;
+  float: left;
+  margin: 10px;
+  text-align: center;
+  width: 200px;
+}
+
+.event_section > .event_section_img{
+  border-radius: 5px 5px 0 0;
+  height: 100px;
+}
+
+.event_section > .event_section_info{
+  background-color: #DEDEDE;
+  border-radius: 0px 0px 5px 5px;
+  height: 50px;
+  padding: 5px;
+  position: relative;
+}
+
+.event_section_info > .event_section_title{
+  font-size: 12px;
+  font-weight: bold;
+  margin: 4px 0 0 0;
+}
+
+.event_section_info > .event_section_subtitle{
+  font-size: 11px;
+  margin: 6px 0 0 0;
+}
+
+.event_sections{
+  margin: 0px 0 50px 0;
 }
 
 .event_time{
@@ -463,16 +575,16 @@ span{
 }
 
 .user_profile_img{
-  border-radius: 25px;
-  height: 50px;
-  width: 50px;
+  border-radius: 20px;
+  height: 40px;
+  width: 40px;
 }
 
 .user_profile_img_placeholder{
   background-color: #DEDEDE;
-  border-radius: 25px;
-  height: 50px;
-  width: 50px;
+  border-radius: 20px;
+  height: 40px;
+  width: 40px;
 }
 
 .user_profile_mini_img{

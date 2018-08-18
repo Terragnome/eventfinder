@@ -189,6 +189,12 @@ def following():
     return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')    
 
+@app.route("/home", methods=['GET'])
+@oauth2.required(scopes=oauth2_scopes)
+def home():
+  current_user = UserController().current_user
+  return user(identifier=current_user.username)
+
 @app.route("/user/<identifier>/", methods=['GET'])
 @paginated
 def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=False):
