@@ -68,7 +68,7 @@ def _render_events_list(
 def paginated(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
-    page = request.args.get('page', default=1, type=int)
+    page = request.args.get('p', default=1, type=int)
     if page <= 1:
         page = 1
         prev_page = None
@@ -79,18 +79,44 @@ def paginated(fn):
     scroll = request.args.get('scroll', default=False, type=bool)
 
     if 'scroll' in kwargs: del kwargs['scroll']
-    if 'page' in kwargs: del kwargs['page']
     if 'prev_page_url' in kwargs: del kwargs['prev_page_url']
     if 'next_page_url' in kwargs: del kwargs['next_page_url']
 
-    prev_page_url = url_for(fn.__name__, *args, page=prev_page, **kwargs)
-    next_page_url = url_for(fn.__name__, *args, page=next_page, **kwargs)
+    if 'p' in kwargs:
+      del kwargs['p']
+
+    if 'tag' in kwargs:
+      kwargs['t'] = kwargs['tag']
+      del kwargs['tag']
+
+    kwargs['p'] = prev_page
+    prev_page_url = url_for(fn.__name__, *args, **kwargs)
+    
+    kwargs['p'] = next_page
+    next_page_url = url_for(fn.__name__, *args, **kwargs)
+
+    if 'p' in kwargs:
+      kwargs['page'] = kwargs['p']
+      del kwargs['p']
+
+    if 't' in kwargs:
+      kwargs['tag'] = kwargs['t']
+      del kwargs['t']
 
     kwargs['scroll'] = scroll
     kwargs['page'] = page
     kwargs['next_page_url'] = next_page_url
     kwargs['prev_page_url'] = prev_page_url
 
+    return fn(*args, **kwargs)
+  return decorated_fn
+
+def tagged(fn):
+  @functools.wraps(fn)
+  def decorated_fn(*args, **kwargs):
+    tag = request.args.get('t', default=None, type=str)
+    if tag:
+      kwargs['tag'] = tag
     return fn(*args, **kwargs)
   return decorated_fn
 
@@ -105,11 +131,20 @@ def logout():
 
 @app.route("/", methods=['GET'])
 @app.route("/events/", methods=['GET'])
+@tagged
 @paginated
-def events(page=1, next_page_url=None, prev_page_url=None, scroll=False):
-  events = EventController().get_events(page=page)
+def events(tag=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
+  events = EventController().get_events(tag=tag, page=page)
+  sections = EventController().get_sections_for_events()
+  for section in sections:
+    section_name = section['section_name']
+    section['section_url'] = url_for('events', t=section_name)
+    section['section_close_url'] = url_for('events')
+    section['selected'] = section_name == tag
+
   vargs = {
     'events': events,
+    'sections': sections,
     'page': page,
     'next_page_url': next_page_url,
     'prev_page_url': prev_page_url,
@@ -196,8 +231,9 @@ def home():
   return user(identifier=current_user.username)
 
 @app.route("/user/<identifier>/", methods=['GET'])
+@tagged
 @paginated
-def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=False):
+def user(identifier, tag=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
   current_user = UserController().current_user
   current_user_id = UserController().current_user_id
 
@@ -205,16 +241,25 @@ def user(identifier, page=1, next_page_url=None, prev_page_url=None, scroll=Fals
 
   if user:
     events = []
+    sections = []
     if not Block.blocks(user.user_id, current_user_id):
       events = EventController().get_events_for_user_by_interested(
         user=user,
         interested=True,
+        tag=tag,
         page=page
       )
+      sections = EventController().get_sections_for_events()
+      for section in sections:
+        section_name = section['section_name']
+        section['section_url'] = url_for('user', identifier=identifier, t=section_name)
+        section['section_close_url'] = url_for('user', identifier=identifier)
+        section['selected'] = section_name == tag
 
     vargs = {
       'current_user': current_user,
       'events': events,
+      'sections': sections,
       'page': page,
       'next_page_url': next_page_url,
       'prev_page_url': prev_page_url

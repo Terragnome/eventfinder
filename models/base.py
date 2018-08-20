@@ -27,10 +27,12 @@ from .auth import Auth
 from .block import Block
 from .connector_event import ConnectorEvent
 from .event import Event
+from .event_tag import EventTag
 from .follow import Follow
 from .squad import Squad
 from .squad_invite import SquadInvite
 from .squad_user import SquadUser
+from .tag import Tag
 from .user import User
 from .user_auth import UserAuth
 from .user_event import UserEvent

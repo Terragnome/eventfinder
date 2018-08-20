@@ -2,7 +2,7 @@ import datetime
 import traceback
 
 from flask import session
-from sqlalchemy import alias, case, desc, nullslast
+from sqlalchemy import alias, asc, case, desc, distinct, nullslast
 from sqlalchemy import and_, or_
 from sqlalchemy.sql import func
 
@@ -11,7 +11,9 @@ from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.data.connector_eb import ConnectorEB, EBEventType
 from models.event import Event
+from models.event_tag import EventTag
 from models.follow import Follow
+from models.tag import Tag
 from models.user import User
 from models.user_event import UserEvent
 from utils.get_from import get_from
@@ -45,12 +47,14 @@ class EventController:
 
     return event
 
-  def get_events(self, page=1):
+  def get_events(self, tag=None, page=1):
     event_scores = alias(
       db_session.query(
         UserEvent.event_id.label('event_id'),
-        func.count(UserEvent.interest>0).label('ct'),
+        func.count(UserEvent.interest).label('ct'),
         func.sum(UserEvent.interest).label('score')
+      ).filter(
+        UserEvent.interest > 0
       ).group_by(
         UserEvent.event_id
       ),
@@ -65,6 +69,17 @@ class EventController:
       event_scores,
       Event.event_id == event_scores.c.event_id
     )
+
+    if tag:
+      events_with_count_query = events_with_count_query.join(
+        EventTag,
+        EventTag.event_id == Event.event_id
+      ).join(
+        Tag,
+        EventTag.tag_id == Tag.tag_id
+      ).filter(
+        Tag.tag_name == tag
+      )
 
     user = UserController().current_user
     if user:
@@ -83,7 +98,7 @@ class EventController:
       )
     ).order_by(
       nullslast(desc(event_scores.c.ct)),
-      nullslast(desc(event_scores.c.ct)),
+      nullslast(desc(event_scores.c.score)),
       Event.start_time.asc(),
       Event.event_id.asc()
     ).limit(
@@ -99,7 +114,7 @@ class EventController:
 
     return results
 
-  def get_events_for_user_by_interested(self, interested, user=None, page=1):
+  def get_events_for_user_by_interested(self, interested, user=None, tag=None, page=1):
     current_user = UserController().current_user
     if not user: user = current_user
 
@@ -133,7 +148,20 @@ class EventController:
           ),
           UserEvent.interest>0
         )
-      ).join(
+      )
+
+      if tag:
+        events_with_counts = events_with_counts.join(
+          EventTag,
+          EventTag.event_id == Event.event_id
+        ).join(
+          Tag,
+          EventTag.tag_id == Tag.tag_id
+        ).filter(
+          Tag.tag_name == tag
+        )
+
+      events_with_counts = events_with_counts.join(
         Event.user_events
       ).group_by(
         Event.event_id
@@ -153,6 +181,29 @@ class EventController:
         results.append(event)
       return results
     return None
+
+  # TODO: Make this operate off the query for performance
+  def get_sections_for_events(self):
+    base_query = db_session.query(
+      Tag.tag_name,
+      func.count(distinct(EventTag.event_id)).label('ct')
+    ).join(
+      EventTag,
+      Tag.tag_id == EventTag.tag_id
+    )
+
+    tags = base_query.group_by(
+      Tag.tag_name
+    ).order_by(
+      desc('ct')
+    )
+
+    return [
+      {
+        'section_name': tag[0],
+        'ct': tag[1],
+      } for tag in tags
+    ]
 
   def update_event(self, event_id, interest):
     user_id = UserController().current_user_id

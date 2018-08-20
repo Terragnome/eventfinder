@@ -170,14 +170,7 @@ span{
 }
 
 .app_panel_overlay > .button_close{
-  color: black;
-  cursor: pointer;
   font-size: 40px;
-  margin: 8px;
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  z-index: 10;
 }
 
 .app_panel_main{
@@ -197,6 +190,17 @@ span{
 
 .box_shadow{
   box-shadow: 2px 2px 10px #DEDEDE;
+}
+
+.button_close{
+  color: black;
+  cursor: pointer;
+  font-size: 20px;
+  margin: 8px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  z-index: 10;
 }
 
 .cap_button{
@@ -431,6 +435,11 @@ span{
   width: 200px;
 }
 
+.event_section.selected > .event_section_info{
+  background-color: red;
+  color: white;
+}
+
 .event_section > .event_section_img{
   border-radius: 5px 5px 0 0;
   height: 100px;
@@ -474,7 +483,7 @@ span{
 }
 
 .event_users{
-  margin: 5px 0 5px 0;
+  margin: 5px 0 15px 0;
 }
 
 .event_users_count{

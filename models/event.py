@@ -1,15 +1,14 @@
-from sqlalchemy import Boolean
-from sqlalchemy import Column
-from sqlalchemy import DateTime
-from sqlalchemy import Float
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import JSON
+from sqlalchemy import and_
+
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, JSON
 from sqlalchemy import orm
 from sqlalchemy import String
 from sqlalchemy.orm import relationship
 
 from .base import Base
+from .base import db_session
+from .event_tag import EventTag
+from .tag import Tag
 from .user_event import UserEvent
 
 class Event(Base):
@@ -34,16 +33,32 @@ class Event(Base):
   link = Column(String)
 
   connector_events = relationship('ConnectorEvent')
+  tags = relationship('Tag', secondary='event_tags', lazy='dynamic')
   user_events = relationship('UserEvent')
-  users = relationship(
-    'User',
-    secondary='user_events',
-    lazy='dynamic'
-  )
+  users = relationship('User', secondary='user_events', lazy='dynamic')
 
   @orm.reconstructor
   def init_on_load(self):
     pass
+
+  def add_tag(self, tag_name):
+    row_tag = Tag.query.filter(Tag.tag_name == tag_name).first()
+
+    if not row_tag:
+      row_tag = Tag(
+        tag_name = tag_name
+      )
+      db_session.add(row_tag)
+      db_session.commit()
+
+    row_event_tag = self.tags.filter(Tag.tag_id == row_tag.tag_id).first()
+    if not row_event_tag:
+      row_event_tag = EventTag(
+        event_id = self.event_id,
+        tag_id = row_tag.tag_id
+      )
+      db_session.add(row_event_tag)
+      db_session.commit()
 
   @property
   def current_user_event(self):

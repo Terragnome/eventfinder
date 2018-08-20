@@ -1,9 +1,13 @@
 {% set events=events or (vargs.events if vargs else None) %}
+{% set sections=sections or (vargs.sections if vargs else None) %}
 
 <div class='event_sections float_container'>
   <div class='float_center'>
-    {% with section_name='Food + Drink' %}{% include "_event_section.html" %}{% endwith %}
-    {% with section_name='Movies' %}{% include "_event_section.html" %}{% endwith %}
+    {% for section in sections %}
+      {% with vargs=section %}
+        {% include "_event_section.html" %}
+      {% endwith %}
+    {% endfor %}
   </div>
 </div>
 

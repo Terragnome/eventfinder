@@ -9,6 +9,7 @@ import tmdbsimple as tmdb
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
+from models.tag import Tag
 
 from utils.get_from import get_from
 
@@ -114,6 +115,8 @@ class ConnectorTMDB:
           row_connector_event.event_id = row_event.event_id
           db_session.merge(row_connector_event)
           db_session.commit()
+
+        row_event.add_tag(Tag.MOVIES)
 
         yield row_event
 

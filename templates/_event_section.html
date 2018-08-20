@@ -1,5 +1,15 @@
-<a>
-  <div class='box_shadow event_section float_child'>
+{% set section_name=section_name or (vargs.section_name if vargs else None) %}
+{% set section_url=section_url or (vargs.section_url if vargs else None) %}
+{% set section_close_url=section_close_url or (vargs.section_close_url if vargs else None) %}
+{% set ct=ct or (vargs.ct if vargs else None) %}
+{% set selected=selected or (vargs.selected if vargs else None) %}
+
+<a class='nav_link_get' href='{{ section_url }}'>
+  <div class='box_shadow event_section float_child {{ "selected" if selected else "" }}'>
+    {% if selected %}
+      <a class='button_close' href='{{ section_close_url }}'>X</a>
+    {% endif %}
+
     <div class='event_section_img'></div>
     <div class='event_section_info'>
       <div class='event_section_title'>{{ section_name }}</div>
