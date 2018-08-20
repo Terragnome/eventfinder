@@ -114,7 +114,11 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
   $.get(url, {
   }).done(function(response) {
     $(target).addClass('anim_fade_in');
-    if(push_state){ history.pushState({'url':url}, null, url); }
+    if(response != '' && push_state){
+      push_url = url;
+      if(typeof push_state === 'string'){ push_url = push_state; }
+      history.pushState({'url':push_url}, null, push_url);
+    }
     if(replace){
       $(target).replaceWith(response);  
     }else{
@@ -162,8 +166,7 @@ Application.scrollNext = function(){
     var current_url = window.location.pathname+window.location.search;
     var next_url = $('.pagination:last').find('a:first').attr('href');
     if(next_url && next_url != current_url){
-      history.pushState({'url':next_url}, null, next_url);
-      Application.getElem('.pagination:last', next_url+'&scroll=true', false, true);
+      Application.getElem('.pagination:last', next_url+'&scroll=true', next_url, true);
     }
   }
 }
