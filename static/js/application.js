@@ -18,11 +18,11 @@ Application.init = function(params) {
 }
 
 Application.ajaxHistory = function(e){
-  var targetData = $(e.target).attr('data');
+  var targetData = $(e.currentTarget).attr('data');
   var data = {};
 
   if(targetData){ data = JSON.parse(targetData); }
-  if(!data.target){ data.target = '#main' }
+  if(!data.target){ data.target = '#main'; }
 
   return data;
 }
@@ -31,6 +31,15 @@ Application.ajaxGet = function(e){
   e.preventDefault();
   var data = Application.ajaxHistory(e);
   $(this).click(Application.getElem(data.target, $(this).attr('href')));  
+}
+
+Application.ajaxGetOverlay = function(e){
+  e.preventDefault();
+  var data = Application.ajaxHistory(e);
+  $(this).click(function(){
+    Application.overlayOpen();
+    Application.getElem("#app_panel_overlay_main", $(this).attr('href'))
+  });
 }
 
 Application.ajaxGetReplace = function(e){
@@ -59,6 +68,9 @@ Application.ajaxifyLinks = function() {
 
   $('a.nav_link_get_replace').unbind('click', Application.ajaxGetReplace);
   $('a.nav_link_get_replace').click(Application.ajaxGetReplace);
+
+  $('a.nav_link_get_overlay').unbind('click', Application.ajaxGetOverlay);
+  $('a.nav_link_get_overlay').click(Application.ajaxGetOverlay);
 
   $('a.nav_link_post').unbind('click', Application.ajaxPost);
   $('a.nav_link_post').click(Application.ajaxPost);
@@ -111,6 +123,18 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
   }).fail(function(xhr, status, error) {
     window.location.replace(url);
   });
+}
+
+Application.overlayOpen = function() {
+  var scrollTop = document.documentElement.scrollTop;
+  var appPanel = $('#app_panel_overlay');
+  appPanel.css('top', scrollTop);
+  appPanel.show();
+}
+
+Application.overlayClose = function() {
+  history.back();
+  $('#app_panel_overlay').hide();
 }
 
 Application.postElem = function(target, url, params, replace=false) {

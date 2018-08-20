@@ -156,17 +156,33 @@ span{
 }
 
 .app_panel_blocker{
+  position: absolute;
   opacity: 0.2;
   background-color: black;
   height: 100%;
-  position: absolute;
   width: 100%;
-  z-index: 2;
+  z-index: 101;
 }
 
 .app_panel_overlay{
+  position: absolute;
   display: none;
-  z-index: 2;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
+}
+
+.app_panel_overlay > .button_close{
+  z-index: 110;
+}
+
+.app_panel_overlay_main{
+  background-color: white;
+  border-radius: 5px;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 102;
 }
 
 .app_panel_overlay > .button_close{

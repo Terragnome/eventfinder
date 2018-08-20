@@ -21,9 +21,10 @@
   {% block scripts %}{% endblock %}
 </head>
 <title>{% block title %}WeGo{% endblock %}</title>
-<div class='app_panel_overlay'>
-  <a class='nav_link_get button_close'>X</a>
-  <div class='app_panel_blocker'></div>
+<div id='app_panel_overlay' class='app_panel_overlay'>
+  <a class='nav_link_get button_close' onclick="Application.overlayClose()">X</a>
+  <div id='app_panel_overlay_main' class='app_panel_overlay_main box_shadow'></div>
+  <div id='app_panel_blocker' class='app_panel_blocker'></div>
 </div>
 <section class="content">
 	<header class='app_header'>

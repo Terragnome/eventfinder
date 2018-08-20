@@ -134,13 +134,11 @@ def logout():
 @tagged
 @paginated
 def events(tag=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
-  events = EventController().get_events(tag=tag, page=page)
-  sections = EventController().get_sections_for_events()
+  events, sections = EventController().get_events(tag=tag, page=page)
   for section in sections:
-    section_name = section['section_name']
-    section['section_url'] = url_for('events', t=section_name)
+    section['section_url'] = url_for('events', t=section['section_name'])
     section['section_close_url'] = url_for('events')
-    section['selected'] = section_name == tag
+    section['selected'] = section['section_name'] == tag
 
   vargs = {
     'events': events,
@@ -243,18 +241,16 @@ def user(identifier, tag=None, page=1, next_page_url=None, prev_page_url=None, s
     events = []
     sections = []
     if not Block.blocks(user.user_id, current_user_id):
-      events = EventController().get_events_for_user_by_interested(
+      events, sections = EventController().get_events_for_user_by_interested(
         user=user,
         interested=True,
         tag=tag,
         page=page
       )
-      sections = EventController().get_sections_for_events()
       for section in sections:
-        section_name = section['section_name']
-        section['section_url'] = url_for('user', identifier=identifier, t=section_name)
+        section['section_url'] = url_for('user', identifier=identifier, t=section['section_name'])
         section['section_close_url'] = url_for('user', identifier=identifier)
-        section['selected'] = section_name == tag
+        section['selected'] = section['section_name'] == tag
 
     vargs = {
       'current_user': current_user,

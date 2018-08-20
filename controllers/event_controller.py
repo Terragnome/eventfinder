@@ -91,33 +91,34 @@ class EventController:
         )
       )
 
-    events_with_counts = events_with_count_query.filter(
+    events_with_count_query = events_with_count_query.filter(
       or_(
         Event.start_time >= datetime.datetime.now(),
         Event.end_time >= datetime.datetime.now()
       )
-    ).order_by(
-      nullslast(desc(event_scores.c.ct)),
-      nullslast(desc(event_scores.c.score)),
-      Event.start_time.asc(),
-      Event.event_id.asc()
-    ).limit(
+    )
+
+    sections = self.get_sections_for_events(events_with_count_query)
+
+    events_with_count_query = events_with_count_query.limit(
       self.PAGE_SIZE
     ).offset(
       (page-1)*self.PAGE_SIZE
     )
 
     results = []
-    for event, user_count, event_score in events_with_counts:
+    for event, user_count, event_score in events_with_count_query:
       event.interested_user_count = user_count
       results.append(event)
 
-    return results
+    return (results, sections)
 
   def get_events_for_user_by_interested(self, interested, user=None, tag=None, page=1):
     current_user = UserController().current_user
     if not user: user = current_user
 
+    results = []
+    sections = []
     if user:
       user_events = UserEvent.query.filter(
         and_(
@@ -167,32 +168,52 @@ class EventController:
         Event.event_id
       ).order_by(
         desc('ct'), Event.start_time.asc(), Event.event_id.asc()
-      ).limit(
+      )
+
+      sections = self.get_sections_for_events(events_with_counts)
+
+      events_with_counts = events_with_counts.limit(
         self.PAGE_SIZE
       ).offset(
         (page-1)*self.PAGE_SIZE
       )
 
-      results = []
       for event, user_event_count in events_with_counts:
         if current_user:
           event.current_user_event = get_from(current_user_events_by_event_id, [event.event_id])
         event.interested_user_count = user_event_count
         results.append(event)
-      return results
-    return None
+
+    return (results, sections)
 
   # TODO: Make this operate off the query for performance
-  def get_sections_for_events(self):
-    base_query = db_session.query(
+  def get_sections_for_events(self, events=None):
+    section_query = db_session.query(
       Tag.tag_name,
       func.count(distinct(EventTag.event_id)).label('ct')
     ).join(
       EventTag,
       Tag.tag_id == EventTag.tag_id
+    ).join(
+      Event,
+      EventTag.event_id == Event.event_id
     )
 
-    tags = base_query.group_by(
+    if events:
+      events_table = alias(
+        events,
+        'events_table'
+      )
+
+      section_query = section_query.join(
+        events_table
+      )
+    else:
+      section_query = section_query.filter(
+        Event.end_time >= datetime.datetime.now()
+      )
+
+    section_query = section_query.group_by(
       Tag.tag_name
     ).order_by(
       desc('ct')
@@ -202,7 +223,7 @@ class EventController:
       {
         'section_name': tag[0],
         'ct': tag[1],
-      } for tag in tags
+      } for tag in section_query if tag[1]>0
     ]
 
   def update_event(self, event_id, interest):
