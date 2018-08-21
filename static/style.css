@@ -129,15 +129,27 @@ span{
 
 .app_background{
   position: absolute;
-  background-color: #650a2d;
+  background-color: #650A2D;
   /*background-image: url('/static/img/bg/bg.jpg');*/
   background-position: center center;
   background-repeat: none;
   background-size: cover;
-  height: 75%;
+  height: 70%;
   top: 0px;
   width: 100%;
   z-index: -10;
+}
+
+.app_background > .app_background_inset_1{
+  background-color: #E51865;
+  height: 45%;
+  z-index: -9;
+}
+
+.app_background > .app_background_inset_2{
+  background-color: #FF1A72;
+  height: 30%;
+  z-index: -8;
 }
 
 .app_header{
@@ -149,9 +161,8 @@ span{
   margin: 8px;
 }
 
-.app_login_name{
-  font-size: 12px;
-  margin: 15px 0 0 0;
+.app_login > .app_nav_link{
+  margin: 15px 5px 0 5px;
 }
 
 .app_login_img{
@@ -163,6 +174,7 @@ span{
 }
 
 .app_nav_link{
+  color: white;
   float: left;
   font-size: 12px;
   margin: 18px 10px 0 0;
@@ -217,8 +229,8 @@ span{
   text-decoration: none;
 }
 
-.box_shadow{/*
-  box-shadow: 1px 1px 5px #DEDEDE inner;*/
+.box_shadow{
+  /*box-shadow: 1px 1px 5px #DEDEDE inner;*/
   border: 1px solid rgba(222, 222, 222, 1);
 }
 
@@ -326,11 +338,8 @@ span{
 }
 
 .event_date_weekend{
-  /*background-color: #900C3F;
-  border-color: #900C3F;
-  color: white;*/
-  border-color: #BA55D3;
-  color: #BA55D3;
+  border-color: #FF1A72;
+  color: #FF1A72;
 }
 
 .event_description{
@@ -392,7 +401,7 @@ span{
   border: 1px solid #DEDEDE;
   border-radius: 5px;
   color: #BEBEBE;
-  font-size: 12px;
+  font-size: 40px;
   margin: 50px 30px 50px 30px;
   padding: 100px 0 100px 0;
   text-align: center;

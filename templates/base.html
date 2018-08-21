@@ -21,7 +21,10 @@
   {% block scripts %}{% endblock %}
 </head>
 <title>{% block title %}WeGo{% endblock %}</title>
-<div class='app_background'></div>
+<div class='app_background'>
+  <div class='app_background_inset_1'></div>
+  <div class='app_background_inset_2'></div>
+</div>
 <div id='app_panel_overlay' class='app_panel_overlay'>
   <a class='nav_link_get button_close' onclick="Application.overlayClose()">X</a>
   <div id='app_panel_overlay_main' class='app_panel_overlay_main box_shadow'></div>
@@ -33,9 +36,6 @@
       <a class='app_title  nav_link_get' href="{{ url_for('events') }}">
         {% block header %}WeGo{% endblock %}
       </a>
-      {% if session.user %}
-        <a class='app_nav_link nav_link_get' href="{{ url_for('following') }}">Following</a>
-      {% endif %}
     </div>
 		<div class='app_login'>
 			{% if session.user %}
@@ -44,7 +44,8 @@
             <img class="app_login_img user_profile_img" src="{{ session.user.image_url }}"></img>
           </a>
         {% endif %}
-        <a class="app_login_name right" href="{{ url_for('home') }}">{{ session.user.username }}</a>
+        <a class="app_nav_link nav_link_get right" href="{{ url_for('home') }}">{{ session.user.username }}</a>
+        <a class='app_nav_link nav_link_get right' href="{{ url_for('following') }}">Following</a>
 			{% else %}
         <a class="app_login_img right user_profile_img_placeholder" href="{{ url_for('oauth2.authorize') }}"></a>
         <a class="app_login_name right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
