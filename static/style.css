@@ -180,7 +180,7 @@ span{
   margin: 18px 10px 0 0;
 }
 
-.app_panel_blocker{
+#app_panel_blocker{
   position: absolute;
   opacity: 0.2;
   background-color: black;
@@ -189,7 +189,7 @@ span{
   z-index: 101;
 }
 
-.app_panel_overlay{
+#app_panel_overlay{
   position: absolute;
   display: none;
   height: 100%;
@@ -197,21 +197,18 @@ span{
   z-index: 100;
 }
 
-.app_panel_overlay > .button_close{
+#app_panel_overlay > .button_close{
+  font-size: 40px;
   z-index: 110;
 }
 
-.app_panel_overlay_main{
+#app_panel_overlay_main{
   background-color: white;
   border-radius: 5px;
   height: 100%;
   position: absolute;
   width: 100%;
   z-index: 102;
-}
-
-.app_panel_overlay > .button_close{
-  font-size: 40px;
 }
 
 .app_panel_main{
@@ -277,9 +274,15 @@ span{
 }
 
 .event{
+  background-color: white;
   position: relative;
   text-align: center;
   z-index: 1;
+}
+
+.event > .event_img_wrapper > .event_img{
+  margin: 40px 0 0 0;
+  width: 420px;
 }
 
 .event_address{
@@ -293,7 +296,6 @@ span{
 }
 
 .event_card{
-  background-color: white;
   border-radius: 5px;
   margin: 0 10px 30px 10px;
   text-align: center;
@@ -338,8 +340,9 @@ span{
 }
 
 .event_date_weekend{
+  background-color: #FF1A72;
   border-color: #FF1A72;
-  color: #FF1A72;
+  color: white;
 }
 
 .event_description{
@@ -473,45 +476,45 @@ span{
   margin: 0px 0 50px 0;
 }
 
-.event_skipped > .event_address{
+.event_skipped.card > .event_address{
   display: none;
 }
 
-.event_skipped > .event_choices > .cap_button{
+.event_skipped.card > .event_choices > .cap_button{
   border-color: #DEDEDE;
   color: #DEDEDE;
 }
 
-.event_skipped > .event_choices > .cap_selected{
+.event_skipped.card > .event_choices > .cap_selected{
   background-color: #DEDEDE;
   color: white;
 }
 
-.event_skipped > .event_dates{
+.event_skipped.card > .event_dates{
   display: none;
 }
 
-.event_skipped > .event_description{
+.event_skipped.card > .event_description{
   display: none;
 }
 
-.event_skipped > .event_img{
+.event_skipped.card > .event_img{
   display: none;
 }
 
-.event_skipped > .event_paid{
+.event_skipped.card > .event_paid{
   display: none;
 }
 
-.event_skipped > .event_time{
+.event_skipped.card > .event_time{
   display: none;
 }
 
-.event_skipped > .event_title{
+.event_skipped.card > .event_title{
   color: #DEDEDE;
 }
 
-.event_skipped > .event_users{
+.event_skipped.card > .event_users{
   display: none;
 }
 
