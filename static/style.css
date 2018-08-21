@@ -93,7 +93,7 @@
 }
 
 a{
-  color: red;
+  color: #E51865;
   cursor: pointer;
   text-decoration: none;
   text-transform: uppercase;
@@ -125,6 +125,19 @@ span{
 .anim_fade_in{
   -webkit-animation: anim-fade-in 0.6s ease forwards;
   animation: anim-fade-in 0.6s ease forwards;  
+}
+
+.app_background{
+  position: absolute;
+  background-color: #650a2d;
+  /*background-image: url('/static/img/bg/bg.jpg');*/
+  background-position: center center;
+  background-repeat: none;
+  background-size: cover;
+  height: 75%;
+  top: 0px;
+  width: 100%;
+  z-index: -10;
 }
 
 .app_header{
@@ -197,15 +210,16 @@ span{
 }
 
 .app_title{
-  color: black;
+  color: white;
   float: left;
   font-size: 22px;
   margin: 10px 10px 0 10px;
   text-decoration: none;
 }
 
-.box_shadow{
-  box-shadow: 2px 2px 10px #DEDEDE;
+.box_shadow{/*
+  box-shadow: 1px 1px 5px #DEDEDE inner;*/
+  border: 1px solid rgba(222, 222, 222, 1);
 }
 
 .button_close{
@@ -220,20 +234,20 @@ span{
 }
 
 .cap_button{
-  border: 1px solid red;
+  border: 1px solid #E51865;
   border-radius: 20px;
   font-size: 11px;
   height: 20px;
   padding: 5px 8px 5px 8px;
 }
 .cap_button:hover{
-  background-color: red;
+  background-color: #E51865;
   color: white;
   transition: 0.3s;
 }
 
 .cap_selected{
-  background-color: red;
+  background-color: #E51865;
   color: white;
 }
 
@@ -268,7 +282,6 @@ span{
 
 .event_card{
   background-color: white;
-  border: 1px solid #DEDEDE;
   border-radius: 5px;
   margin: 0 10px 30px 10px;
   text-align: center;
@@ -281,48 +294,6 @@ span{
 
 .event_choices{
   margin: 10px 0 20px 0;
-}
-
-.event_skipped > .event_address{
-  display: none;
-}
-
-.event_skipped > .event_choices > .cap_button{
-  border-color: #DEDEDE;
-  color: #DEDEDE;
-}
-
-.event_skipped > .event_choices > .cap_selected{
-  background-color: #DEDEDE;
-  color: white;
-}
-
-.event_skipped > .event_dates{
-  display: none;
-}
-
-.event_skipped > .event_description{
-  display: none;
-}
-
-.event_skipped > .event_img{
-  display: none;
-}
-
-.event_skipped > .event_paid{
-  display: none;
-}
-
-.event_skipped > .event_time{
-  display: none;
-}
-
-.event_skipped > .event_title{
-  color: #DEDEDE;
-}
-
-.event_skipped > .event_users{
-  display: none;
 }
 
 .event_collapse{
@@ -431,7 +402,7 @@ span{
   color: white;
   cursor: default;
   display: inline-block;
-  background-color: red;
+  background-color: #E51865;
   border-radius: 1px;
   float: left;
   font-size: 10px;
@@ -443,6 +414,7 @@ span{
 }
 
 .event_section{
+  background-color: white;
   border-radius: 5px;
   color: black;
   float: left;
@@ -451,8 +423,16 @@ span{
   width: 200px;
 }
 
+.event_section.selected{
+  width: 600px;
+}
+
+.event_section.selected > .event_section_img{
+  height: 300px;
+}
+
 .event_section.selected > .event_section_info{
-  background-color: red;
+  background-color: #E51865;
   color: white;
 }
 
@@ -482,6 +462,48 @@ span{
 
 .event_sections{
   margin: 0px 0 50px 0;
+}
+
+.event_skipped > .event_address{
+  display: none;
+}
+
+.event_skipped > .event_choices > .cap_button{
+  border-color: #DEDEDE;
+  color: #DEDEDE;
+}
+
+.event_skipped > .event_choices > .cap_selected{
+  background-color: #DEDEDE;
+  color: white;
+}
+
+.event_skipped > .event_dates{
+  display: none;
+}
+
+.event_skipped > .event_description{
+  display: none;
+}
+
+.event_skipped > .event_img{
+  display: none;
+}
+
+.event_skipped > .event_paid{
+  display: none;
+}
+
+.event_skipped > .event_time{
+  display: none;
+}
+
+.event_skipped > .event_title{
+  color: #DEDEDE;
+}
+
+.event_skipped > .event_users{
+  display: none;
 }
 
 .event_time{
