@@ -1,9 +1,13 @@
 {% set users=users or (vargs.users if vargs else None) %}
 
-{% for user in users %}
-  {% with vargs=vargs, user=user %}
-    <div class="left">
-      {% include "_user_card.html" %}
-    </div>
-  {% endwith %}
-{% endfor %}
+{% if users%}
+  {% for user in users %}
+    {% with vargs=vargs, user=user %}
+      <div class="left">
+        {% include "_user_card.html" %}
+      </div>
+    {% endwith %}
+  {% endfor %}
+{% else %}
+  {% include "_empty.html" %}
+{% endif %}

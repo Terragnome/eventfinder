@@ -15,6 +15,8 @@ Application.init = function(params) {
   });
   $(document).ajaxSuccess(Application.ajaxifyLinks);
   $(document).ajaxComplete(Application.enableScrollEvent);
+
+  $(document).ready(Application.userPanelInit);
 }
 
 Application.ajaxHistory = function(e){
@@ -168,5 +170,43 @@ Application.scrollNext = function(){
     if(next_url && next_url != current_url){
       Application.getElem('.pagination:last', next_url+'&scroll=true', next_url, true);
     }
+  }
+}
+
+Application.userPanelInit = function(){
+  $(".toggle_user_panel").bind('click', Application.userPanelToggle);
+  $("#user_panel > a").bind('click', Application.userPanelHide);
+}
+
+Application.userPanelToggle = function(e){
+  console.log('hola');
+  var isVisible = $("#user_panel").is(':visible');
+  if(isVisible){
+    Application.userPanelHide();
+  }else{
+    Application.userPanelShow();
+  }
+  e.stopPropagation();
+}
+
+Application.userPanelHide = function(){
+  var isVisible = $("#user_panel").is(':visible');
+  if(isVisible){
+    $("#user_panel").hide();
+    $('html').unbind('click', Application.userPanelCheckHide);
+  }
+}
+
+Application.userPanelCheckHide = function(e){
+  if(e.target.id != 'user_panel'){
+    Application.userPanelHide();
+  }
+}
+
+Application.userPanelShow = function(){
+  var isVisible = $("#user_panel").is(':visible');
+  if(!isVisible){
+    $("#user_panel").show();
+    $('html').bind('click', Application.userPanelCheckHide);
   }
 }

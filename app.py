@@ -206,21 +206,19 @@ def following():
   current_user = UserController().current_user
   following = UserController().get_following()
 
-  if following:
-    template = TEMPLATE_USERS
+  template = TEMPLATE_USERS
 
-    vargs = {
-      'users': following
-    }
+  vargs = {
+    'users': following
+  }
 
-    for user in following:
-      user.is_followed = current_user.is_follows_user(user)
-      user.is_blocked = current_user.is_blocks_user(user)
+  for user in following:
+    user.is_followed = current_user.is_follows_user(user)
+    user.is_blocked = current_user.is_blocks_user(user)
 
-    if request.is_xhr:        
-      return render_template(template, vargs=vargs, **vargs)
-    return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
-  return redirect(request.referrer or '/')    
+  if request.is_xhr:
+    return render_template(template, vargs=vargs, **vargs)
+  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
 @app.route("/home", methods=['GET'])
 @oauth2.required(scopes=oauth2_scopes)

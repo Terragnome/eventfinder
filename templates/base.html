@@ -1,6 +1,9 @@
+{% set app_name="EventFinder" %}
+
 <!doctype html>
 <head>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"></link>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rubik"></link>
 	<link rel="stylesheet" href="{{ url_for('static', filename='_animation.css', v=(range(1, 100000) | random)) }}"></link>
   <link rel="stylesheet" href="{{ url_for('static', filename='_fonts.css', v=(range(1, 100000) | random)) }}"></link>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v=(range(1, 100000) | random)) }}"></link>
@@ -11,16 +14,9 @@
   <script type='application/javascript' src="{{ url_for('static', filename='js/classie.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/AnimOnScroll.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=(range(1, 100000) | random)) }}"></script>
-  <script>
-    Application.init({
-      'urls': {
-        'auth': "{{ url_for('oauth2.authorize') }}"
-      }
-    });
-  </script>
   {% block scripts %}{% endblock %}
 </head>
-<title>{% block title %}WeGo{% endblock %}</title>
+<title>{% block title %}{{ app_name }}{% endblock %}</title>
 <div class='app_background'>
   <div class='app_background_inset_1'></div>
   <div class='app_background_inset_2'></div>
@@ -34,26 +30,42 @@
 	<header class='app_header'>
     <div>
       <a class='app_title  nav_link_get' href="{{ url_for('events') }}">
-        {% block header %}WeGo{% endblock %}
+        {% block header %}{{ app_name }}{% endblock %}
       </a>
     </div>
-		<div class='app_login'>
+    <div class='app_login'>
 			{% if session.user %}
-		    {% if session.user.image_url %}
-          <a class="right" href="{{ url_for('logout') }}"">
+        <a class="right toggle_user_panel">
+          {% if session.user.image_url %}
             <img class="app_login_img user_profile_img" src="{{ session.user.image_url }}"></img>
-          </a>
-        {% endif %}
+          {% else %}
+            <img class="app_login_img user_profile_img_placeholder"></img>
+          {% endif %}
+        </a>
         <a class="app_nav_link nav_link_get right" href="{{ url_for('home') }}">{{ session.user.username }}</a>
-        <a class='app_nav_link nav_link_get right' href="{{ url_for('following') }}">Following</a>
 			{% else %}
-        <a class="app_login_img right user_profile_img_placeholder" href="{{ url_for('oauth2.authorize') }}"></a>
-        <a class="app_login_name right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
+        <img class="app_login_img right user_profile_img_placeholder" href="{{ url_for('oauth2.authorize') }}"></img>
+        <a class="app_nav_link nav_link_get right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
 			{% endif %}
-		</div>
+    </div>
 	</header>
+  {% if session.user %}
+    <div id='user_panel'>
+      <a class="nav_link_get" href="{{ url_for('home') }}">Home</a>
+      <a class='nav_link_get' href="{{ url_for('following') }}">Following</a>
+      <a href="{{ url_for('logout') }}">Sign out</a>
+    </div>
+  {% endif %}
   <div id='main' class='app_panel_main'>
   	{% block content %}{% endblock %}
   </div>
 </section>
 </html>
+
+<script>
+    Application.init({
+      'urls': {
+        'auth': "{{ url_for('oauth2.authorize') }}"
+      }
+    });
+  </script>

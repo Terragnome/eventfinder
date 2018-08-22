@@ -129,25 +129,25 @@ span{
 
 .app_background{
   position: absolute;
-  background-color: #650A2D;
+  background-color: #E51865;
   /*background-image: url('/static/img/bg/bg.jpg');*/
   background-position: center center;
   background-repeat: none;
   background-size: cover;
-  height: 70%;
+  height: 80%;
   top: 0px;
   width: 100%;
   z-index: -10;
 }
 
 .app_background > .app_background_inset_1{
-  background-color: #E51865;
-  height: 45%;
+  background-color: #650A2D;
+  height: 40%;
   z-index: -9;
 }
 
 .app_background > .app_background_inset_2{
-  background-color: #FF1A72;
+  background-color: #991044;
   height: 30%;
   z-index: -8;
 }
@@ -176,6 +176,7 @@ span{
 .app_nav_link{
   color: white;
   float: left;
+  font-family: Rubik,sans-serif;
   font-size: 12px;
   margin: 18px 10px 0 0;
 }
@@ -221,6 +222,7 @@ span{
 .app_title{
   color: white;
   float: left;
+  font-family: Rubik,sans-serif;
   font-size: 22px;
   margin: 10px 10px 0 10px;
   text-decoration: none;
@@ -271,6 +273,20 @@ span{
   font-size: 0;
   height: 0;
   visibility: hidden;
+}
+
+.empty{  
+  background-color: #650A2D;
+  color: white;
+  font-size: 40px;
+  height: 100%;
+  text-align: center;
+  width: 100%;
+}
+
+.empty > .emoji{
+  font-size: 40px;
+  margin: 50px 0 30px 0;
 }
 
 .event{
@@ -397,17 +413,6 @@ span{
   transform: translateY(100px);
   -webkit-animation: anim-move-up 0.3s ease forwards;
   animation: anim-move-up 0.3s ease forwards;
-}
-
-.events_none{
-  background-color: white;
-  border: 1px solid #DEDEDE;
-  border-radius: 5px;
-  color: #BEBEBE;
-  font-size: 40px;
-  margin: 50px 30px 50px 30px;
-  padding: 100px 0 100px 0;
-  text-align: center;
 }
 
 .event_paid{
@@ -631,6 +636,31 @@ span{
 
 .user_feed_profile_img{
   margin: 0 15px 0 0;
+}
+
+#user_panel{
+  position: absolute;
+  right: 0px;
+  background-color: white;
+  border-radius: 5px;
+  display: none;
+  font-size: 12px;
+  margin: 5px;
+  padding: 10px;
+  width: 150px;
+  text-align: right;
+  z-index: 20;
+}
+
+#user_panel > a{
+  border-radius: 5px;
+  display: block;
+  padding: 5px;
+}
+
+#user_panel > a:hover{
+  color: white;
+  background-color: #E51865;
 }
 
 .user_profile_img{
