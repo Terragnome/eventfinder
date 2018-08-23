@@ -134,7 +134,7 @@ span{
   background-position: center center;
   background-repeat: none;
   background-size: cover;
-  height: 80%;
+  height: 600px;
   top: 0px;
   width: 100%;
   z-index: -10;
@@ -142,13 +142,13 @@ span{
 
 .app_background > .app_background_inset_1{
   background-color: #650A2D;
-  height: 40%;
+  height: 280px;
   z-index: -9;
 }
 
 .app_background > .app_background_inset_2{
   background-color: #991044;
-  height: 30%;
+  height: 160px;
   z-index: -8;
 }
 
@@ -179,6 +179,14 @@ span{
   font-family: Rubik,sans-serif;
   font-size: 12px;
   margin: 18px 10px 0 0;
+}
+
+.app_page{
+  background-color: white;
+  padding: 20px 10px 20px 10px;
+  position: relative;
+  text-align: center;
+  z-index: 1;
 }
 
 #app_panel_blocker{
@@ -217,6 +225,16 @@ span{
   position: absolute;
   width: 100%;
   z-index: 1;
+}
+
+.app_section{
+}
+
+.app_section > .body{
+}
+
+.app_section > .title{
+  margin: 0 0 10px 0;
 }
 
 .app_title{
@@ -276,7 +294,7 @@ span{
 }
 
 .empty{  
-  background-color: #650A2D;
+  /*background-color: #650A2D;*/
   color: white;
   font-size: 40px;
   height: 100%;
@@ -289,14 +307,7 @@ span{
   margin: 50px 0 30px 0;
 }
 
-.event{
-  background-color: white;
-  position: relative;
-  text-align: center;
-  z-index: 1;
-}
-
-.event > .event_img_wrapper > .event_img{
+.app_page > .event_img_wrapper > .event_img{
   margin: 40px 0 0 0;
   width: 420px;
 }
@@ -608,16 +619,23 @@ span{
   float: right;
 }
 
+.title{
+  color: #650A2D;
+  font-family: Rubik,sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.user_feed{
+  margin: 20px 0px 10px 0;
+}
+
 .user_feed_choice{
   margin: 0 5px 0 5px;
 }
 
 .user_feed_choices{
   margin: 12px 0 0 0;
-}
-
-.user_feed{
-  margin: 20px 0px 10px 0;
 }
 
 .user_feed_profile{

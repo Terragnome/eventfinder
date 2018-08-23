@@ -40,6 +40,7 @@ oauth2.init_app(
 )
 
 TEMPLATE_MAIN = "main.html"
+TEMPLATE_FOLLOWING = "_following.html"
 TEMPLATE_EVENT = "_event.html"
 TEMPLATE_EVENTS = "_events.html"
 TEMPLATE_EVENTS_LIST = "_events_list.html"
@@ -204,12 +205,15 @@ def event_update(event_id):
 @oauth2.required(scopes=oauth2_scopes)
 def following():
   current_user = UserController().current_user
+  recommended_users = UserController().get_following_recommended()
   following = UserController().get_following()
 
-  template = TEMPLATE_USERS
+  template = TEMPLATE_FOLLOWING
 
   vargs = {
-    'users': following
+    'recommended_users': recommended_users,
+    'users': following,
+    'callback': '/following'
   }
 
   for user in following:

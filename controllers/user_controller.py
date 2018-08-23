@@ -1,8 +1,8 @@
 import httplib2
 import json
 
-from flask import current_app, session
-from sqlalchemy import and_, or_
+from flask import  current_app, session
+from sqlalchemy import alias, and_, or_
 
 from models.base import db_session
 from models.auth import Auth
@@ -129,8 +129,54 @@ class UserController:
   def get_user(self, identifier):
     return self._get_user(identifier)
 
-  def get_following(self):
-    return self.current_user.followed_users.filter(Follow.active).all()
+  def get_following(self, user=None):
+    if user is None: user = self.current_user
+    return user.followed_users.filter(Follow.active).all()
+
+  def get_following_recommended(self, user=None):
+    if user is None: user = self.current_user
+
+    already_following_user_ids = alias(
+      db_session.query(
+        Follow.follow_id
+      ).select_from(
+        Follow
+      ).filter(
+        and_(
+          Follow.user_id == user.user_id,
+          Follow.active
+        )
+      ),
+      'already_following_user_ids'
+    )
+
+    blocking_user_ids = alias(
+      db_session.query(
+        Block.block_id
+      ).select_from(
+        Block
+      ).filter(
+        and_(
+          Block.user_id == user.user_id,
+          Block.active
+        )
+      ),
+      'blocking_user_ids'
+    )
+
+    query = db_session.query(
+      User
+    ).filter(
+      and_(
+        User.user_id != user.user_id,
+        ~User.user_id.in_(already_following_user_ids),
+        ~User.user_id.in_(blocking_user_ids)
+      )
+    ).limit(
+      5
+    ).all()
+
+    return query
 
   def get_users(self):
     return User.query.all()

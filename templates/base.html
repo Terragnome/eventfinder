@@ -44,7 +44,9 @@
         </a>
         <a class="app_nav_link nav_link_get right" href="{{ url_for('home') }}">{{ session.user.username }}</a>
 			{% else %}
-        <img class="app_login_img right user_profile_img_placeholder" href="{{ url_for('oauth2.authorize') }}"></img>
+        <a href="{{ url_for('oauth2.authorize') }}">
+          <img class="app_login_img right user_profile_img_placeholder"></img>
+        </a>
         <a class="app_nav_link nav_link_get right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
 			{% endif %}
     </div>

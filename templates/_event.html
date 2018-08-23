@@ -6,7 +6,7 @@
 {% set is_maybe = event.current_user_event and event.current_user_event.interest == 1 %}
 {% set is_go = event.current_user_event and event.current_user_event.interest == 2 %}
 
-<div id="event_{{ event.event_id }}" class='event'>
+<div id="event_{{ event.event_id }}" class='app_page event'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
     <div class='{{ "card" if card else "" }} event_img_wrapper {{ "event_skipped" if is_skipped else ""}}'>
       {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}

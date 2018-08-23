@@ -1,13 +1,19 @@
+{% set callback=callback or (vargs.callback if vargs else None) %}
 {% set users=users or (vargs.users if vargs else None) %}
+{% set user_elem_id_modifier=user_elem_id_modifier or (vargs.user_elem_id_modifier if vargs else None) %}
 
 {% if users%}
-  {% for user in users %}
-    {% with vargs=vargs, user=user %}
-      <div class="left">
-        {% include "_user_card.html" %}
-      </div>
-    {% endwith %}
-  {% endfor %}
+  <div class='float_container'>
+    <div class='float_center'>
+      {% for user in users %}
+        <div class='float_child left'>
+          {% with vargs=vargs, user=user, user_elem_id_modifier=user_elem_id_modifier %}
+            {% include "_user_card.html" %}
+          {% endwith %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 {% else %}
   {% include "_empty.html" %}
 {% endif %}
