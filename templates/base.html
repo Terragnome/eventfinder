@@ -1,4 +1,4 @@
-{% set app_name="EventFinder" %}
+{% set app_name="GoWithMe" %}
 
 <!doctype html>
 <head>
@@ -55,6 +55,7 @@
     <div id='user_panel'>
       <a class="nav_link_get" href="{{ url_for('home') }}">Home</a>
       <a class='nav_link_get' href="{{ url_for('following') }}">Following</a>
+      <a class='nav_link_get' href="{{ url_for('followers') }}">Followers</a>
       <a class='nav_link_get' href="{{ url_for('blocking') }}">Blocking</a>
       <a href="{{ url_for('logout') }}">Sign out</a>
     </div>

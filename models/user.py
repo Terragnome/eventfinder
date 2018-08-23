@@ -36,7 +36,7 @@ class User(Base):
     lazy='dynamic'
   )
 
-  followed_users = relationship(
+  following_users = relationship(
     'User',
     secondary='follows',
     primaryjoin='User.user_id==Follow.user_id',
@@ -44,6 +44,14 @@ class User(Base):
     lazy='dynamic'
   )
   
+  follower_users = relationship(
+    'User',
+    secondary='follows',
+    primaryjoin='User.user_id==Follow.follow_id',
+    secondaryjoin='Follow.user_id==User.user_id',
+    lazy='dynamic'
+  )
+
   @property
   def interested_events(self):
     return self.events.filter(UserEvent.interest>0)
@@ -75,7 +83,7 @@ class User(Base):
     self._is_followed = value
 
   def is_follows_user(self, user):
-    return self.followed_users.filter(
+    return self.following_users.filter(
       and_(
         Follow.follow_id==user.user_id,
         Follow.active

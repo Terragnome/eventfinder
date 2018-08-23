@@ -41,6 +41,7 @@ oauth2.init_app(
 
 TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING = "_blocking.html"
+TEMPLATE_FOLLOWERS = "_followers.html"
 TEMPLATE_FOLLOWING = "_following.html"
 TEMPLATE_EVENT = "_event.html"
 TEMPLATE_EVENTS = "_events.html"
@@ -223,22 +224,43 @@ def event_update(event_id):
     return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
+@app.route("/followers/", methods=['GET'])
+@oauth2.required(scopes=oauth2_scopes)
+def followers():
+  current_user = UserController().current_user
+  follower_users = UserController().get_followers()
+
+  template = TEMPLATE_FOLLOWERS
+
+  vargs = {
+    'users': follower_users,
+    'callback': '/followers'
+  }
+
+  for user in follower_users:
+    user.is_followed = current_user.is_follows_user(user)
+    user.is_blocked = current_user.is_blocks_user(user)
+
+  if request.is_xhr:
+    return render_template(template, vargs=vargs, **vargs)
+  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
+
 @app.route("/following/", methods=['GET'])
 @oauth2.required(scopes=oauth2_scopes)
 def following():
   current_user = UserController().current_user
   recommended_users = UserController().get_following_recommended()
-  following = UserController().get_following()
+  following_users = UserController().get_following()
 
   template = TEMPLATE_FOLLOWING
 
   vargs = {
     'recommended_users': recommended_users,
-    'users': following,
+    'users': following_users,
     'callback': '/following'
   }
 
-  for user in following:
+  for user in following_users:
     user.is_followed = current_user.is_follows_user(user)
     user.is_blocked = current_user.is_blocks_user(user)
 
