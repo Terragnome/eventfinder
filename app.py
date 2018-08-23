@@ -40,6 +40,7 @@ oauth2.init_app(
 )
 
 TEMPLATE_MAIN = "main.html"
+TEMPLATE_BLOCKING = "_blocking.html"
 TEMPLATE_FOLLOWING = "_following.html"
 TEMPLATE_EVENT = "_event.html"
 TEMPLATE_EVENTS = "_events.html"
@@ -129,6 +130,27 @@ def login():
 def logout():
   UserController()._logout()
   return redirect('/')
+
+@app.route("/blocking/", methods=['GET'])
+@oauth2.required(scopes=oauth2_scopes)
+def blocking():
+  current_user = UserController().current_user
+  blocking = UserController().get_blocking()
+
+  template = TEMPLATE_BLOCKING
+
+  vargs = {
+    'users': blocking,
+    'callback': '/blocking'
+  }
+
+  for user in blocking:
+    user.is_followed = current_user.is_follows_user(user)
+    user.is_blocked = current_user.is_blocks_user(user)
+
+  if request.is_xhr:
+    return render_template(template, vargs=vargs, **vargs)
+  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
 @app.route("/", methods=['GET'])
 @app.route("/events/", methods=['GET'])
@@ -298,7 +320,9 @@ def user_action(identifier):
         interested=True
       )
 
-    if 'following' in callback:
+    if 'blocking' in callback:
+      return blocking()
+    elif 'following' in callback:
       return following()
     elif 'events' in callback:
       return events()

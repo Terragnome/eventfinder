@@ -126,8 +126,9 @@ class UserController:
 
     return self._get_user(identifier)
 
-  def get_user(self, identifier):
-    return self._get_user(identifier)
+  def get_blocking(self, user=None):
+    if user is None: user = self.current_user
+    return user.blocked_users.filter(Block.active).all()
 
   def get_following(self, user=None):
     if user is None: user = self.current_user
@@ -177,6 +178,9 @@ class UserController:
     ).all()
 
     return query
+
+  def get_user(self, identifier):
+    return self._get_user(identifier)
 
   def get_users(self):
     return User.query.all()

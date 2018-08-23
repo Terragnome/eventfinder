@@ -182,9 +182,11 @@ span{
 }
 
 .app_page{
-  background-color: white;
+  background-color: #650A2D;
+  height: 100%;
   padding: 20px 10px 20px 10px;
   position: relative;
+  width: 100%;
   text-align: center;
   z-index: 1;
 }
@@ -294,7 +296,7 @@ span{
 }
 
 .empty{  
-  /*background-color: #650A2D;*/
+  /*background-color: #E51865;*/
   color: white;
   font-size: 40px;
   height: 100%;
@@ -627,7 +629,7 @@ span{
 }
 
 .title{
-  color: #650A2D;
+  color: #E51865;
   font-family: Rubik,sans-serif;
   font-weight: bold;
   font-size: 20px;
