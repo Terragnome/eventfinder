@@ -142,7 +142,7 @@ def blocking():
 
   vargs = {
     'users': blocking,
-    'callback': '/blocking'
+    'callback': 'blocking'
   }
 
   for user in blocking:
@@ -154,7 +154,7 @@ def blocking():
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
 @app.route("/", methods=['GET'])
-@app.route("/events/", methods=['GET'])
+@app.route("/explore/", methods=['GET'])
 @tagged
 @paginated
 def events(tag=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
@@ -234,7 +234,7 @@ def followers():
 
   vargs = {
     'users': follower_users,
-    'callback': '/followers'
+    'callback': 'followers'
   }
 
   for user in follower_users:
@@ -257,7 +257,7 @@ def following():
   vargs = {
     'recommended_users': recommended_users,
     'users': following_users,
-    'callback': '/following'
+    'callback': 'following'
   }
 
   for user in following_users:
@@ -342,8 +342,11 @@ def user_action(identifier):
         interested=True
       )
 
+    # TODO: Replace this with something generic but safe
     if 'blocking' in callback:
       return blocking()
+    elif 'followers' in callback:
+      return followers()
     elif 'following' in callback:
       return following()
     elif 'events' in callback:

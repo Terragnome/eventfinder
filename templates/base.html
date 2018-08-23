@@ -53,6 +53,7 @@
 	</header>
   {% if session.user %}
     <div id='user_panel'>
+      <a class="nav_link_get" href="{{ url_for('events') }}">Explore</a>
       <a class="nav_link_get" href="{{ url_for('home') }}">Home</a>
       <a class='nav_link_get' href="{{ url_for('following') }}">Following</a>
       <a class='nav_link_get' href="{{ url_for('followers') }}">Followers</a>
