@@ -7,10 +7,9 @@
 <a class='nav_link_get' href='{{ section_url }}'>
   <div class='box_shadow event_section float_child {{ "selected" if selected else "" }}'>
     {% if selected %}
-      <a class='button_close' href='{{ section_close_url }}'>X</a>
+      <a class='button_close nav_link_get' href='{{ section_close_url }}'>X</a>
     {% endif %}
-
-    <div class='event_section_img'></div>
+    <img class='event_section_img' src='/static/img/section/{{ section_name }}.jpg'></img>
     <div class='event_section_info'>
       <div class='event_section_title'>{{ section_name }}</div>
       <div class='event_section_subtitle'>{{ ct }} Events</div>

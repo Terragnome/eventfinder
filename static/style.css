@@ -311,6 +311,7 @@ span{
 
 .event{
   background-color: white;
+  border-radius: 5px;
   position: relative;
   text-align: center;
   z-index: 1;
@@ -460,30 +461,38 @@ span{
   width: 200px;
 }
 
-.event_section.selected{
-  width: 600px;
-}
-
-.event_section.selected > .event_section_img{
-  height: 300px;
-}
-
-.event_section.selected > .event_section_info{
-  background-color: #E51865;
+.event_section > .button_close{
   color: white;
+  font-size: 30px;
 }
 
 .event_section > .event_section_img{
   border-radius: 5px 5px 0 0;
-  height: 100px;
+  width: 100%;
 }
 
 .event_section > .event_section_info{
   background-color: #DEDEDE;
   border-radius: 0px 0px 5px 5px;
   height: 50px;
+  margin: -4px 0 0 0;
   padding: 5px;
   position: relative;
+}
+
+.event_section.selected{
+  width: 600px;
+}
+
+.event_section.selected > .event_section_info{
+  background-color: #650A2D;
+  color: white;
+}
+
+.event_section_img{
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
 }
 
 .event_section_info > .event_section_title{
