@@ -28,11 +28,9 @@
 </div>
 <section class="content">
 	<header class='app_header'>
-    <div>
-      <a class='app_title  nav_link_get' href="{{ url_for('events') }}">
-        {% block header %}{{ app_name }}{% endblock %}
-      </a>
-    </div>
+    <a class='app_title  nav_link_get' href="{{ url_for('events') }}">
+      {% block header %}{{ app_name }}{% endblock %}
+    </a>
     <div class='app_login'>
 			{% if session.user %}
         <a class="right toggle_user_panel">
@@ -49,6 +47,10 @@
         </a>
         <a class="app_nav_link nav_link_get right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
 			{% endif %}
+    </div>
+    <div class='app_search'>
+      <input type='text' class='search_field' name='q'></input>
+      <a class='nav_link_post search_icon' href=''></a>
     </div>
 	</header>
   {% if session.user %}
