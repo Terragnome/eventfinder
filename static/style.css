@@ -350,8 +350,9 @@ span{
   z-index: 1;
 }
 
-.event.app_page{
+.event.event_page{
   border-radius: 0;
+  margin: 20px 0 0 0;
 }
 
 .event > .event_img_wrapper > .event_img{
