@@ -17,10 +17,7 @@
   {% block scripts %}{% endblock %}
 </head>
 <title>{% block title %}{{ app_name }}{% endblock %}</title>
-<div class='app_background'>
-  <div class='app_background_inset_1'></div>
-  <div class='app_background_inset_2'></div>
-</div>
+<div class='app_background'></div>
 <div id='app_panel_overlay'>
   <a class='nav_link_get button_close' onclick="Application.overlayClose()">X</a>
   <div id='app_panel_overlay_main' class='box_shadow'></div>
@@ -48,10 +45,10 @@
         <a class="app_nav_link nav_link_get right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
 			{% endif %}
     </div>
-    <div class='app_search'>
+    <!-- <div class='app_search'>
       <input type='text' class='search_field' name='q'></input>
       <a class='nav_link_post search_icon' href=''></a>
-    </div>
+    </div> -->
 	</header>
   {% if session.user %}
     <div id='user_panel'>
@@ -63,7 +60,7 @@
       <a href="{{ url_for('logout') }}">Sign out</a>
     </div>
   {% endif %}
-  <div id='main' class='app_panel_main'>
+  <div id='main'>
   	{% block content %}{% endblock %}
   </div>
 </section>

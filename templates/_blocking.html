@@ -5,10 +5,8 @@
     {% if users %}
       <div class='title'>Blocking</div>
     {% endif %}
-    <div class='body'>
-      {% with vargs=vargs, user_elem_id_modifier='blocking' %}
-        {% include "_users.html" %}
-      {% endwith %}
-    </div>
+    {% with vargs=vargs, user_elem_id_modifier='blocking' %}
+      {% include "_users.html" %}
+    {% endwith %}
   </div>
 </div>

@@ -27,38 +27,55 @@ class User(Base):
     cascade="all, delete-orphan",
     lazy='dynamic'
   )
+  @property
+  def user_events(self):
+    return self._user_events.filter(UserEvent.interest != None)
 
-  blocked_users = relationship(
+  _blocked_users = relationship(
     'User',
     secondary='blocks',
     primaryjoin='User.user_id==Block.user_id',
     secondaryjoin='User.user_id==Block.block_id',
     lazy='dynamic'
   )
+  @property
+  def blocked_users(self):
+    return self._blocked_users.filter(Block.active)
+  @property
+  def count_blocked(self):
+    return self.blockeds_users.count()
 
-  following_users = relationship(
+  _following_users = relationship(
     'User',
     secondary='follows',
     primaryjoin='User.user_id==Follow.user_id',
     secondaryjoin='User.user_id==Follow.follow_id',
     lazy='dynamic'
   )
+  @property
+  def following_users(self):
+    return self._following_users.filter(Follow.active)
+  @property
+  def count_following(self):
+    return self.following_users.count()
   
-  follower_users = relationship(
+  _follower_users = relationship(
     'User',
     secondary='follows',
     primaryjoin='User.user_id==Follow.follow_id',
     secondaryjoin='Follow.user_id==User.user_id',
     lazy='dynamic'
   )
+  @property
+  def follower_users(self):
+    return self._follower_users.filter(Follow.active)
+  @property
+  def count_followers(self):
+    return self.follower_users.count()
 
   @property
   def interested_events(self):
     return self.events.filter(UserEvent.interest>0)
-
-  @property
-  def user_events(self):
-    return self._user_events.filter(UserEvent.interest != None)
 
   @property
   def is_blocked(self):
