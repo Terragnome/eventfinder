@@ -1,9 +1,12 @@
+import datetime
+
 from sqlalchemy import Column, Integer, String
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import relationship
 
 from .base import Base
 from .block import Block
+from .event import Event
 from .follow import Follow
 from .user_event import UserEvent
 
@@ -29,7 +32,15 @@ class User(Base):
   )
   @property
   def user_events(self):
-    return self._user_events.filter(UserEvent.interest != None)
+    return self._user_events.join(
+      Event
+    ).filter(
+      and_(
+        Event.end_time >= datetime.datetime.now(),
+        UserEvent.interest != None,
+        UserEvent.interest > 0
+      )
+    )
   @property
   def user_events_count(self):
     return self.user_events.count()
