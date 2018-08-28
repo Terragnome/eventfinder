@@ -30,6 +30,9 @@ class User(Base):
   @property
   def user_events(self):
     return self._user_events.filter(UserEvent.interest != None)
+  @property
+  def user_events_count(self):
+    return self.user_events.count()
 
   _blocked_users = relationship(
     'User',
@@ -42,8 +45,8 @@ class User(Base):
   def blocked_users(self):
     return self._blocked_users.filter(Block.active)
   @property
-  def count_blocked(self):
-    return self.blockeds_users.count()
+  def blocked_users_count(self):
+    return self.blockeds_users.count() or 0
 
   _following_users = relationship(
     'User',
@@ -56,8 +59,8 @@ class User(Base):
   def following_users(self):
     return self._following_users.filter(Follow.active)
   @property
-  def count_following(self):
-    return self.following_users.count()
+  def following_users_count(self):
+    return self.following_users.count() or 0
   
   _follower_users = relationship(
     'User',
@@ -70,8 +73,8 @@ class User(Base):
   def follower_users(self):
     return self._follower_users.filter(Follow.active)
   @property
-  def count_followers(self):
-    return self.follower_users.count()
+  def follower_users_count(self):
+    return self.follower_users.count() or 0
 
   @property
   def interested_events(self):

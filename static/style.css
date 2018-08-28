@@ -108,7 +108,7 @@ span{
   background-position: center center;
   background-repeat: none;
   background-size: cover;
-  height: 600px;
+  height: 800px;
   top: 0px;
   width: 100%;
   z-index: -10;
@@ -192,41 +192,50 @@ span{
 }
 
 .app_search{
-  display: inline-block;
+  background-color: var(--dark-color);
+  border: 0px;
+  border-radius: 8px;
+  height: 40px;
+  margin: 10px 30px 30px 30px;
+}
+
+.app_search > .cap_button{
   float: right;
-  margin: 10px 30px 10px 30px;
+  margin: 4px;
+  position: relative;
+
 }
 
 .app_search > .search_field{
-  background-color: var(--mid-color);
+  background-color: var(--dark-color);
   border: 0px;
-  border-radius: 5px;
   color: white;
   display: inline-block;
-  font-size: 12px;
-  height: 28px;
+  font-size: 16px;
+  height: 40px;
   margin: 0px;
+  overflow: hidden;
   padding: 0px;
+  width: 80%;
   text-align: center;
   text-transform: uppercase;
-  width: 200px;
 }
 
 .app_search > .search_field:focus{
   outline-width: 0;
 }
-
 .app_search > .search_icon{
   background: url(/static/icons/search.svg) no-repeat;
-  background-position: center;
-  background-size: auto 21px;
+  background-position: center center;
+  background-size: auto 30px;
   background-repeat: no-repeat;
-  display: line;
+  display: inline-block;
   float: right;
   font-size: 46px;
-  height: 22px;
-  margin: 2px 4px 2px 4px;
-  width: 22px;
+  height: 30px;
+  margin: 0 7px 0 0;
+  padding: 5px;
+  width: 30px;
 
   &:hover{
     color: red;
@@ -275,6 +284,18 @@ span{
   background-color: var(--light-color);
   color: white;
   transition: 0.3s;
+}
+
+.cap_button.cap_close{
+  background-color: var(--light-color);
+  color: white;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.cap_close > .cap_button_close{
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0 0 0 5px;
 }
 
 .cap_selected{
@@ -474,7 +495,7 @@ span{
 }
 
 .event_section > .event_section_info{
-  background-color: var(--neutral-color);
+  background-color: white;
   border-radius: 0px 0px 5px 5px;
   height: 50px;
   margin: -4px 0 0 0;
@@ -487,7 +508,7 @@ span{
 }
 
 .event_section.selected > .event_section_info{
-  background-color: var(--mid-color);
+  background-color: var(--dark-color);
   color: white;
 }
 
@@ -686,7 +707,7 @@ span{
 }
 
 .title{
-  color: var(--light-color);
+  color: white;
   font-family: Rubik,sans-serif;
   font-weight: bold;
   font-size: 18px;

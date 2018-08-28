@@ -1,0 +1,12 @@
+{% set url=url or (vargs.url if vargs else request.url) %}
+
+<form class='app_search' action='{{ url }}' method='get'>
+  <input type='text' class='search_field' name='q'></input>
+  <a class='app_link_post search_icon' onclick='parentNode.submit();'></a>
+  {% if request.args.get('q') %}
+    <a class='cap_button cap_close nav_link_get' href='{{ filter_url_params(url, exclude=["q"]) }}'>
+      {{ request.args.get('q') }}
+      <span class='cap_button_close'>X</span>
+    </a>
+  {% endif %}
+</form>

@@ -13,6 +13,7 @@ from config.app_config import app_config
 
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
+from helpers.jinja_helper import filter_url_params
 from models.base import db_session
 from models.block import Block
 from models.follow import Follow
@@ -27,6 +28,8 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url('redis://redis:6379/')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
+app.jinja_env.globals.update(filter_url_params=filter_url_params)
+
 sess = Session()
 sess.init_app(app)
 
@@ -38,6 +41,12 @@ oauth2.init_app(
   prompt = 'select_account',
   authorize_callback=UserController()._request_user_info
 )
+
+param_to_kwarg = {
+  'p': 'page',
+  'q': 'query',
+  't': 'tag'
+}
 
 TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING = "_blocking.html"
@@ -67,6 +76,15 @@ def _render_events_list(
     return render_template(template, vargs=vargs, **vargs)
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
+def searchable(fn):
+  @functools.wraps(fn)
+  def decorated_fn(*args, **kwargs):
+    query = request.args.get('q', default='', type=str)
+    if 'query' in kwargs: del kwargs['query']
+    kwargs['query'] = query
+    return fn(*args, **kwargs)
+  return decorated_fn
+
 # TODO: Need to fix showing next button with no next pages
 def paginated(fn):
   @functools.wraps(fn)
@@ -81,30 +99,22 @@ def paginated(fn):
 
     scroll = request.args.get('scroll', default=False, type=bool)
 
+    if 'p' in kwargs: del kwargs['p']
     if 'scroll' in kwargs: del kwargs['scroll']
     if 'prev_page_url' in kwargs: del kwargs['prev_page_url']
     if 'next_page_url' in kwargs: del kwargs['next_page_url']
 
-    if 'p' in kwargs:
-      del kwargs['p']
+    url_kwargs = dict(kwargs)
+    for param, kw in param_to_kwarg.items():
+      if kw in url_kwargs:
+        url_kwargs[param] = url_kwargs[kw]
+        del url_kwargs[kw]
 
-    if 'tag' in kwargs:
-      kwargs['t'] = kwargs['tag']
-      del kwargs['tag']
-
-    kwargs['p'] = prev_page
-    prev_page_url = url_for(fn.__name__, *args, **kwargs)
+    url_kwargs['p'] = prev_page
+    prev_page_url = url_for(fn.__name__, *args, **url_kwargs)
     
-    kwargs['p'] = next_page
-    next_page_url = url_for(fn.__name__, *args, **kwargs)
-
-    if 'p' in kwargs:
-      kwargs['page'] = kwargs['p']
-      del kwargs['p']
-
-    if 't' in kwargs:
-      kwargs['tag'] = kwargs['t']
-      del kwargs['t']
+    url_kwargs['p'] = next_page
+    next_page_url = url_for(fn.__name__, *args, **url_kwargs)
 
     kwargs['scroll'] = scroll
     kwargs['page'] = page
@@ -156,12 +166,18 @@ def blocking():
 @app.route("/", methods=['GET'])
 @app.route("/explore/", methods=['GET'])
 @tagged
+@searchable
 @paginated
-def events(tag=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
-  events, sections = EventController().get_events(tag=tag, page=page)
+def events(tag=None, query=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
+  events, sections = EventController().get_events(query=query, tag=tag, page=page)
   for section in sections:
-    section['section_url'] = url_for('events', t=section['section_name'])
-    section['section_close_url'] = url_for('events')
+    kwargs = {}
+    if query: kwargs['q'] = query
+    section['section_close_url'] = url_for('events', **kwargs)
+
+    kwargs['t'] = section['section_name']
+    section['section_url'] = url_for('events', **kwargs)
+
     section['selected'] = section['section_name'] == tag
 
   vargs = {

@@ -222,13 +222,14 @@ class ConnectorEB:
                         or ("kindergarten" in lower_event_name)
                         or ("gluten" in lower_event_name)
                         or ("health" in lower_event_name)
-                        or ("vegan" in lower_event_name)
-                        or ("vegan" in lower_event_name)
                         or ("job" in lower_event_name and "fair" in lower_event_name)
                         or ("kid" in lower_event_name)
                         or ("kids" in lower_event_name)
+                        or ("phone number" in lower_event_name)
                         or ("teen" in lower_event_name)
                         or ("teens" in lower_event_name)
+                        or ("vegan" in lower_event_name)
+                        or ("vegan" in lower_event_name)
                         or ("wealth" in lower_event_name and "management" in lower_event_name)
                     ):
                         continue

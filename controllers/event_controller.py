@@ -47,7 +47,7 @@ class EventController:
 
     return event
 
-  def get_events(self, tag=None, page=1):
+  def get_events(self, query=None, tag=None, page=1):
     event_scores = alias(
       db_session.query(
         UserEvent.event_id.label('event_id'),
@@ -69,6 +69,16 @@ class EventController:
       event_scores,
       Event.event_id == event_scores.c.event_id
     )
+
+    if query:
+      events_with_count_query = events_with_count_query.filter(
+        or_(
+          Event.name.ilike("%{}%".format(query)),
+          Event.description.ilike("%{}%".format(query)),
+          Event.venue_name.ilike("%{}%".format(query)),
+          Event.city.ilike("%{}%".format(query))
+        )
+      )
 
     if tag:
       events_with_count_query = events_with_count_query.join(

@@ -12,6 +12,10 @@
     </div>
   </div>
 
+  {% with url=request.url %}
+    {% include "_search_bar.html" %}
+  {% endwith %}
+
   <ul id='event_list' class='event_list effect_in'>
     {% with vargs=vargs %}
       {% include "_events_list.html" %}

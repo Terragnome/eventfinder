@@ -11,10 +11,10 @@
     <div class='left'>{{ user.username }} ({{ user.display_name }})</div>
     <div class='user_feed_counts'>
       <div class='user_feed_count'>
-        {{ user.count_following }} {{ 'Follow' if user.count_following == 1 else 'Follows' }}
+        {{ user.user_events_count }} {{ 'Event' if user.user_events_count == 1 else 'Events' }}
       </div>
       <div class='user_feed_count'>
-        {{ user.count_followers }} {{ 'Follower' if user.count_followers == 1 else 'Followers' }}
+        {{ user.follower_users_count }} {{ 'Follower' if user.follower_users_count == 1 else 'Followers' }}
       </div>
     </div>
     <div class='user_feed_choices'>
