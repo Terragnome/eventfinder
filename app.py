@@ -292,8 +292,9 @@ def home():
 
 @app.route("/user/<identifier>/", methods=['GET'])
 @tagged
+@searchable
 @paginated
-def user(identifier, tag=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
+def user(identifier, query=None, tag=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
   current_user = UserController().current_user
   current_user_id = UserController().current_user_id
 
@@ -305,6 +306,7 @@ def user(identifier, tag=None, page=1, next_page_url=None, prev_page_url=None, s
     if not Block.blocks(user.user_id, current_user_id):
       events, sections = EventController().get_events_for_user_by_interested(
         user=user,
+        query=query,
         interested=True,
         tag=tag,
         page=page

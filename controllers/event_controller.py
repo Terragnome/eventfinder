@@ -123,7 +123,7 @@ class EventController:
 
     return (results, sections)
 
-  def get_events_for_user_by_interested(self, interested, user=None, tag=None, page=1):
+  def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, page=1):
     current_user = UserController().current_user
     if not user: user = current_user
 
@@ -160,6 +160,16 @@ class EventController:
           UserEvent.interest>0
         )
       )
+
+      if query:
+        events_with_counts = events_with_counts.filter(
+          or_(
+            Event.name.ilike("%{}%".format(query)),
+            Event.description.ilike("%{}%".format(query)),
+            Event.venue_name.ilike("%{}%".format(query)),
+            Event.city.ilike("%{}%".format(query))
+          )
+        )
 
       if tag:
         events_with_counts = events_with_counts.join(
