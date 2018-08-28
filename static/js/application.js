@@ -215,6 +215,9 @@ Application.scrollNext = function(){
     var current_url = window.location.pathname+window.location.search;
     var next_url = $('.pagination:last').find('a:first').attr('href');
     if(next_url && next_url != current_url){
+      //Disable history with pages
+      next_url = False;
+      //
       Application.getElem('.pagination:last', next_url+'&scroll=true', next_url, true);
     }
   }
