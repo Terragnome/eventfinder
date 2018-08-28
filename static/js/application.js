@@ -19,7 +19,7 @@ Application.init = function(params) {
   $(document).ready(Application.userPanelInit);
 }
 
-Application.ajaxHistory = function(e){
+Application.ajaxData = function(e){
   var targetData = $(e.currentTarget).attr('data');
   var data = {};
 
@@ -31,13 +31,13 @@ Application.ajaxHistory = function(e){
 
 Application.ajaxGet = function(e){
   e.preventDefault();
-  var data = Application.ajaxHistory(e);
+  var data = Application.ajaxData(e);
   $(this).click(Application.getElem(data.target, $(this).attr('href')));  
 }
 
 Application.ajaxGetOverlay = function(e){
   e.preventDefault();
-  var data = Application.ajaxHistory(e);
+  var data = Application.ajaxData(e);
   $(this).click(function(){
     Application.overlayOpen();
     Application.getElem("#app_panel_overlay_main", $(this).attr('href'))
@@ -46,20 +46,64 @@ Application.ajaxGetOverlay = function(e){
 
 Application.ajaxGetReplace = function(e){
   e.preventDefault();
-  var data = Application.ajaxHistory(e);
+  var data = Application.ajaxData(e);
   $(this).click(Application.getElem(data.target, $(this).attr('href')));
 }
 
 Application.ajaxPost = function(e){
   e.preventDefault();
-  var data = Application.ajaxHistory(e);
+  var data = Application.ajaxData(e);
   $(this).click(Application.postElem(data.target, $(this).attr('href'), data));
 }
 
 Application.ajaxPostReplace = function(e){
   e.preventDefault();
-  var data = Application.ajaxHistory(e);
+  var data = Application.ajaxData(e);
   $(this).click(Application.postElem(data.target, $(this).attr('href'), data, true));
+}
+
+Application.ajaxForm = function(e){
+  e.preventDefault();
+  var data = Application.ajaxData(e);
+  var form = $(this);
+  var url = form.attr('action');
+  var method = form.attr('method').toLowerCase();
+
+  var urlComponents = url.split('?');
+  var urlRoot = urlComponents[0];
+
+  var urlQuery;
+  if(urlComponents[1]){
+   urlQuery = urlComponents[1].split('&');
+  }else{
+    urlQuery = [];
+  }
+  var urlValues = {};
+  urlQuery.forEach(function(kv){
+    var pair = kv.split('=');
+    var k = pair[0];
+    var v = pair[1];
+    urlValues[k] = v;
+  });
+
+  var inputs = form.find($('input'));
+  inputs.each(function() {
+    if(this.name != null && this.name != ""){
+      var k = this.name;
+      var v = $(this).val();
+      urlValues[k] = v;
+    }
+  });
+  
+  if(method == 'get'){
+    var newUrlQuery = [];
+    for(var k in urlValues){
+      var v = urlValues[k];
+      newUrlQuery.push(k+'='+v);
+    }
+    var newUrl = urlRoot+"?"+newUrlQuery.join('&');
+    Application.getElem(data.target, newUrl, true);
+  }
 }
 
 Application.ajaxifyLinks = function() {
@@ -79,6 +123,9 @@ Application.ajaxifyLinks = function() {
 
   $('a.nav_link_post_replace').unbind('click', Application.ajaxPostReplace);
   $('a.nav_link_post_replace').click(Application.ajaxPostReplace);
+
+  $('form.nav_link_form').unbind('submit', Application.ajaxForm);
+  $('form.nav_link_form').submit(Application.ajaxForm);
 }
 
 Application.animateElems = function() {
@@ -179,7 +226,6 @@ Application.userPanelInit = function(){
 }
 
 Application.userPanelToggle = function(e){
-  console.log('hola');
   var isVisible = $("#user_panel").is(':visible');
   if(isVisible){
     Application.userPanelHide();

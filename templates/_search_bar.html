@@ -1,8 +1,9 @@
 {% set url=url or (vargs.url if vargs else request.url) %}
+{% set placeholder=placeholder or (vargs.placeholder if vargs else '') %}
 
-<form class='app_search' action='{{ url }}' method='get'>
-  <input type='text' class='search_field' name='q'></input>
-  <a class='app_link_post search_icon' onclick='parentNode.submit();'></a>
+<form class='app_search nav_link_form' action='{{ url }}' method='get'>
+  <input type='text' class='search_field' name='q' placeholder='{{ placeholder }}'></input>
+  <input type='submit' class='nav_link_form search_icon' value=''></input>
   {% if request.args.get('q') %}
     <a class='cap_button cap_close nav_link_get' href='{{ filter_url_params(url, exclude=["q"]) }}'>
       {{ request.args.get('q') }}

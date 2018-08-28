@@ -201,6 +201,7 @@ span{
 
 .app_search > .cap_button{
   float: right;
+  font-size: 14px;
   margin: 4px;
   position: relative;
 
@@ -221,25 +222,38 @@ span{
   text-transform: uppercase;
 }
 
-.app_search > .search_field:focus{
+.app_search > input{
+  border: 0px;
+}
+
+.app_search > input:focus{
   outline-width: 0;
 }
+
+.app_search > .search_field::placeholder{
+  color: var(--mid-color);
+}
+.app_search > .search_field:-ms-input-placeholder{
+  color: var(--mid-color);
+}
+.app_search > .search_field::-ms-input-placeholder{
+  color: var(--mid-color);
+}
+
 .app_search > .search_icon{
   background: url(/static/icons/search.svg) no-repeat;
   background-position: center center;
   background-size: auto 30px;
   background-repeat: no-repeat;
+
+  cursor: pointer;
   display: inline-block;
   float: right;
   font-size: 46px;
   height: 30px;
-  margin: 0 7px 0 0;
+  margin: 5px 7px 5px 5px;
   padding: 5px;
   width: 30px;
-
-  &:hover{
-    color: red;
-  }
 }
 
 .app_section{
@@ -292,9 +306,8 @@ span{
   padding-left: 10px;
   padding-right: 10px;
 }
-.cap_close > .cap_button_close{
+.cap_button.cap_close > .cap_button_close{
   font-weight: bold;
-  font-size: 14px;
   margin: 0 0 0 5px;
 }
 
