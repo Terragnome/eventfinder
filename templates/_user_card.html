@@ -11,7 +11,7 @@
     <div class='left'>{{ user.username }} ({{ user.display_name }})</div>
     <div class='user_feed_counts'>
       <div class='user_feed_count'>
-        {{ user.user_events_count }} {{ 'Event' if user.user_events_count == 1 else 'Events' }}
+        {{ user.active_user_events_count }} {{ 'Event' if user.active_user_events_count == 1 else 'Events' }}
       </div>
       <div class='user_feed_count'>
         {{ user.follower_users_count }} {{ 'Follower' if user.follower_users_count == 1 else 'Followers' }}

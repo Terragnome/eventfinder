@@ -32,18 +32,26 @@ class User(Base):
   )
   @property
   def user_events(self):
-    return self._user_events.join(
-      Event
-    ).filter(
-      and_(
-        Event.end_time >= datetime.datetime.now(),
-        UserEvent.interest != None,
-        UserEvent.interest > 0
-      )
+    return self._user_events.filter(
+      UserEvent.interest != None
     )
   @property
   def user_events_count(self):
     return self.user_events.count()
+
+  @property
+  def active_user_events(self):
+    return self.user_events.join(
+      Event
+    ).filter(
+      and_(
+        Event.end_time >= datetime.datetime.now(),
+        UserEvent.interest > 0
+      )
+    )
+  @property
+  def active_user_events_count(self):
+    return self.active_user_events.count()
 
   _blocked_users = relationship(
     'User',
