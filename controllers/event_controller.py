@@ -23,6 +23,7 @@ class EventController:
 
   def get_event(self, event_id):
     event = Event.query.filter(Event.event_id == event_id).first()
+    if not event: return None
 
     user = UserController().current_user
     if user:
@@ -233,6 +234,8 @@ class EventController:
     cities_query = db_session.query(
       Event.city,
       func.count(distinct(Event.event_id)).label('ct')
+    ).filter(
+      Event.city != None
     )
 
     if events:

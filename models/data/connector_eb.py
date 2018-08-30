@@ -226,6 +226,8 @@ class ConnectorEB:
                         or ("kid" in lower_event_name)
                         or ("kids" in lower_event_name)
                         or ("phone number" in lower_event_name)
+                        or ("service number" in lower_event_name)
+                        or ("support number" in lower_event_name)
                         or ("teen" in lower_event_name)
                         or ("teens" in lower_event_name)
                         or ("vegan" in lower_event_name)
