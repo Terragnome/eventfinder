@@ -1,7 +1,7 @@
 import datetime
 import traceback
 
-from flask import session
+from flask import current_app, session
 from sqlalchemy import alias, asc, case, desc, distinct, nullslast
 from sqlalchemy import and_, or_
 from sqlalchemy.sql import func
@@ -47,7 +47,9 @@ class EventController:
 
     return event
 
-  def get_events(self, query=None, tag=None, page=1):
+  def get_events(self, user=None, query=None, tag=None, cities=None, page=1):
+    user = UserController().current_user
+
     event_scores = alias(
       db_session.query(
         UserEvent.event_id.label('event_id'),
@@ -91,7 +93,6 @@ class EventController:
         Tag.tag_name == tag
       )
 
-    user = UserController().current_user
     if user:
       user_events = user.user_events
       user_event_ids = [x.event_id for x in user_events]
@@ -109,6 +110,16 @@ class EventController:
     )
 
     sections = self.get_sections_for_events(events_with_count_query)
+    event_cities = self.get_cities_for_events(events_with_count_query)
+
+    # This has to come after the cities list is queries
+    if cities:
+      events_with_count_query = events_with_count_query.filter(
+        Event.city.in_(cities)
+      )
+      for city in event_cities:
+        if city['city_name'] in cities:
+          city['selected'] = True
 
     events_with_count_query = events_with_count_query.limit(
       self.PAGE_SIZE
@@ -121,14 +132,15 @@ class EventController:
       event.interested_user_count = user_count
       results.append(event)
 
-    return (results, sections)
+    return (results, sections, event_cities)
 
-  def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, page=1):
+  def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, cities=None, page=1):
     current_user = UserController().current_user
     if not user: user = current_user
 
     results = []
     sections = []
+    event_cities = []
     if user:
       user_events = UserEvent.query.filter(
         and_(
@@ -191,6 +203,16 @@ class EventController:
       )
 
       sections = self.get_sections_for_events(events_with_counts)
+      event_cities = self.get_cities_for_events(events_with_counts)
+
+      # This has to come after the cities list is queries
+      if cities:
+        events_with_count_query = events_with_count_query.filter(
+          Event.city.in_(cities)
+        )
+        for city in event_cities:
+          if city['city_name'] in cities:
+            city['selected'] = True
 
       events_with_counts = events_with_counts.limit(
         self.PAGE_SIZE
@@ -204,10 +226,46 @@ class EventController:
         event.interested_user_count = user_event_count
         results.append(event)
 
-    return (results, sections)
+    return (results, sections, event_cities)
 
   # TODO: Make this operate off the query for performance
-  def get_sections_for_events(self, events=None):
+  def get_cities_for_events(self, events=None, limit=10):
+    cities_query = db_session.query(
+      Event.city,
+      func.count(distinct(Event.event_id)).label('ct')
+    )
+
+    if events:
+      events_table = alias(
+        events,
+        'events_table'
+      )
+
+      cities_query = cities_query.join(
+        events_table,
+        Event.event_id == events_table.c.events_event_id
+      )
+    else:
+      cities_query = cities_query.filter(
+        Event.end_time >= datetime.datetime.now()
+      )
+
+    cities_query = cities_query.group_by(
+      Event.city
+    ).order_by(
+      desc('ct')
+    )
+
+    if limit: cities_query = cities_query.limit(limit)
+
+    return [
+      {
+        'city_name': dat[0] or 'Unknown',
+        'ct': dat[1],
+      } for dat in cities_query if dat[1]>0
+    ]
+
+  def get_sections_for_events(self, events=None, limit=None):
     section_query = db_session.query(
       Tag.tag_name,
       func.count(distinct(EventTag.event_id)).label('ct')
@@ -238,6 +296,9 @@ class EventController:
     ).order_by(
       desc('ct')
     )
+
+    if limit:
+      section_query = section_query.limit(limit)
 
     return [
       {

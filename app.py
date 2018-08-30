@@ -13,7 +13,7 @@ from config.app_config import app_config
 
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
-from helpers.jinja_helper import filter_url_params
+from helpers.jinja_helper import add_url_params, filter_url_params, remove_url_params
 from models.base import db_session
 from models.block import Block
 from models.follow import Follow
@@ -28,7 +28,9 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url('redis://redis:6379/')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
+app.jinja_env.globals.update(add_url_params=add_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
+app.jinja_env.globals.update(remove_url_params=remove_url_params)
 
 sess = Session()
 sess.init_app(app)
@@ -76,7 +78,17 @@ def _render_events_list(
     return render_template(template, vargs=vargs, **vargs)
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
-def searchable(fn):
+def param_cities(fn):
+  @functools.wraps(fn)
+  def decorated_fn(*args, **kwargs):
+    raw_cities = request.args.get('cities', default=None, type=str)
+    if raw_cities:
+      cities = set(raw_cities.split(','))
+      kwargs['cities'] = cities
+    return fn(*args, **kwargs)
+  return decorated_fn
+
+def param_query(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
     query = request.args.get('q', default='', type=str)
@@ -85,7 +97,15 @@ def searchable(fn):
     return fn(*args, **kwargs)
   return decorated_fn
 
-# TODO: Need to fix showing next button with no next pages
+def param_tag(fn):
+  @functools.wraps(fn)
+  def decorated_fn(*args, **kwargs):
+    tag = request.args.get('t', default=None, type=str)
+    if tag:
+      kwargs['tag'] = tag
+    return fn(*args, **kwargs)
+  return decorated_fn
+
 def paginated(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
@@ -124,15 +144,6 @@ def paginated(fn):
     return fn(*args, **kwargs)
   return decorated_fn
 
-def tagged(fn):
-  @functools.wraps(fn)
-  def decorated_fn(*args, **kwargs):
-    tag = request.args.get('t', default=None, type=str)
-    if tag:
-      kwargs['tag'] = tag
-    return fn(*args, **kwargs)
-  return decorated_fn
-
 @app.route("/login")
 def login():
   return redirect(request.referrer or '/')
@@ -165,11 +176,21 @@ def blocking():
 
 @app.route("/", methods=['GET'])
 @app.route("/explore/", methods=['GET'])
-@tagged
-@searchable
+@param_cities
+@param_tag
+@param_query
 @paginated
-def events(tag=None, query=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
-  events, sections = EventController().get_events(query=query, tag=tag, page=page)
+def events(
+  query=None, tag=None, cities=None,
+  page=1, next_page_url=None, prev_page_url=None,
+  scroll=False
+):
+  events, sections, event_cities = EventController().get_events(
+    query=query,
+    tag=tag,
+    cities=cities,
+    page=page
+  )
   for section in sections:
     kwargs = {}
     if query: kwargs['q'] = query
@@ -183,6 +204,7 @@ def events(tag=None, query=None, page=1, next_page_url=None, prev_page_url=None,
   vargs = {
     'events': events,
     'sections': sections,
+    'cities': event_cities,
     'page': page,
     'next_page_url': next_page_url,
     'prev_page_url': prev_page_url,
@@ -291,10 +313,16 @@ def home():
   return user(identifier=current_user.username)
 
 @app.route("/user/<identifier>/", methods=['GET'])
-@tagged
-@searchable
+@param_cities
+@param_tag
+@param_query
 @paginated
-def user(identifier, query=None, tag=None, page=1, next_page_url=None, prev_page_url=None, scroll=False):
+def user(
+  identifier,
+  query=None, tag=None, cities=None,
+  page=1, next_page_url=None, prev_page_url=None,
+  scroll=False
+):
   current_user = UserController().current_user
   current_user_id = UserController().current_user_id
 
@@ -303,12 +331,14 @@ def user(identifier, query=None, tag=None, page=1, next_page_url=None, prev_page
   if user:
     events = []
     sections = []
+    cities = []
     if not Block.blocks(user.user_id, current_user_id):
-      events, sections = EventController().get_events_for_user_by_interested(
+      events, sections, event_cities = EventController().get_events_for_user_by_interested(
         user=user,
         query=query,
-        interested=True,
         tag=tag,
+        cities=cities,
+        interested=True,
         page=page
       )
       for section in sections:
@@ -320,6 +350,7 @@ def user(identifier, query=None, tag=None, page=1, next_page_url=None, prev_page
       'current_user': current_user,
       'events': events,
       'sections': sections,
+      'cities': event_cities,
       'page': page,
       'next_page_url': next_page_url,
       'prev_page_url': prev_page_url

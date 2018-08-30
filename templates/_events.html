@@ -1,4 +1,5 @@
 {% set events=events or (vargs.events if vargs else None) %}
+{% set cities=cities or (vargs.cities if vargs else None) %}
 {% set sections=sections or (vargs.sections if vargs else None) %}
 
 <div class='app_page'>
@@ -15,6 +16,16 @@
   {% with url=request.url %}
     {% include "_search_bar.html" %}
   {% endwith %}
+
+  <div class='event_cities'>
+    {% for city in cities %}
+      {% if city.selected %}
+        <a class='cap_button cap_selected' href='{{ remove_url_params(request.url, remove={"cities": city.city_name}) }}'>{{ city.city_name }} {{ city.ct }} X</a>
+      {% else %}
+        <a class='cap_button' href='{{ add_url_params(request.url, merge={"cities": city.city_name}) }}'>{{ city.city_name }} {{ city.ct }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
 
   <ul id='event_list' class='event_list effect_in'>
     {% with vargs=vargs %}

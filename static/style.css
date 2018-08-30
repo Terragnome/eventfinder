@@ -290,8 +290,8 @@ span{
 .cap_button{
   border: 1px solid var(--light-color);
   border-radius: 20px;
+  display: inline-block;
   font-size: 11px;
-  height: 20px;
   padding: 5px 8px 5px 8px;
 }
 .cap_button:hover{
@@ -313,6 +313,7 @@ span{
 
 .cap_selected{
   background-color: var(--light-color);
+  border-color: var(--light-color);
   color: white;
 }
 
@@ -383,6 +384,32 @@ span{
 
 .event_choices{
   margin: 10px 0 20px 0;
+}
+
+.event_cities{
+  color: white;
+  margin: -10px 0 30px 0;
+  text-align: center;
+}
+
+.event_cities > .cap_button{
+  border-color: white;
+  color: white;
+  margin: 5px 2px 5px 2px;
+}
+
+.event_cities > .cap_selected{
+  border-color: var(--light-color);
+}
+
+.event_cities > .cap_button:hover{
+  border-color: var(--mid-color);
+  color: white;
+}
+
+.event_cities > .cap_button.selected{
+  border-color: var(--mid-color);
+  color: white;
 }
 
 .event_collapse{
