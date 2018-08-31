@@ -111,8 +111,11 @@ class EventController:
     )
 
     sections = self.get_sections_for_events(events_with_count_query)
-    event_cities = self.get_cities_for_events(events_with_count_query)
+    if sections:
+      for section in sections:
+        section['selected'] = section['section_name'] == tag
 
+    event_cities = self.get_cities_for_events(events_with_count_query)
     # This has to come after the cities list is queries
     if cities:
       events_with_count_query = events_with_count_query.filter(
@@ -121,6 +124,12 @@ class EventController:
       for city in event_cities:
         if city['city_name'] in cities:
           city['selected'] = True
+
+    events_with_count_query = events_with_count_query.order_by(
+        nullslast(desc('ct')),
+        nullslast(Event.start_time.asc()),
+        nullslast(Event.event_id.asc())
+    )
 
     events_with_count_query = events_with_count_query.limit(
       self.PAGE_SIZE
@@ -200,12 +209,17 @@ class EventController:
       ).group_by(
         Event.event_id
       ).order_by(
-        desc('ct'), Event.start_time.asc(), Event.event_id.asc()
+        nullslast(desc('ct')),
+        nullslast(Event.start_time.asc()),
+        nullslast(Event.event_id.asc())
       )
 
       sections = self.get_sections_for_events(events_with_counts)
-      event_cities = self.get_cities_for_events(events_with_counts)
+      if sections:
+        for section in sections:
+          section['selected'] = section['section_name'] == tag
 
+      event_cities = self.get_cities_for_events(events_with_counts)
       # This has to come after the cities list is queries
       if cities:
         events_with_count_query = events_with_count_query.filter(

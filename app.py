@@ -199,8 +199,6 @@ def events(
     kwargs['t'] = section['section_name']
     section['section_url'] = url_for('events', **kwargs)
 
-    section['selected'] = section['section_name'] == tag
-
   vargs = {
     'events': events,
     'sections': sections,
@@ -344,7 +342,6 @@ def user(
       for section in sections:
         section['section_url'] = url_for('user', identifier=identifier, t=section['section_name'])
         section['section_close_url'] = url_for('user', identifier=identifier)
-        section['selected'] = section['section_name'] == tag
 
     vargs = {
       'current_user': current_user,
