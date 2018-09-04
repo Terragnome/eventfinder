@@ -12,7 +12,7 @@
   <script type='application/javascript' src="{{ url_for('static', filename='js/masonry.pkgd.min.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/classie.js') }}"></script>
-  <script type='application/javascript' src="{{ url_for('static', filename='js/AnimOnScroll.js') }}"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/AnimOnScroll.js', v=(range(1, 100000) | random)) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=(range(1, 100000) | random)) }}"></script>
   {% block scripts %}{% endblock %}
 </head>

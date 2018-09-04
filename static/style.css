@@ -475,28 +475,31 @@ span{
   z-index: 1;
 }
 
-.event_list {
+#event_list {
+  border: 0px;
   list-style: none;
+  margin: 0 auto;
+  padding: 0px;
 }
 
-.event_list li {
+#event_list li {
   display: inline-block;
   max-width: 100%;
   opacity: 0;
 }
 
-.event_list li.shown,
-.event_list .no-js li,
-.event_list .no-cssanimations li {
+#event_list li.shown,
+#event_list .no-js li,
+#event_list .no-cssanimations li {
   opacity: 1;
 }
 
-.event_list li img {
+#event_list li img {
   display: block;
   max-width: 100%;
 }
 
-.event_list.effect_in li.animate {
+#event_list.effect_in li.animate {
   -webkit-transform: translateY(100px);
   transform: translateY(100px);
   -webkit-animation: anim-move-up 0.3s ease forwards;

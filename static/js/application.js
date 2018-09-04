@@ -8,7 +8,6 @@ Application.init = function(params) {
 
   $(window).on('popstate', Application.backButton);
 
-  $(document).ready(Application.ajaxifyLinks);
   $(document).ajaxStart(function(e){
     $('#main').removeClass('anim_fade_in');
     Application.disableScrollEvent();
@@ -16,6 +15,7 @@ Application.init = function(params) {
   $(document).ajaxSuccess(Application.ajaxifyLinks);
   $(document).ajaxComplete(Application.enableScrollEvent);
 
+  $(document).ready(Application.ajaxifyLinks);
   $(document).ready(Application.userPanelInit);
 }
 
@@ -131,7 +131,8 @@ Application.ajaxifyLinks = function() {
 Application.animateElems = function() {
   if($('#event_list').length > 0 && $('.event_card').length > 0){
     new AnimOnScroll(
-      document.getElementById('event_list'), {
+      document.getElementById('event_list'),
+      {
         minDuration : 0.4,
         maxDuration : 0.7,
         viewportFactor : 0.2
