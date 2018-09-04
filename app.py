@@ -17,6 +17,7 @@ from helpers.jinja_helper import add_url_params, filter_url_params, remove_url_p
 from models.base import db_session
 from models.block import Block
 from models.follow import Follow
+from models.tag import Tag
 
 from utils.config_utils import load_config
 
@@ -189,6 +190,8 @@ def events(
       'cities': cities,
       'tag': section['section_name']
     }
+
+    if section['section_name'] == Tag.MOVIES: del kwargs['cities']
     section['section_url'] = parse_url_for('events', **kwargs)
 
     del kwargs['tag']
@@ -339,6 +342,8 @@ def user(
           'cities': cities,
           'tag': tag
         }
+
+        if section['section_name'] == Tag.MOVIES: del kwargs['cities']
         section['section_url'] = parse_url_for('user', **kwargs)
 
         del kwargs['tag']
