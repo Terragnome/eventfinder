@@ -58,6 +58,7 @@
 }
 
 :root{
+  --darkest-color: #340517;
   --dark-color: #650A2D;
   --light-color: #E51865;
   --mid-color: #991044;
@@ -104,19 +105,21 @@ span{
 
 .app_background{
   position: absolute;
+  /*background: url(/static/img/bg/bg.jpg) no-repeat;*/
   background-color: var(--mid-color);
   background-position: center center;
   background-repeat: none;
   background-size: cover;
-  height: 800px;
+  height: 80%;
+  min-height: 650px;
   top: 0px;
   width: 100%;
   z-index: -10;
 }
 /*
-.app_background > .app_background_inset_1{
+.app_background > .app_background_inset{
   background-color: var(--mid-color);
-  height: 440px;
+  height: 600px;
   z-index: -9;
 }*/
 
@@ -272,8 +275,9 @@ span{
   text-decoration: none;
 }
 
-.box_shadow{
-  border: 1px solid rgba(222, 222, 222, 1);
+.box_outline{
+  /*border: 1px solid rgba(222, 222, 222, 1);*/
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .button_close{
@@ -778,7 +782,7 @@ span{
 
 .user_feed_profile{
   background-color: white;
-  border: 1px solid var(--neutral-color);
+  /*border: 1px solid var(--neutral-color);*/
   border-radius: 5px;
   margin: 0 10px 30px 10px;
   padding: 15px 15px 20px 15px;

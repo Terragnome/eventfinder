@@ -1,7 +1,7 @@
 {% set url=url or (vargs.url if vargs else request.url) %}
 {% set placeholder=placeholder or (vargs.placeholder if vargs else '') %}
 
-<form class='app_search nav_link_form' action='{{ url }}' method='get'>
+<form class='app_search box_outline nav_link_form' action='{{ url }}' method='get'>
   <input type='text' class='search_field' name='q' placeholder='{{ placeholder }}'></input>
   <input type='submit' class='nav_link_form search_icon' value=''></input>
   {% if request.args.get('q') %}

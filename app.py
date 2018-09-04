@@ -84,7 +84,7 @@ def parse_url_params(fn):
     for param,kw in param_to_kwarg.items():
       v = request.args.get(param, default=None, type=str)
       if param in kwargs: del kwargs[param]
-      if v != None: kwargs[kw] = v
+      if v not in (None, ''): kwargs[kw] = v
 
     raw_cities = request.args.get('cities', default=None, type=str)
     if raw_cities:
@@ -110,14 +110,14 @@ def paginated(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
     page = request.args.get('p', default=1, type=int)
+    scroll = request.args.get('scroll', default=False, type=bool)
+    
     if page <= 1:
         page = 1
         prev_page = None
     else:
         prev_page = page-1
     next_page = page+1
-
-    scroll = request.args.get('scroll', default=False, type=bool)
 
     if 'p' in kwargs: del kwargs['p']
     if 'scroll' in kwargs: del kwargs['scroll']
@@ -129,8 +129,8 @@ def paginated(fn):
     kwargs['page'] = next_page
     next_page_url = parse_url_for(fn.__name__, *args, **kwargs)
 
-    kwargs['scroll'] = scroll
     kwargs['page'] = page
+    kwargs['scroll'] = scroll
     kwargs['next_page_url'] = next_page_url
     kwargs['prev_page_url'] = prev_page_url
 
