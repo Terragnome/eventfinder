@@ -78,9 +78,14 @@ def _render_events_list(
     return render_template(template, vargs=vargs, **vargs)
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
-def param_cities(fn):
+def parse_url_params(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
+    for param,kw in param_to_kwarg.items():
+      v = request.args.get(param, default=None, type=str)
+      if param in kwargs: del kwargs[param]
+      if v != None: kwargs[kw] = v
+
     raw_cities = request.args.get('cities', default=None, type=str)
     if raw_cities:
       cities = set(raw_cities.split(','))
@@ -88,23 +93,18 @@ def param_cities(fn):
     return fn(*args, **kwargs)
   return decorated_fn
 
-def param_query(fn):
-  @functools.wraps(fn)
-  def decorated_fn(*args, **kwargs):
-    query = request.args.get('q', default='', type=str)
-    if 'query' in kwargs: del kwargs['query']
-    kwargs['query'] = query
-    return fn(*args, **kwargs)
-  return decorated_fn
+def parse_url_for(*args, **kwargs):
+  for param,kw in param_to_kwarg.items():
+    if kw in kwargs:
+      v = kwargs[kw]
+      del kwargs[kw]
+      kwargs[param] = v
 
-def param_tag(fn):
-  @functools.wraps(fn)
-  def decorated_fn(*args, **kwargs):
-    tag = request.args.get('t', default=None, type=str)
-    if tag:
-      kwargs['tag'] = tag
-    return fn(*args, **kwargs)
-  return decorated_fn
+  if 'cities' in kwargs:
+    if kwargs['cities']:
+      kwargs['cities'] = ','.join(kwargs['cities'])
+
+  return url_for(*args, **kwargs)
 
 def paginated(fn):
   @functools.wraps(fn)
@@ -124,17 +124,10 @@ def paginated(fn):
     if 'prev_page_url' in kwargs: del kwargs['prev_page_url']
     if 'next_page_url' in kwargs: del kwargs['next_page_url']
 
-    url_kwargs = dict(kwargs)
-    for param, kw in param_to_kwarg.items():
-      if kw in url_kwargs:
-        url_kwargs[param] = url_kwargs[kw]
-        del url_kwargs[kw]
-
-    url_kwargs['p'] = prev_page
-    prev_page_url = url_for(fn.__name__, *args, **url_kwargs)
-    
-    url_kwargs['p'] = next_page
-    next_page_url = url_for(fn.__name__, *args, **url_kwargs)
+    kwargs['page'] = prev_page
+    prev_page_url = parse_url_for(fn.__name__, *args, **kwargs)
+    kwargs['page'] = next_page
+    next_page_url = parse_url_for(fn.__name__, *args, **kwargs)
 
     kwargs['scroll'] = scroll
     kwargs['page'] = page
@@ -176,9 +169,7 @@ def blocking():
 
 @app.route("/", methods=['GET'])
 @app.route("/explore/", methods=['GET'])
-@param_cities
-@param_tag
-@param_query
+@parse_url_params
 @paginated
 def events(
   query=None, tag=None, cities=None,
@@ -191,13 +182,17 @@ def events(
     cities=cities,
     page=page
   )
-  for section in sections:
-    kwargs = {}
-    if query: kwargs['q'] = query
-    section['section_close_url'] = url_for('events', **kwargs)
 
-    kwargs['t'] = section['section_name']
-    section['section_url'] = url_for('events', **kwargs)
+  for section in sections:
+    kwargs = {
+      'query': query,
+      'cities': cities,
+      'tag': section['section_name']
+    }
+    section['section_url'] = parse_url_for('events', **kwargs)
+
+    del kwargs['tag']
+    section['section_close_url'] = parse_url_for('events', **kwargs)
 
   vargs = {
     'events': events,
@@ -311,9 +306,7 @@ def home():
   return user(identifier=current_user.username)
 
 @app.route("/user/<identifier>/", methods=['GET'])
-@param_cities
-@param_tag
-@param_query
+@parse_url_params
 @paginated
 def user(
   identifier,
@@ -340,8 +333,16 @@ def user(
         page=page
       )
       for section in sections:
-        section['section_url'] = url_for('user', identifier=identifier, t=section['section_name'])
-        section['section_close_url'] = url_for('user', identifier=identifier)
+        kwargs = {
+          'identifier': identifier,
+          'query': query,
+          'cities': cities,
+          'tag': tag
+        }
+        section['section_url'] = parse_url_for('user', **kwargs)
+
+        del kwargs['tag']
+        section['section_close_url'] = parse_url_for('user', **kwargs)
 
     vargs = {
       'current_user': current_user,
