@@ -218,7 +218,8 @@ class ConnectorEB:
                     lower_event_name = self.tokenize(event_name)
                     if (
                         ("speed dat" in lower_event_name)
-                        or ("high" in lower_event_name and 'school' in lower_event_name)
+                        or ("high" in lower_event_name and "school" in lower_event_name)
+                        or ("hiring" in lower_event_name and "fair" in lower_event_name)
                         or ("kindergarten" in lower_event_name)
                         or ("gluten" in lower_event_name)
                         or ("health" in lower_event_name)
