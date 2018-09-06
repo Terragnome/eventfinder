@@ -4,19 +4,19 @@ Application.init = function(params) {
   var urls = params['urls'];
   Application.url_auth = urls['auth'];
 
-  Application.enableScrollEvent();
+  Scroll.enable();
 
   $(window).on('popstate', Application.backButton);
 
   $(document).ajaxStart(function(e){
     $('#main').removeClass('anim_fade_in');
-    Application.disableScrollEvent();
+    Scroll.disable();
   });
   $(document).ajaxSuccess(Application.ajaxifyLinks);
-  $(document).ajaxComplete(Application.enableScrollEvent);
+  $(document).ajaxComplete(Scroll.enable);
 
   $(document).ready(Application.ajaxifyLinks);
-  $(document).ready(Application.userPanelInit);
+  $(document).ready(UserPanel.init);
 }
 
 Application.ajaxData = function(e){
@@ -39,7 +39,7 @@ Application.ajaxGetOverlay = function(e){
   e.preventDefault();
   var data = Application.ajaxData(e);
   $(this).click(function(){
-    Application.overlayOpen();
+    Overlay.open();
     Application.getElem("#app_panel_overlay_main", $(this).attr('href'))
   });
 }
@@ -142,22 +142,13 @@ Application.animateElems = function() {
 }
 
 Application.backButton = function(e){
-  Application.disableScrollEvent();
+  Scroll.disable();
 
   var state = e.originalEvent.state;
   if (state !== null) {
     if(state.title){ document.title = state.title; }
     Application.getElem('#main', state.url, false);
   }
-}
-
-Application.disableScrollEvent = function() {
-  $(window).off("scroll", Application.scrollNext);
-}
-
-Application.enableScrollEvent = function() {
-  Application.disableScrollEvent();
-  $(window).on("scroll", Application.scrollNext);
 }
 
 Application.getElem = function(target, url, push_state=true, replace=false) {
@@ -179,18 +170,6 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
   });
 }
 
-Application.overlayOpen = function() {
-  var scrollTop = document.documentElement.scrollTop;
-  var appPanel = $('#app_panel_overlay');
-  appPanel.css('top', scrollTop);
-  appPanel.show();
-}
-
-Application.overlayClose = function() {
-  history.back();
-  $('#app_panel_overlay').hide();
-}
-
 Application.postElem = function(target, url, params, replace=false) {
   $.post(url, params, {
   }).done(function(response) {
@@ -208,61 +187,11 @@ Application.removeElem = function(target) {
   $(target).remove();
 }
 
-Application.scrollNext = function(){
-  var scrollHeight = $(document).height();
-  var scrollPosition = $(window).height()+$(window).scrollTop();
-
-  if((scrollHeight-scrollPosition)/scrollHeight === 0){
-    var current_url = window.location.pathname+window.location.search;
-    var next_url = $('.pagination:last').find('a:first').attr('href');
-    if(next_url && next_url != current_url){
-      Application.getElem('.pagination:last', next_url+'&scroll=true', false, true);
-    }
-  }
-}
-
 Application.toggleVisibility = function(target){
   var isVisible = $(target).is(':visible');
   if(isVisible){
     $(target).hide();
   }else{
     $(target).show();
-  }
-}
-
-Application.userPanelInit = function(){
-  $(".toggle_user_panel").bind('click', Application.userPanelToggle);
-  $("#user_panel > a").bind('click', Application.userPanelHide);
-}
-
-Application.userPanelToggle = function(e){
-  var isVisible = $("#user_panel").is(':visible');
-  if(isVisible){
-    Application.userPanelHide();
-  }else{
-    Application.userPanelShow();
-  }
-  e.stopPropagation();
-}
-
-Application.userPanelHide = function(){
-  var isVisible = $("#user_panel").is(':visible');
-  if(isVisible){
-    $("#user_panel").hide();
-    $('html').unbind('click', Application.userPanelCheckHide);
-  }
-}
-
-Application.userPanelCheckHide = function(e){
-  if(e.target.id != 'user_panel'){
-    Application.userPanelHide();
-  }
-}
-
-Application.userPanelShow = function(){
-  var isVisible = $("#user_panel").is(':visible');
-  if(!isVisible){
-    $("#user_panel").show();
-    $('html').bind('click', Application.userPanelCheckHide);
   }
 }
