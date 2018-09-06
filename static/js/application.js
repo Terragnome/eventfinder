@@ -3,6 +3,7 @@ var Application = Application || {};
 Application.init = function(params) {
   var urls = params['urls'];
   Application.url_auth = urls['auth'];
+  Application.url_home = urls['home'];
 
   Scroll.enable();
 
@@ -17,6 +18,9 @@ Application.init = function(params) {
 
   $(document).ready(Application.ajaxifyLinks);
   $(document).ready(UserPanel.init);
+
+  var push_url = Application.url_home;
+  history.pushState({'url':push_url}, null, push_url);
 }
 
 Application.ajaxData = function(e){
@@ -102,7 +106,7 @@ Application.ajaxForm = function(e){
       newUrlQuery.push(k+'='+v);
     }
     var newUrl = urlRoot+"?"+newUrlQuery.join('&');
-    Application.getElem(data.target, newUrl, true);
+    Application.getElem(data.target, newUrl);
   }
 }
 
@@ -148,6 +152,8 @@ Application.backButton = function(e){
   if (state != null) {
     if(state.title){ document.title = state.title; }
     Application.getElem('#main', state.url, false);
+  }else{
+    window.location.replace('/');
   }
 }
 
@@ -156,7 +162,7 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
   }).done(function(response) {
     $(target).addClass('anim_fade_in');
     if(response != '' && push_state){
-      push_url = url;
+      var push_url = url;
       if(typeof push_state === 'string'){ push_url = push_state; }
       history.pushState({'url':push_url}, null, push_url);
     }
@@ -166,7 +172,7 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
       $(target).html(response);
     }
   }).fail(function(xhr, status, error) {
-    window.location.replace(url);
+    window.location.replace(Application.url_home);
   });
 }
 
