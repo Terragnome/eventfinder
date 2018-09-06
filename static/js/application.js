@@ -145,7 +145,7 @@ Application.backButton = function(e){
   Scroll.disable();
 
   var state = e.originalEvent.state;
-  if (state !== null) {
+  if (state != null) {
     if(state.title){ document.title = state.title; }
     Application.getElem('#main', state.url, false);
   }
