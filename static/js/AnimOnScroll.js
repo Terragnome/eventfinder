@@ -92,33 +92,34 @@
 			this.didScroll = false;
 
 			var self = this;
+			imagesLoaded(this.el, function(){
+  			// initialize masonry
+        new Masonry(
+          self.el,
+          {
+            itemSelector: 'li',
+            transitionDuration : 0,
+            fitWidth: true
+          }
+        );
 
-			imagesLoaded( this.el, function() {
-				
-				// initialize masonry
-				new Masonry( self.el, {
-					itemSelector: 'li',
-					transitionDuration : 0
-				} );
-				
-				if( Modernizr.cssanimations ) {
-					// the items already shown...
-					self.items.forEach( function( el, i ) {
-						if( inViewport( el ) ) {
-							self._checkTotalRendered();
-							classie.add( el, 'shown' );
-						}
-					} );
+  			if( Modernizr.cssanimations ) {
+  				// the items already shown...
+  				self.items.forEach( function(el, i){
+  					if( inViewport(el) ){
+  						self._checkTotalRendered();
+  						classie.add( el, 'shown' );
+  					}
+  				});
 
-					// animate on scroll the items inside the viewport
-					window.addEventListener( 'scroll', function() {
-						self._onScrollFn();
-					}, false );
-					window.addEventListener( 'resize', function() {
-						self._resizeHandler();
-					}, false );
-				}
-
+  				// animate on scroll the items inside the viewport
+  				window.addEventListener('scroll', function() {
+  				  self._onScrollFn();
+  				}, false);
+  				window.addEventListener( 'resize', function() {
+  				  self._resizeHandler();
+  				}, false);
+  			}
 			});
 		},
 		_onScrollFn : function() {
