@@ -110,7 +110,7 @@ span{
   background-repeat: none;
   background-size: cover;
   height: 80%;
-  min-height: 650px;
+  min-height: 750px;
   top: 0px;
   width: 100%;
   z-index: -10;
@@ -381,6 +381,15 @@ span{
   width: 315px;
 }
 
+.event_card > .event.event_selected{
+  background-color: var(--mid-color);
+  color: white;
+}
+
+.event_card > .event.selected > .event_header{
+  color: white;
+}
+
 .event_choice{
   margin: 0 2px 0 2px;
 }
@@ -580,6 +589,23 @@ span{
   margin: 20px 0 50px 0;
 }
 
+.event_selected.card > .nav_link_get > .event_img_wrapper{
+  display: none;
+}
+
+.event_selected.card > .nav_link_get > .event_header{
+  color: white;
+}
+
+.event_selected.card > .nav_link_get > .event_header > .event_dates > .event_date{
+  border-color: white;
+  color: white;
+}
+
+.event_selected.card > .nav_link_get > .event_header > .event_title{
+  color: white;
+}
+
 .event_skipped.card > .event_address{
   display: none;
 }
@@ -602,7 +628,7 @@ span{
   display: none;
 }
 
-.event_skipped.card > .event_img{
+.event_skipped.card.event_img_wrapper{
   display: none;
 }
 
