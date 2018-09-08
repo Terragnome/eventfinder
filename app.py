@@ -340,7 +340,7 @@ def user(
           'identifier': identifier,
           'query': query,
           'cities': cities,
-          'tag': tag
+          'tag': section['section_name']
         }
 
         if section['section_name'] == Tag.MOVIES: del kwargs['cities']

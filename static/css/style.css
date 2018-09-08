@@ -378,7 +378,7 @@ span{
   border-radius: 5px;
   margin: 0 10px 30px 10px;
   text-align: center;
-  width: 315px;
+  width: 280px;
 }
 
 .event_card > .event.event_selected{
@@ -515,6 +515,12 @@ span{
   animation: anim-move-up 0.3s ease forwards;
 }
 
+#event_list > .pagination{
+  bottom: 10px;
+  color: white;
+  position: absolute;
+}
+
 .event_paid{
   color: white;
   cursor: default;
@@ -587,10 +593,6 @@ span{
 
 .event_sections{
   margin: 20px 0 50px 0;
-}
-
-.event_selected.card > .nav_link_get > .event_img_wrapper{
-  display: none;
 }
 
 .event_selected.card > .nav_link_get > .event_header{
@@ -694,7 +696,11 @@ span{
   background-color: white;
 }
 
-.float_center{
+.float_container{
+  overflow: auto;
+}
+
+.float_container > .float_center{
   float: right;
   left: -50%;
   margin-left: auto;
@@ -706,10 +712,6 @@ span{
 .float_child{
   left: 50%;
   position: relative;
-}
-
-.float_container{
-  overflow: auto;
 }
 
 .hide{
@@ -745,13 +747,13 @@ span{
 }
 
 .spinner {
-  text-align: center;
   font-size: 10px;
+  text-align: center;
 }
 
 .spinner > div {
+  background-color: white;
   display: inline-block;
-  background-color: var(--neutral-color);
   height: 100%;
   width: 6px;
 
