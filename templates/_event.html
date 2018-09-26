@@ -5,8 +5,9 @@
 {% set is_skipped = event.current_user_event and event.current_user_event.interest == 0 %}
 {% set is_maybe = event.current_user_event and event.current_user_event.interest == 1 %}
 {% set is_go = event.current_user_event and event.current_user_event.interest == 2 %}
+{% set event_selected_class = "event_selected" if is_go or is_maybe else "" %}
 
-<div id="event_{{ event.event_id }}" class='{{ "card" if card else "event_page"}} event {{ "event_selected" if is_go or is_maybe else "" }}'>
+<div id="event_{{ event.event_id }}" class='{{ "card" if card else "event_page"}} event {{ event_selected_class }}'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
     <div class='{{ "card" if card else "" }} event_img_wrapper {{ "event_skipped" if is_skipped else ""}}'>
       {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
@@ -41,7 +42,7 @@
     {% if not card %}
       <p class='event_description'>{{ event.description }}</p>
     {% endif %}
-    <div class='event_choices'>
+    <div class='event_choices {{ event_selected_class }}'>
       {% if is_skipped %}
         <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Skip</a>
       {% else %}
@@ -63,7 +64,7 @@
         <div class='float_center'>
           <div class='float_child'>
             <a class='link_img'>
-              <span class='event_users_count'>
+              <span class='event_users_count {{ event_selected_class }}'>
                 <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
               </span>
             </a>

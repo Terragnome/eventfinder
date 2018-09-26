@@ -413,6 +413,17 @@ span{
   margin: 10px 0 20px 0;
 }
 
+.event_choices.event_selected > .cap_button{
+  border-color: white;
+  color: white;
+}
+.event_choices.event_selected > .cap_button.cap_selected{
+  border-color: var(--link-color);
+}
+.event_choices.event_selected > .cap_button:hover{
+  border-color: var(--link-color);
+}
+
 .event_cities{
   color: white;
   margin: -10px 0 30px 0;
@@ -619,6 +630,11 @@ span{
   color: white;
 }
 
+.event_selected.card > .nav_link_get > .event_header > .event_dates > .event_date.event_date_weekend{
+  border-color: var(--weekend-color);
+  color: white;
+}
+
 .event_selected.card > .nav_link_get > .event_header > .event_title{
   color: white;
 }
@@ -695,6 +711,11 @@ span{
   margin: 2px 3px 2px 3px;
   text-align: center;
   width: 34px;
+}
+
+.event_users_count.event_selected{
+  border-color: white;
+  color: white;
 }
 
 .event_users_count_number{
