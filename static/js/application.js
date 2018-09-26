@@ -18,9 +18,6 @@ Application.init = function(params) {
 
   $(document).ready(Application.ajaxifyLinks);
   $(document).ready(UserPanel.init);
-
-  var push_url = Application.url_home;
-  history.pushState({'url':push_url}, null, push_url);
 }
 
 Application.ajaxData = function(e){
