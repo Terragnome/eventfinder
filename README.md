@@ -48,3 +48,8 @@ docker exec -it event_finder_postgres_1 bash
 docker exec -it redis bash
 
 # docker logs --tail 2500 --follow eb7b166e3d18
+
+# Kubernetes dashboard
+kubectl get pods --namespace=kube-system
+kubectl port-forward kubernetes-dashboard-7b9c7bc8c9-7sdbb 8443:8443 --namespace=kube-system
+https://localhost:8443

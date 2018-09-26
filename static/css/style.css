@@ -13,6 +13,7 @@
   --dark-color: #D69249;
   --mid-color: #E5B256;
   --light-color: #E5B256;
+  --dark-neutral-color: #808080;
   --neutral-color: #DEDEDE;
 
   --link-color: var(--dark-color);
@@ -216,8 +217,8 @@ span{
 
 .app_search > .cap_button{
   float: right;
-  font-size: 16px;
-  margin: 4px;
+  font-size: 14px;
+  margin: 6px;
   position: relative;
 
 }
@@ -318,6 +319,7 @@ span{
 
 .cap_button.cap_close{
   background-color: var(--link-color);
+  border-color: white;
   color: white;
   padding-left: 10px;
   padding-right: 10px;
