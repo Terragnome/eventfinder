@@ -371,15 +371,6 @@ span{
 
 .event.event_page{
   border-radius: 0;
-  margin: 10px 0 0 0;
-}
-
-.event_img_wrapper{
-  min-height: 20px;
-}
-
-.event_img_wrapper > .event_img{
-  width: 420px;
 }
 
 .event_address{
@@ -414,6 +405,17 @@ span{
 
 .event_choices{
   margin: 10px 0 20px 0;
+}
+
+.event_choices.event_selected.event_page > .cap_button{
+  border-color: var(--link-color);
+  color: var(--link-color);
+}
+.event_choices.event_selected.event_page > .cap_button.cap_selected{
+  color: white;
+}
+.event_choices.event_selected.event_page > .cap_button:hover{
+  color: white;
 }
 
 .event_choices.event_selected > .cap_button{
@@ -511,6 +513,14 @@ span{
   top: 0px;
   width: 100%;
   z-index: 1;
+}
+
+.event_img_wrapper{
+  min-height: 20px;
+}
+
+.event_img_wrapper > .event_img{
+  width: 420px;
 }
 
 #event_list {
