@@ -407,28 +407,6 @@ span{
   margin: 10px 0 20px 0;
 }
 
-.event_choices.event_selected.event_page > .cap_button{
-  border-color: var(--link-color);
-  color: var(--link-color);
-}
-.event_choices.event_selected.event_page > .cap_button.cap_selected{
-  color: white;
-}
-.event_choices.event_selected.event_page > .cap_button:hover{
-  color: white;
-}
-
-.event_choices.event_selected > .cap_button{
-  border-color: white;
-  color: white;
-}
-.event_choices.event_selected > .cap_button.cap_selected{
-  border-color: var(--link-color);
-}
-.event_choices.event_selected > .cap_button:hover{
-  border-color: var(--link-color);
-}
-
 .event_cities{
   color: white;
   margin: -10px 0 30px 0;
@@ -634,6 +612,22 @@ span{
   margin: 20px 0 50px 0;
 }
 
+.event_selected.card.event_choices > .cap_button{
+  border-color: white;
+  color: white;
+}
+.event_selected.card.event_choices > .cap_button.cap_selected{
+  border-color: var(--link-color);
+}
+.event_selected.card > .cap_button:hover{
+  border-color: var(--link-color);
+}
+
+.event_selected.card.event_users_count{
+  border-color: white;
+  color: white;
+}
+
 .event_selected.card > .nav_link_get > .event_header{
   color: white;
 }
@@ -724,11 +718,6 @@ span{
   margin: 2px 3px 2px 3px;
   text-align: center;
   width: 34px;
-}
-
-.event_users_count.event_selected{
-  border-color: white;
-  color: white;
 }
 
 .event_users_count_number{
