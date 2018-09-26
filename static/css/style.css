@@ -124,7 +124,7 @@ span{
   background-repeat: none;
   background-size: cover;
   height: 80%;
-  min-height: 750px;
+  min-height: 900px;
   top: 0px;
   width: 100%;
   z-index: -10;
@@ -374,8 +374,11 @@ span{
   margin: 10px 0 0 0;
 }
 
-.event > .event_img_wrapper > .event_img{
-  margin: 40px 0 0 0;
+.event_img_wrapper{
+  min-height: 20px;
+}
+
+.event_img_wrapper > .event_img{
   width: 420px;
 }
 
@@ -670,7 +673,7 @@ span{
 }
 
 .event_skipped.card > .event_time{
-  display: none;
+  color: var(--neutral-color);
 }
 
 .event_skipped.card > .event_title{

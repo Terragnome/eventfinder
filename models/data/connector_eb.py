@@ -226,6 +226,7 @@ class ConnectorEB:
                         or ("job" in lower_event_name and "fair" in lower_event_name)
                         or ("kid" in lower_event_name)
                         or ("kids" in lower_event_name)
+                        or ("marketing" in lower_event_name)
                         or ("phone number" in lower_event_name)
                         or ("service number" in lower_event_name)
                         or ("support number" in lower_event_name)
