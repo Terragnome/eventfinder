@@ -1,3 +1,25 @@
+/*
+:root{
+  --darkest-color: #340517;
+  --dark-color: #650A2D;
+  --mid-color: #991044;
+  --light-color: #E51865;
+  --neutral-color: #DEDEDE;
+  --weekend-color: #FF1A72;
+}
+*/
+:root{
+  --darkest-color: #C2823C;
+  --dark-color: #D69249;
+  --mid-color: #E5B256;
+  --light-color: #E5B256;
+  --neutral-color: #DEDEDE;
+
+  --link-color: var(--dark-color);
+  --searchbar-color: var(--dark-color);
+  --weekend-color: var(--dark-color);
+}
+
 @-webkit-keyframes anim-collapse {
   to{ opacity: 0; }
 }
@@ -57,24 +79,15 @@
   }
 }
 
-:root{
-  --darkest-color: #340517;
-  --dark-color: #650A2D;
-  --light-color: #E51865;
-  --mid-color: #991044;
-  --neutral-color: #DEDEDE;
-  --weekend-color: #FF1A72;
-}
-
 a{
-  color: var(--light-color);
+  color: var(--link-color);
   cursor: pointer;
   text-decoration: none;
   text-transform: uppercase;
 }
 
 body{
-  background-color: var(--dark-color);
+  background-color: white;/*var(--dark-color);*/
   border: 0px;
   font-family: Roboto,sans-serif;
   margin: 0px;
@@ -105,7 +118,7 @@ span{
 .app_background{
   position: absolute;
   /*background: url(/static/img/bg/bg.jpg) no-repeat;*/
-  background-color: var(--mid-color);
+  background-color: var(--mid-color);/*var(--mid-color);*/
   background-position: center center;
   background-repeat: none;
   background-size: cover;
@@ -194,7 +207,7 @@ span{
 }
 
 .app_search{
-  background-color: var(--dark-color);
+  background-color: var(--searchbar-color);
   border: 0px;
   border-radius: 8px;
   height: 40px;
@@ -291,20 +304,20 @@ span{
 }
 
 .cap_button{
-  border: 1px solid var(--light-color);
+  border: 1px solid var(--link-color);
   border-radius: 20px;
   display: inline-block;
   font-size: 11px;
   padding: 5px 8px 5px 8px;
 }
 .cap_button:hover{
-  background-color: var(--light-color);
+  background-color: var(--link-color);
   color: white;
   transition: 0.3s;
 }
 
 .cap_button.cap_close{
-  background-color: var(--light-color);
+  background-color: var(--link-color);
   color: white;
   padding-left: 10px;
   padding-right: 10px;
@@ -315,8 +328,8 @@ span{
 }
 
 .cap_selected{
-  background-color: var(--light-color);
-  border-color: var(--light-color);
+  background-color: var(--link-color);
+  border-color: var(--link-color);
   color: white;
 }
 
@@ -411,7 +424,7 @@ span{
 }
 
 .event_cities > .cap_selected{
-  border-color: var(--light-color);
+  border-color: var(--link-color);
 }
 
 .event_cities > .cap_button:hover{
@@ -525,7 +538,7 @@ span{
   color: white;
   cursor: default;
   display: inline-block;
-  background-color: var(--light-color);
+  background-color: var(--link-color);
   border-radius: 1px;
   float: left;
   font-size: 10px;
@@ -850,7 +863,7 @@ span{
 
 #user_panel > a:hover{
   color: white;
-  background-color: var(--light-color);
+  background-color: var(--link-color);
 }
 
 .user_profile_img{
