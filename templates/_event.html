@@ -6,7 +6,8 @@
 {% set is_skipped = event.current_user_event and event.current_user_event.interest == 0 %}
 {% set is_maybe = event.current_user_event and event.current_user_event.interest == 1 %}
 {% set is_go = event.current_user_event and event.current_user_event.interest == 2 %}
-{% set event_selected_class = "event_selected" if is_go or is_maybe else "" %}
+{% set is_selected = is_go or is_maybe %}
+{% set event_selected_class = "event_selected" if is_selected else "" %}
 
 <div id="event_{{ event.event_id }}" class='{{ event_class }} event {{ event_selected_class }}'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
@@ -45,20 +46,37 @@
     {% endif %}
     <div class='event_choices {{ event_class }} {{ event_selected_class }}'>
       {% if is_skipped %}
-        <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Skip</a>
+        <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
+          {% include "icon/_ex.html" %}
+        </a>
       {% else %}
-        <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 0, "card": "{{ is_card_json }}"}'>Skip</a>
+        <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 0, "card": "{{ is_card_json }}"}'>
+          {% include "icon/_ex.html" %}
+        </a>
       {% endif %}
       {% if is_maybe %}
-        <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Maybe</a>
+        <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
+          {% include "icon/_star.html" %}
+        </a>
       {% else %}
-        <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 1, "card": "{{ is_card_json }}"}'>Maybe</a>  
+        <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 1, "card": "{{ is_card_json }}"}'>
+          {% include "icon/_star.html" %}
+        </a>
       {% endif %}
       {% if is_go %}
-        <a class='cap_button cap_selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>Go</a>
+        <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
+          {% include "icon/_heart.html" %}
+        </a>
       {% else %}
-        <a class='cap_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 2, "card": "{{ is_card_json }}"}'>Go</a>  
+        <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 2, "card": "{{ is_card_json }}"}'>
+          {% include "icon/_heart.html" %}
+        </a>
       {% endif %}
+      <!-- {% if is_selected %}
+        <a class='cap_button event_choice nav_link_post_replace'>
+          Done
+        </a>
+      {% endif %} -->
     </div>
     {% if event.interested_user_count %}
       <div class='float_container event_users'>

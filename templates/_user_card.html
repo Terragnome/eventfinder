@@ -19,10 +19,10 @@
     </div>
     <div class='user_feed_choices'>
       {% if user.is_blocked %}
-        <a class='cap_button cap_selected nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"target": "#main", "action": "block", "active": false, "cb": "{{ callback }}"}'>Block</a>
+        <a class='cap_button selected nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"target": "#main", "action": "block", "active": false, "cb": "{{ callback }}"}'>Block</a>
       {% else %}
         {% if user.is_followed %}
-          <a class='cap_button cap_selected nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"target": "#main", "action": "follow", "active": false, "cb": "{{ callback }}"}'>Follow</a>
+          <a class='cap_button selected nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"target": "#main", "action": "follow", "active": false, "cb": "{{ callback }}"}'>Follow</a>
         {% else %}
           <a class='cap_button nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"target": "#main", "action": "follow", "active": true, "cb": "{{ callback }}"}'>Follow</a>
           <a class='cap_button nav_link_post user_feed_choice' href="{{ url_for('user_action', identifier=user.username) }}" data='{"target": "#main", "action": "block", "active": true, "cb": "{{ callback }}"}'>Block</a>

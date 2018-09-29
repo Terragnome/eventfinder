@@ -256,8 +256,8 @@ span{
   color: var(--mid-color);
 }
 
-.app_search > .search_icon{
-  background: url(/static/icons/search.svg) no-repeat;
+.app_search > .icon_search{
+  background: url(/static/icons/svg/search.svg) no-repeat;
   background-position: center center;
   background-size: auto 30px;
   background-repeat: no-repeat;
@@ -310,6 +310,7 @@ span{
   display: inline-block;
   font-size: 11px;
   padding: 5px 8px 5px 8px;
+  text-align: center;
 }
 .cap_button:hover{
   background-color: var(--link-color);
@@ -329,7 +330,7 @@ span{
   margin: 0 0 0 5px;
 }
 
-.cap_selected{
+.cap_button.selected{
   background-color: var(--link-color);
   border-color: var(--link-color);
   color: white;
@@ -400,7 +401,7 @@ span{
 }
 
 .event_choice{
-  margin: 0 2px 0 2px;
+  margin: 0 4px 0 4px;
 }
 
 .event_choices{
@@ -419,7 +420,7 @@ span{
   margin: 5px 2px 5px 2px;
 }
 
-.event_cities > .cap_selected{
+.event_cities > .selected{
   border-color: var(--link-color);
 }
 
@@ -612,14 +613,15 @@ span{
   margin: 20px 0 50px 0;
 }
 
-.event_selected.card.event_choices > .cap_button{
+.event_selected.card.event_choices > .round_button{
   border-color: white;
   color: white;
+  fill: white;
 }
-.event_selected.card.event_choices > .cap_button.cap_selected{
+.event_selected.card.event_choices > .round_button.selected{
   border-color: var(--link-color);
 }
-.event_selected.card > .cap_button:hover{
+.event_selected.card > .round_button:hover{
   border-color: var(--link-color);
 }
 
@@ -650,12 +652,12 @@ span{
   display: none;
 }
 
-.event_skipped.card > .event_choices > .cap_button{
+.event_skipped.card > .event_choices > .round_button{
   border-color: var(--neutral-color);
   color: var(--neutral-color);
 }
 
-.event_skipped.card > .event_choices > .cap_selected{
+.event_skipped.card > .event_choices > .selected{
   background-color: var(--neutral-color);
   color: white;
 }
@@ -782,6 +784,43 @@ span{
 
 .right{
   float: right;
+}
+
+.round_button{
+  border: 1px solid var(--link-color);
+  border-radius: 20px;
+  display: inline-block;
+  fill: var(--link-color);
+  height: 38px;
+  width: 38px;
+}
+
+.round_button.selected{
+  background-color: var(--link-color);
+  border-color: var(--link-color);
+  color: white;
+  fill: white;
+}
+
+.round_button > svg {
+  margin-top: 10px;
+  width: 18px;
+}
+
+.round_button > svg.icon_ex{
+}
+
+.round_button > svg.icon_heart{
+}
+
+.round_button > svg.icon_star{
+}
+
+.round_button:hover{
+  background-color: var(--link-color);
+  color: white;
+  fill: white;
+  transition: 0.3s;
 }
 
 .spinner {

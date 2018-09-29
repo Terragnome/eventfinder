@@ -20,7 +20,7 @@
   <div class='event_cities'>
     {% for city in cities %}
       {% if city.selected %}
-        <a class='cap_button cap_selected nav_link_get' href='{{ remove_url_params(request.url, remove={"cities": city.city_name}) }}'>{{ city.city_name }} {{ city.ct }} X</a>
+        <a class='cap_button selected nav_link_get' href='{{ remove_url_params(request.url, remove={"cities": city.city_name}) }}'>{{ city.city_name }} {{ city.ct }} X</a>
       {% else %}
         <a class='cap_button nav_link_get' href='{{ add_url_params(request.url, merge={"cities": city.city_name}) }}'>{{ city.city_name }} {{ city.ct }}</a>
       {% endif %}
