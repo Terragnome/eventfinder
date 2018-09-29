@@ -655,11 +655,13 @@ span{
 .event_skipped.card > .event_choices > .round_button{
   border-color: var(--neutral-color);
   color: var(--neutral-color);
+  fill: var(--neutral-color);
 }
 
 .event_skipped.card > .event_choices > .selected{
   background-color: var(--neutral-color);
   color: white;
+  fill: white;
 }
 
 .event_skipped.card > .event_dates{
