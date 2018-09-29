@@ -14,7 +14,7 @@ class UserEvent(Base):
 
   @property
   def is_done(self):
-    return self.interest == -1
+    return self.interest == 3
 
   @property
   def is_go(self):

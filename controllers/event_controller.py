@@ -40,7 +40,8 @@ class EventController:
     user_event_count = UserEvent.query.filter(
       and_(
         UserEvent.event_id==event_id,
-        UserEvent.interest>0
+        UserEvent.interest>0,
+        UserEvent.interest<3
       )
     ).count()
 
@@ -164,7 +165,8 @@ class EventController:
         current_user_events = UserEvent.query.filter(
           and_(
             UserEvent.user_id == current_user.user_id,
-            UserEvent.interest>0
+            UserEvent.interest>0,
+            UserEvent.interest<3
           )
         ).all()
         current_user_events_by_event_id = { x.event_id: x for x in current_user_events }      
@@ -179,7 +181,8 @@ class EventController:
             Event.start_time >= datetime.datetime.now(),
             Event.end_time >= datetime.datetime.now()
           ),
-          UserEvent.interest>0
+          UserEvent.interest>0,
+          UserEvent.interest<3
         )
       )
 
