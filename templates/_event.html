@@ -3,21 +3,23 @@
 {% set event_class='card' if card else 'event_page' %}
 
 {% set is_card_json = 'true' if card else 'false' %}
-{% set is_skipped = event.current_user_event and event.current_user_event.interest == 0 %}
-{% set is_maybe = event.current_user_event and event.current_user_event.interest == 1 %}
-{% set is_go = event.current_user_event and event.current_user_event.interest == 2 %}
+
+{% set is_done = event.current_user_event and event.current_user_event.is_done %}
+{% set is_go = event.current_user_event and event.current_user_event.is_go %}
+{% set is_maybe = event.current_user_event and event.current_user_event.is_maybe %}
+{% set is_skip = event.current_user_event and event.current_user_event.is_skip %}
 {% set is_selected = is_go or is_maybe %}
-{% set event_selected_class = "event_selected" if is_selected else "" %}
+{% set event_selected_class = "event_selected" if is_selected or is_done else "" %}
 
 <div id="event_{{ event.event_id }}" class='{{ event_class }} event {{ event_selected_class }}'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
-    <div class='{{ event_class }} event_img_wrapper {{ "event_skipped" if is_skipped else ""}}'>
+    <div class='{{ event_class }} event_img_wrapper {{ "event_skip" if is_skip else ""}}'>
       {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
       {% if event.img_url %}
         <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
       {% endif %}
     </div>
-    <div class='{{ event_class }} event_header {{ "event_skipped" if is_skipped else ""}}'>  
+    <div class='{{ event_class }} event_header {{ "event_skip" if is_skip else ""}}'>  
       <div class='event_title'>{{ event.display_name }}</div>
       {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
       <div class='event_time'>{{ event.display_time }}</div>
@@ -40,43 +42,50 @@
       </div>
     </div>
   {% if card %}</a>{% endif %}
-  <div class='{{ event_class }} event_body {{ "event_skipped" if is_skipped else ""}}'>
+  <div class='{{ event_class }} event_body {{ "event_skip" if is_skip else ""}}'>
     {% if not card %}
       <p class='event_description'>{{ event.description }}</p>
     {% endif %}
     <div class='event_choices {{ event_class }} {{ event_selected_class }}'>
-      {% if is_skipped %}
-        <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
-          {% include "icon/_ex.html" %}
+      {% if is_done %}
+        <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 2, "card": "{{ is_card_json }}"}'>
+          {% include "icon/_check.html" %}
         </a>
       {% else %}
-        <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 0, "card": "{{ is_card_json }}"}'>
-          {% include "icon/_ex.html" %}
-        </a>
+        {% if is_skip %}
+          <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
+            {% include "icon/_check.html" %}
+          </a>
+        {% else %}
+          {% if is_selected %}
+            <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": -1, "card": "{{ is_card_json }}"}'>
+              {% include "icon/_check.html" %}
+            </a>
+          {% else %}
+            <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 0, "card": "{{ is_card_json }}"}'>
+              {% include "icon/_ex.html" %}
+            </a>
+          {% endif %}
+        {% endif %}
+        {% if is_maybe %}
+          <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
+            {% include "icon/_star.html" %}
+          </a>
+        {% else %}
+          <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 1, "card": "{{ is_card_json }}"}'>
+            {% include "icon/_star.html" %}
+          </a>
+        {% endif %}
+        {% if is_go %}
+          <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
+            {% include "icon/_heart.html" %}
+          </a>
+        {% else %}
+          <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 2, "card": "{{ is_card_json }}"}'>
+            {% include "icon/_heart.html" %}
+          </a>
+        {% endif %}
       {% endif %}
-      {% if is_maybe %}
-        <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
-          {% include "icon/_star.html" %}
-        </a>
-      {% else %}
-        <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 1, "card": "{{ is_card_json }}"}'>
-          {% include "icon/_star.html" %}
-        </a>
-      {% endif %}
-      {% if is_go %}
-        <a class='round_button selected event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": null, "card": "{{ is_card_json }}"}'>
-          {% include "icon/_heart.html" %}
-        </a>
-      {% else %}
-        <a class='round_button event_choice nav_link_post_replace' href="{{ url_for('event', event_id=event.event_id) }}" data='{"target": "#event_{{ event.event_id }}", "go": 2, "card": "{{ is_card_json }}"}'>
-          {% include "icon/_heart.html" %}
-        </a>
-      {% endif %}
-      <!-- {% if is_selected %}
-        <a class='cap_button event_choice nav_link_post_replace'>
-          Done
-        </a>
-      {% endif %} -->
     </div>
     {% if event.interested_user_count %}
       <div class='float_container event_users'>

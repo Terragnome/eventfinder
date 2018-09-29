@@ -648,47 +648,47 @@ span{
   color: white;
 }
 
-.event_skipped.card > .event_address{
+.event_skip.card > .event_address{
   display: none;
 }
 
-.event_skipped.card > .event_choices > .round_button{
+.event_skip.card > .event_choices > .round_button{
   border-color: var(--neutral-color);
   color: var(--neutral-color);
   fill: var(--neutral-color);
 }
 
-.event_skipped.card > .event_choices > .selected{
+.event_skip.card > .event_choices > .selected{
   background-color: var(--neutral-color);
   color: white;
   fill: white;
 }
 
-.event_skipped.card > .event_dates{
+.event_skip.card > .event_dates{
   display: none;
 }
 
-.event_skipped.card > .event_description{
+.event_skip.card > .event_description{
   display: none;
 }
 
-.event_skipped.card.event_img_wrapper{
+.event_skip.card.event_img_wrapper{
   display: none;
 }
 
-.event_skipped.card > .event_paid{
+.event_skip.card > .event_paid{
   display: none;
 }
 
-.event_skipped.card > .event_time{
+.event_skip.card > .event_time{
   color: var(--neutral-color);
 }
 
-.event_skipped.card > .event_title{
+.event_skip.card > .event_title{
   color: var(--neutral-color);
 }
 
-.event_skipped.card > .event_users{
+.event_skip.card > .event_users{
   display: none;
 }
 

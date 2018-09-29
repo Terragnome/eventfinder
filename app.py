@@ -230,7 +230,7 @@ def event_update(event_id):
   is_card = request.form.get('card') == 'true'
   go_value = request.form.get('go')
 
-  if go_value in ('2','1','0'):
+  if go_value in ('-1','2','1','0'):
     interest = str(go_value)
   else:
     interest = None
@@ -302,7 +302,7 @@ def following():
     return render_template(template, vargs=vargs, **vargs)
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
-@app.route("/home", methods=['GET'])
+@app.route("/events", methods=['GET'])
 @oauth2.required(scopes=oauth2_scopes)
 def home():
   current_user = UserController().current_user
