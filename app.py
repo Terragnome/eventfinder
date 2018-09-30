@@ -344,6 +344,7 @@ def user(
   if user:
     events = []
     sections = []
+    event_cities = []
     cities = []
     if not Block.blocks(user.user_id, current_user_id):
       events, sections, event_cities = EventController().get_events_for_user_by_interested(
