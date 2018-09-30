@@ -154,19 +154,30 @@ class EventController:
     event_cities = []
     if user:
       user_events = UserEvent.query.filter(
-        and_(
-          UserEvent.user_id == user.user_id,
-          UserEvent.interest > 0 if interested else UserEvent<=0
+        UserEvent.user_id == user.user_id
+      )
+
+      if interested == 'done':
+        user_events = user_events.filter(
+          UserEvent.interest == 3
         )
-      ).all()
+      elif interested == 'interested':
+        user_events = user_events.filter(
+          UserEvent.interest.in_([1,2])
+        )
+      else:
+        user_events = user_events.filter(
+          UserEvent.interest == 0
+        )
+
+      user_events = user_events.all()
       user_events_by_event_id = { x.event_id: x for x in user_events }
 
       if current_user:
         current_user_events = UserEvent.query.filter(
           and_(
             UserEvent.user_id == current_user.user_id,
-            UserEvent.interest>0,
-            UserEvent.interest<3
+            ~UserEvent.interest.in_([3])
           )
         ).all()
         current_user_events_by_event_id = { x.event_id: x for x in current_user_events }      
@@ -180,9 +191,7 @@ class EventController:
           or_(
             Event.start_time >= datetime.datetime.now(),
             Event.end_time >= datetime.datetime.now()
-          ),
-          UserEvent.interest>0,
-          UserEvent.interest<3
+          )
         )
       )
 

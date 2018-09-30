@@ -20,6 +20,7 @@ from models.follow import Follow
 from models.tag import Tag
 
 from utils.config_utils import load_config
+from utils.get_from import get_from
 
 app = Flask(__name__)
 app.config.update(**app_config)
@@ -110,9 +111,11 @@ def parse_url_for(*args, **kwargs):
 def paginated(fn):
   @functools.wraps(fn)
   def decorated_fn(*args, **kwargs):
-    page = request.args.get('p', default=1, type=int)
-    scroll = request.args.get('scroll', default=False, type=bool)
-    
+    page = get_from(kwargs, ['p'], request.args.get('p', default=1, type=int))
+    scroll = get_from(kwargs, ['scroll'], request.args.get('scroll', default=False, type=bool))
+    prev_page_url = get_from(kwargs, ['prev_page_url'])
+    next_page_url = get_from(kwargs, ['next_page_url'])
+
     if page <= 1:
         page = 1
         prev_page = None
@@ -120,15 +123,13 @@ def paginated(fn):
         prev_page = page-1
     next_page = page+1
 
-    if 'p' in kwargs: del kwargs['p']
-    if 'scroll' in kwargs: del kwargs['scroll']
-    if 'prev_page_url' in kwargs: del kwargs['prev_page_url']
-    if 'next_page_url' in kwargs: del kwargs['next_page_url']
-
-    kwargs['page'] = prev_page
-    prev_page_url = parse_url_for(fn.__name__, *args, **kwargs)
-    kwargs['page'] = next_page
-    next_page_url = parse_url_for(fn.__name__, *args, **kwargs)
+    if not prev_page_url:
+      kwargs['page'] = prev_page
+      prev_page_url = parse_url_for(fn.__name__, *args, **kwargs)
+    
+    if not next_page_url:
+      kwargs['page'] = next_page
+      next_page_url = parse_url_for(fn.__name__, *args, **kwargs)
 
     kwargs['page'] = page
     kwargs['scroll'] = scroll
@@ -137,15 +138,6 @@ def paginated(fn):
 
     return fn(*args, **kwargs)
   return decorated_fn
-
-@app.route("/login")
-def login():
-  return redirect(request.referrer or '/')
-
-@app.route("/logout")
-def logout():
-  UserController()._logout()
-  return redirect('/')
 
 @app.route("/blocking/", methods=['GET'])
 @oauth2.required(scopes=oauth2_scopes)
@@ -167,46 +159,6 @@ def blocking():
   if request.is_xhr:
     return render_template(template, vargs=vargs, **vargs)
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
-
-@app.route("/", methods=['GET'])
-@app.route("/explore/", methods=['GET'])
-@parse_url_params
-@paginated
-def events(
-  query=None, tag=None, cities=None,
-  page=1, next_page_url=None, prev_page_url=None,
-  scroll=False
-):
-  events, sections, event_cities = EventController().get_events(
-    query=query,
-    tag=tag,
-    cities=cities,
-    page=page
-  )
-
-  for section in sections:
-    kwargs = {
-      'query': query,
-      'cities': cities,
-      'tag': section['section_name']
-    }
-
-    if section['section_name'] == Tag.MOVIES: del kwargs['cities']
-    section['section_url'] = parse_url_for('events', **kwargs)
-
-    del kwargs['tag']
-    section['section_close_url'] = parse_url_for('events', **kwargs)
-
-  vargs = {
-    'events': events,
-    'sections': sections,
-    'cities': event_cities,
-    'page': page,
-    'next_page_url': next_page_url,
-    'prev_page_url': prev_page_url,
-  }
-
-  return _render_events_list(request, events, vargs, scroll=scroll)
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):
@@ -258,6 +210,46 @@ def event_update(event_id):
     return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
   return redirect(request.referrer or '/')
 
+@app.route("/", methods=['GET'])
+@app.route("/explore/", methods=['GET'])
+@parse_url_params
+@paginated
+def events(
+  query=None, tag=None, cities=None,
+  page=1, next_page_url=None, prev_page_url=None,
+  scroll=False
+):
+  events, sections, event_cities = EventController().get_events(
+    query=query,
+    tag=tag,
+    cities=cities,
+    page=page
+  )
+
+  for section in sections:
+    kwargs = {
+      'query': query,
+      'cities': cities,
+      'tag': section['section_name']
+    }
+
+    if section['section_name'] == Tag.MOVIES: del kwargs['cities']
+    section['section_url'] = parse_url_for('events', **kwargs)
+
+    del kwargs['tag']
+    section['section_close_url'] = parse_url_for('events', **kwargs)
+
+  vargs = {
+    'events': events,
+    'sections': sections,
+    'cities': event_cities,
+    'page': page,
+    'next_page_url': next_page_url,
+    'prev_page_url': prev_page_url,
+  }
+
+  return _render_events_list(request, events, vargs, scroll=scroll)
+
 @app.route("/followers/", methods=['GET'])
 @oauth2.required(scopes=oauth2_scopes)
 def followers():
@@ -304,15 +296,42 @@ def following():
 
 @app.route("/events", methods=['GET'])
 @oauth2.required(scopes=oauth2_scopes)
-def home():
+@parse_url_params
+@paginated
+def home(**kwargs):
   current_user = UserController().current_user
-  return user(identifier=current_user.username)
+  kwargs.update({
+    'identifier': current_user.username
+  })
+  return user(**kwargs)
+
+@app.route("/events/history", methods=['GET'])
+@oauth2.required(scopes=oauth2_scopes)
+@parse_url_params
+@paginated
+def home_done(**kwargs):
+  current_user = UserController().current_user
+  kwargs.update({
+    'identifier': current_user.username,
+    'interested': 'done'
+  })
+  return user(**kwargs)
+
+@app.route("/login")
+def login():
+  return redirect(request.referrer or '/')
+
+@app.route("/logout")
+def logout():
+  UserController()._logout()
+  return redirect('/')
 
 @app.route("/user/<identifier>/", methods=['GET'])
 @parse_url_params
 @paginated
 def user(
   identifier,
+  interested='interested',
   query=None, tag=None, cities=None,
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False
@@ -332,7 +351,7 @@ def user(
         query=query,
         tag=tag,
         cities=cities,
-        interested=True,
+        interested=interested,
         page=page
       )
       for section in sections:
@@ -391,7 +410,7 @@ def user_action(identifier):
     if not Block.blocks(u.user_id, current_user_id):
       events = EventController().get_events_for_user_by_interested(
         user=u,
-        interested=True
+        interested='interested'
       )
 
     # TODO: Replace this with something generic but safe
