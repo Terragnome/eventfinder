@@ -157,8 +157,6 @@ Application.backButton = function(e){
 Application.getElem = function(target, url, push_state=true, replace=false) {
   $.get(url, {
   }).done(function(response) {
-    Application.setAppBackground(null);
-
     $(target).addClass('anim_fade_in');
     if(response != '' && push_state){
       var push_url = url;
