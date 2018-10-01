@@ -18,6 +18,7 @@ class Event(Base):
   description = Column(String)
   short_name = Column(String)
   img_url = Column(String)
+  backdrop_url = Column(String)
   start_time = Column(DateTime)
   end_time = Column(DateTime)
   cost = Column(Integer)

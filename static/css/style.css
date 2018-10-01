@@ -355,7 +355,26 @@ span{
 }
 
 .event.event_page{
-  border-radius: 0;
+  border-radius: 5px;
+  margin-bottom: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+  text-align: center;
+  width: 600px;
+}
+
+.event.event_page > .event_img_wrapper > .event_img{
+  border-radius: 5px;
+}
+
+.event_page > .event_description{
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.event_page > .event_img{
+  margin-top: 30px;
 }
 
 .event_address{

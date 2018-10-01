@@ -11,7 +11,17 @@
 {% set is_selected = is_go or is_maybe %}
 {% set event_selected_class = "event_selected" if is_selected else "" %}
 
-<div id="event_{{ event.event_id }}" class='{{ event_class }} event {{ event_selected_class }}'>
+{% if not card %}
+<script>
+  {% if event.backdrop_url %}
+    Application.setAppBackground('{{ event.backdrop_url }}');
+  {% else %}
+    Application.setAppBackground(null);
+  {% endif %}
+</script>
+{% endif %}
+
+<div id="event_{{ event.event_id }}" class='box_outline {{ event_class }} event {{ event_selected_class }}'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
     <div class='{{ event_class }} event_img_wrapper {{ "event_skip" if is_skip else ""}}'>
       {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}

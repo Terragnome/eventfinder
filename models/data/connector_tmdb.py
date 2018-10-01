@@ -85,7 +85,8 @@ class ConnectorTMDB:
         event_name = row_connector_event.data['title']
         event_description = row_connector_event.data['overview']
         event_short_name = row_connector_event.data['title']
-        event_img_url = 'https://image.tmdb.org/t/p/w780/{}'.format(row_connector_event.data['poster_path'])
+        event_img_url = 'https://image.tmdb.org/t/p/w780{}'.format(row_connector_event.data['poster_path'])
+        event_backdrop_url = 'https://image.tmdb.org/t/p/original{}'.format(row_connector_event.data['backdrop_path'])
 
         event_start_time = datetime.datetime.strptime(row_connector_event.data['release_date'], "%Y-%m-%d")
         event_end_time = event_start_time+datetime.timedelta(days=180)
@@ -96,6 +97,7 @@ class ConnectorTMDB:
           row_event.description = event_description
           row_event.short_name = event_name
           row_event.img_url = event_img_url
+          row_event.backdrop_url = event_backdrop_url
           row_event.start_time = event_start_time
           row_event.end_time = event_end_time
           db_session.merge(row_event)
@@ -106,6 +108,7 @@ class ConnectorTMDB:
             description = event_description,
             short_name = event_short_name,
             img_url = event_img_url,
+            backdrop_url = event_backdrop_url,
             start_time = event_start_time,
             end_time = event_end_time
           )
