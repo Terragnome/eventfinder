@@ -72,10 +72,10 @@
 </html>
 
 <script>
-    Application.init({
-      'urls': {
-        'auth': "{{ url_for('oauth2.authorize') }}",
-        'home': "{{ url_for('events') }}"
-      }
-    });
-  </script>
+  Application.init({
+    'urls': {
+      'auth': "{{ url_for('oauth2.authorize') }}",
+      'home': "{{ url_for('events') }}"
+    }
+  });
+</script>

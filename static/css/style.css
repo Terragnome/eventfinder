@@ -1,13 +1,3 @@
-/*
-:root{
-  --darkest-color: #340517;
-  --dark-color: #650A2D;
-  --mid-color: #991044;
-  --light-color: #E51865;
-  --neutral-color: #DEDEDE;
-  --weekend-color: #FF1A72;
-}
-*/
 :root{
   --darkest-color: #C2823C;
   --dark-color: #D69249;
@@ -88,7 +78,7 @@ a{
 }
 
 body{
-  background-color: white;/*var(--dark-color);*/
+  background-color: white;
   border: 0px;
   font-family: Roboto,sans-serif;
   margin: 0px;
@@ -119,7 +109,7 @@ span{
 .app_background{
   position: absolute;
   /*background: url(/static/img/bg/bg.jpg) no-repeat;*/
-  background-color: var(--mid-color);/*var(--mid-color);*/
+  background-color: var(--mid-color);
   background-position: center center;
   background-repeat: none;
   background-size: cover;
@@ -129,12 +119,6 @@ span{
   width: 100%;
   z-index: -10;
 }
-/*
-.app_background > .app_background_inset{
-  background-color: var(--mid-color);
-  height: 600px;
-  z-index: -9;
-}*/
 
 .app_header{
   overflow: auto;
@@ -892,7 +876,6 @@ span{
 
 .user_feed_profile{
   background-color: white;
-  /*border: 1px solid var(--neutral-color);*/
   border-radius: 5px;
   margin: 0 10px 30px 10px;
   padding: 15px 15px 20px 15px;

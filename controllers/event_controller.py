@@ -332,6 +332,7 @@ class EventController:
     return [
       {
         'section_name': tag[0],
+        'section_key': tag[0].lower().replace(" ", "_"),
         'ct': tag[1],
       } for tag in section_query if tag[1]>0
     ]

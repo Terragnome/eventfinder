@@ -1,15 +1,23 @@
 {% set section_name=section_name or (vargs.section_name if vargs else None) %}
+{% set section_key=section_key or (vargs.section_key if vargs else None) %}
 {% set section_url=section_url or (vargs.section_url if vargs else None) %}
 {% set section_close_url=section_close_url or (vargs.section_close_url if vargs else None) %}
 {% set ct=ct or (vargs.ct if vargs else None) %}
 {% set selected=selected or (vargs.selected if vargs else None) %}
 
 <a class='nav_link_get' href='{{ section_url }}'>
+  {% if selected %}
+    <script>
+      Application.setAppBackground('/static/img/section/{{ section_key }}.jpg');
+    </script>
+  {% else %}
+  {% endif %}
+
   <div class='box_outline event_section float_child {{ "selected" if selected else "" }}'>
     {% if selected %}
       <a class='button_close nav_link_get' href='{{ section_close_url }}'>X</a>
     {% endif %}
-    <img class='event_section_img' src='/static/img/section/{{ section_name }}.jpg'></img>
+    <img class='event_section_img' src='/static/img/section/{{ section_key }}.jpg'></img>
     <div class='event_section_info'>
       <div class='event_section_title'>{{ section_name }}</div>
       <div class='event_section_subtitle'>{{ ct }} Events</div>

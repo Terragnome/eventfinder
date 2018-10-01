@@ -157,6 +157,8 @@ Application.backButton = function(e){
 Application.getElem = function(target, url, push_state=true, replace=false) {
   $.get(url, {
   }).done(function(response) {
+    Application.setAppBackground(null);
+
     $(target).addClass('anim_fade_in');
     if(response != '' && push_state){
       var push_url = url;
@@ -188,6 +190,14 @@ Application.postElem = function(target, url, params, replace=false) {
 
 Application.removeElem = function(target) {
   $(target).remove();
+}
+
+Application.setAppBackground = function(url) {
+  if(url == null){
+    $('.app_background').css('background-image', 'none');
+  }else{
+    $('.app_background').css('background-image', 'url('+url+')');
+  }
 }
 
 Application.toggleVisibility = function(target){
