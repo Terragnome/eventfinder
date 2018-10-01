@@ -78,7 +78,7 @@ a{
 }
 
 body{
-  background-color: white;
+  background-color: white;/*var(--mid-color);*/
   border: 0px;
   font-family: Roboto,sans-serif;
   margin: 0px;
@@ -108,13 +108,13 @@ span{
 
 .app_background{
   position: absolute;
-  /*background: url(/static/img/bg/bg.jpg) no-repeat;*/
+  background-attachment: fixed;
   background-color: var(--mid-color);
   background-position: center center;
   background-repeat: none;
   background-size: cover;
   height: 80%;
-  min-height: 900px;
+  min-height: 1200px;
   top: 0px;
   width: 100%;
   z-index: -10;
