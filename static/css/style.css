@@ -1,14 +1,19 @@
 :root{
-  --darkest-color: #C2823C;
+  --darkest-color: #707070;
+  --dark-color: #A0A0A0;
+  --mid-color: #D0D0D0;
+  --light-color: #F0F0F0;
+  /*--darkest-color: #C2823C;
   --dark-color: #D69249;
   --mid-color: #E5B256;
-  --light-color: #E5B256;
+  --light-color: #E5B256;*/
   --dark-neutral-color: #808080;
   --neutral-color: #DEDEDE;
 
-  --link-color: var(--dark-color);
-  --searchbar-color: var(--dark-color);
-  --weekend-color: var(--dark-color);
+  --link-color: black;
+  /*--link-color: var(--dark-color);*/
+  --searchbar-color: white;
+  --weekend-color: var(--darkest-color);
 }
 
 @-webkit-keyframes anim-collapse {
@@ -144,10 +149,10 @@ span{
 }
 
 .app_nav_link{
-  color: white;
+  color: var(--link-color);
   float: left;
   font-family: Rubik,sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   margin: 18px 10px 0 0;
 }
 
@@ -208,9 +213,9 @@ span{
 }
 
 .app_search > .search_field{
-  background-color: var(--dark-color);
+  background-color: var(--searchbar-color);
   border: 0px;
-  color: white;
+  color: black;
   display: inline-block;
   font-size: 16px;
   height: 40px;
@@ -264,10 +269,10 @@ span{
 }
 
 .app_title{
-  color: white;
+  color: var(--link-color);
   float: left;
   font-family: Rubik,sans-serif;
-  font-size: 22px;
+  font-size: 24px;
   margin: 10px 10px 0 10px;
   text-decoration: none;
 }
@@ -446,9 +451,9 @@ span{
 }
 
 .event_date{
-  border: 1px solid black;
+  border: 1px solid var(--weekend-color);
   border-radius: 5px;
-  color: black;
+  color: var(--weekend-color);
   cursor: default;
   display: inline-block;
   height: 40px;
@@ -547,7 +552,7 @@ span{
   color: white;
   cursor: default;
   display: inline-block;
-  background-color: var(--link-color);
+  background-color: var(--darkest-color);
   border-radius: 1px;
   float: left;
   font-size: 10px;
