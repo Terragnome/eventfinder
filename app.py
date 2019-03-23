@@ -24,7 +24,7 @@ from utils.get_from import get_from
 
 app = Flask(__name__)
 app.config.update(**app_config)
-app.config['PROJECT_ID'] = "eventfinder-208801"
+app.config['PROJECT_ID'] = "eventfinder-214723"
 app.config['GOOGLE_OAUTH2_CLIENT_SECRETS_FILE'] = 'config/google_auth.json'
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url('redis://redis:6379/')

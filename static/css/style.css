@@ -947,7 +947,7 @@ span{
 }
 
 .user_profile_img_placeholder{
-  background-color: var(--neutral-color);
+  background-color: white;/*var(--neutral-color);*/
   border-radius: 20px;
   height: 40px;
   width: 40px;

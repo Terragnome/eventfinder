@@ -6,7 +6,7 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=event_finder
+      - POSTGRES_DB=eventfinder
       - PGDATA=/tmp
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
@@ -14,15 +14,15 @@ services:
       - 5432:5432
   redis:
     restart: always
-    image: redis
     command: redis-server --appendonly yes
+    image: redis
     volumes:
-      - ./data/redis:/data
+      - ./data/redis:/var/lib/redis/data
     ports:
         - 6379:6379
   app:
     restart: always
-    image: event_finder_app:latest
+    image: eventfinder_app:latest
     build: .
     volumes:
       - .:/app
