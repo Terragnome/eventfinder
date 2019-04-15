@@ -12,8 +12,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 ENV FLASK_ENV="docker"
 
-# Expose port 5000
+# Expose ports
 EXPOSE 5000
+EXPOSE 5432
+EXPOSE 6379
 
 # Populate the events db
 # RUN sh scripts/sync.sh

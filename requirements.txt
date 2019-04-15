@@ -3,10 +3,13 @@ eventbrite == 3.3.3
 flask == 1.0.2
 flask-session == 0.3.1
 geocoder == 1.38
-oauth2client == 4.1.2
-oauthlib == 2.1.0
+google-api-python-client == 1.7.8
+google-auth == 1.6.3
+google-auth-oauthlib == 0.3.0
+google-auth-httplib2 == 0.0.3
 postgres == 2.2.1
 psycopg2-binary == 2.7.5
+pyopenssl == 19.0.0
 redis == 2.10.6
 sqlalchemy == 1.2.8
 tmdbsimple == 2.2.0

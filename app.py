@@ -2,15 +2,18 @@ import functools
 import json
 import os
 
+import flask
 from flask import Flask
+from flask import current_app, session
 from flask import redirect, render_template, request
 from flask import url_for
 from flask_session import Session
-from oauth2client.contrib.flask_util import UserOAuth2
+import google.oauth2.credentials
+import google_auth_oauthlib.flow
 import redis
+import ssl
 
 from config.app_config import app_config
-
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
 from helpers.jinja_helper import add_url_params, filter_url_params, remove_url_params
@@ -18,14 +21,14 @@ from models.base import db_session
 from models.block import Block
 from models.follow import Follow
 from models.tag import Tag
-
 from utils.config_utils import load_config
 from utils.get_from import get_from
 
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_cert_chain('config/certs/ssl.cert', 'config/certs/ssl.key')
+
 app = Flask(__name__)
 app.config.update(**app_config)
-app.config['PROJECT_ID'] = "eventfinder-214723"
-app.config['GOOGLE_OAUTH2_CLIENT_SECRETS_FILE'] = 'config/google_auth.json'
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url('redis://redis:6379/')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -37,20 +40,13 @@ app.jinja_env.globals.update(remove_url_params=remove_url_params)
 sess = Session()
 sess.init_app(app)
 
-oauth2_scopes = ["profile", "email"]
-oauth2 = UserOAuth2()
-oauth2.init_app(
-  app,
-  scopes = oauth2_scopes,
-  prompt = 'select_account',
-  authorize_callback=UserController()._request_user_info
-)
-
 param_to_kwarg = {
   'p': 'page',
   'q': 'query',
   't': 'tag'
 }
+
+OAUTH2_CALLBACK = "https://www.pursuitofhobbiness.com/oauth2callback"
 
 TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING = "_blocking.html"
@@ -62,9 +58,74 @@ TEMPLATE_EVENTS_LIST = "_events_list.html"
 TEMPLATE_USER = "_user.html"
 TEMPLATE_USERS = "_users.html"
 
+@app.route("/debug/", methods=['GET'])
+def debug():
+  user_info = UserController()._request_user_info()
+
+@app.route("/oauth2callback/", methods=['GET'])
+def oauth2callback():
+  state = session['state']
+
+  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    app.config['AUTH']['CLIENT_SECRETS_FILE'],
+    scopes=app.config['AUTH']['SCOPES'],
+    state=state
+  )
+  flow.redirect_uri = OAUTH2_CALLBACK#flask.url_for('oauth2callback', _external=True)
+
+  authorization_response = flask.request.url
+  flow.fetch_token(authorization_response=authorization_response)
+
+  credentials = flow.credentials
+  session['credentials'] = {
+    'token': credentials.token,
+    'refresh_token': credentials.refresh_token,
+    'token_uri': credentials.token_uri,
+    'client_id': credentials.client_id,
+    'client_secret': credentials.client_secret,
+    'scopes': credentials.scopes
+  }
+
+  UserController()._request_user_info()
+  return redirect(request.referrer or '/')
+
+@app.route("/authorize/")
+def authorize():
+  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    app.config['AUTH']['CLIENT_SECRETS_FILE'],
+    scopes=app.config['AUTH']['SCOPES'],
+  )
+  flow.redirect_uri = OAUTH2_CALLBACK#flask.url_for('oauth2callback', _external=True)
+
+  authorization_url, state = flow.authorization_url(
+    access_type='offline',
+    include_granted_scopes='true'
+  )
+  session['state'] = state
+
+  return flask.redirect(authorization_url)
+
+def oauth2_required(fn):
+  @functools.wraps(fn)
+  def decorated_fn(*args, **kwargs):
+    if 'credentials' not in session:
+      return flask.redirect(flask.url_for('authorize'))
+    return fn(*args, **kwargs)
+  return decorated_fn
+
+@app.route("/login/")
+@oauth2_required
+def login():
+  return redirect(request.referrer or '/')
+
+@app.route("/logout/")
+def logout():
+  UserController()._logout()
+  return redirect('/')
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db_session.remove()
+   db_session.remove()
 
 def _render_events_list(
   request,
@@ -140,7 +201,7 @@ def paginated(fn):
   return decorated_fn
 
 @app.route("/blocking/", methods=['GET'])
-@oauth2.required(scopes=oauth2_scopes)
+@oauth2_required
 def blocking():
   current_user = UserController().current_user
   blocking = UserController().get_blocking()
@@ -177,7 +238,7 @@ def event(event_id):
   return redirect(request.referrer or '/')
 
 @app.route("/event/<int:event_id>/", methods=['POST'])
-@oauth2.required(scopes=oauth2_scopes)
+@oauth2_required
 def event_update(event_id):
   is_card = request.form.get('card') == 'true'
   go_value = request.form.get('go')
@@ -251,7 +312,7 @@ def events(
   return _render_events_list(request, events, vargs, scroll=scroll)
 
 @app.route("/followers/", methods=['GET'])
-@oauth2.required(scopes=oauth2_scopes)
+@oauth2_required
 def followers():
   current_user = UserController().current_user
   follower_users = UserController().get_followers()
@@ -272,7 +333,7 @@ def followers():
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
 @app.route("/following/", methods=['GET'])
-@oauth2.required(scopes=oauth2_scopes)
+@oauth2_required
 def following():
   current_user = UserController().current_user
   recommended_users = UserController().get_following_recommended()
@@ -295,7 +356,7 @@ def following():
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
 @app.route("/events", methods=['GET'])
-@oauth2.required(scopes=oauth2_scopes)
+@oauth2_required
 @parse_url_params
 @paginated
 def home(**kwargs):
@@ -306,7 +367,7 @@ def home(**kwargs):
   return user(**kwargs)
 
 @app.route("/events/history", methods=['GET'])
-@oauth2.required(scopes=oauth2_scopes)
+@oauth2_required
 @parse_url_params
 @paginated
 def home_done(**kwargs):
@@ -316,15 +377,6 @@ def home_done(**kwargs):
     'interested': 'done'
   })
   return user(**kwargs)
-
-@app.route("/login")
-def login():
-  return redirect(request.referrer or '/')
-
-@app.route("/logout")
-def logout():
-  UserController()._logout()
-  return redirect('/')
 
 @app.route("/user/<identifier>/", methods=['GET'])
 @parse_url_params
@@ -392,7 +444,7 @@ def user(
   return redirect(request.referrer or '/')    
 
 @app.route("/user/<identifier>/", methods=['POST'])
-@oauth2.required(scopes=oauth2_scopes)
+@oauth2_required
 def user_action(identifier):
   current_user = UserController().current_user
   current_user_id = UserController().current_user_id
@@ -429,4 +481,6 @@ def user_action(identifier):
   return redirect(request.referrer or '/')
 
 if __name__ == '__main__':
-  app.run(debug=True, host='0.0.0.0', port=5000)
+  # app.run(host='0.0.0.0', port=5000, debug=True)
+  app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)
+  # app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)

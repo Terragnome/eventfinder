@@ -1,7 +1,10 @@
 import httplib2
 import json
 
-from flask import  current_app, session
+import flask
+from flask import current_app, session
+import google.oauth2.credentials
+from googleapiclient.discovery import build
 from sqlalchemy import alias, and_, or_
 
 from models.base import db_session
@@ -24,37 +27,49 @@ class UserController:
     return user
 
   def _logout(self):
-    from app import oauth2
     if 'user' in session:
       del session['user']
     session.modified = True
-    oauth2.storage.delete()
 
-  def _request_user_info(self, credentials):
-    http = httplib2.Http()
-    credentials.authorize(http)
-    resp, content = http.request('https://www.googleapis.com/plus/v1/people/me')
+    if 'credentials' in session:
+      del session['credentials']
 
-    if resp.status != 200:
-      current_app.logger.error(
-        "Error while obtaining user profile: \n%s: %s",
-        resp,
-        content
-      )
-      return None
+  def _request_user_info(self):
+    credentials = google.oauth2.credentials.Credentials(**session['credentials'])
+    #current_app.logger.info(session['credentials'])
 
-    profile = json.loads(content.decode('utf-8'))
+    people_service = build('people', 'v1', credentials=credentials)
+    profile = people_service.people().get(
+      resourceName='people/me',
+      personFields='names,emailAddresses,photos'
+    ).execute()
+    #current_app.logger.info(profile)
 
-    google_auth_id = profile['id']
-    email = profile['emails'][0]['value']
+    primary_email = profile['emailAddresses'][0]
+    for cur_email in profile['emailAddresses']:
+      if cur_email['metadata']['primary']:
+        primary_email = cur_email
+
+    primary_name = profile['names'][0]
+    for cur_name in profile['names']:
+      if cur_name['metadata']['primary']:
+        primary_name = cur_name
+
+    primary_photo = profile['photos'][0]
+    for cur_photo in profile['photos']:
+      if cur_photo['metadata']['primary']:
+        primary_photo = cur_photo
+
+    google_auth_id =profile['resourceName'].split("/")[1]
     user = {
-      'username': email.split("@")[0],
-      'email': email,
-      'display_name': profile['displayName'],
-      'first_name': get_from(profile, ['name', 'givenName']),
-      'last_name': get_from(profile, ['name', 'familyName']),
-      'image_url': get_from(profile, ['image', 'url']),
+      'username': primary_email['value'].split("@")[0],
+      'email': primary_email['value'],
+      'display_name': primary_name['displayName'],
+      'first_name': primary_name['givenName'],
+      'last_name': primary_name['familyName'],
+      'image_url': primary_photo['url'],
     }
+    #current_app.logger.info(user)
 
     row_user_auth = UserAuth.query.filter(
       and_(
@@ -82,6 +97,8 @@ class UserController:
       db_session.commit()
 
     session['user'] = row_user.to_json()
+
+    return session['user']
 
   def block_user(self, identifier, active):
     current_user = self.current_user

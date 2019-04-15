@@ -46,10 +46,10 @@
       </a>
       <a class="app_nav_link nav_link_get right" href="{{ url_for('home') }}">{{ session.user.username }}</a>
     {% else %}
-      <a href="{{ url_for('oauth2.authorize') }}">
+      <a href="{{ url_for('login') }}">
         <img class="app_login_img right user_profile_img_placeholder"></img>
       </a>
-      <a class="app_nav_link right" href="{{ url_for('oauth2.authorize') }}">Sign In</a>
+      <a class="app_nav_link right" href="{{ url_for('login') }}">Sign In</a>
     {% endif %}
   </div>
 </header>
@@ -74,7 +74,7 @@
 <script>
   Application.init({
     'urls': {
-      'auth': "{{ url_for('oauth2.authorize') }}",
+      'auth': "{{ url_for('login') }}",
       'home': "{{ url_for('events') }}"
     }
   });

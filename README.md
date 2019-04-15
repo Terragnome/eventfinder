@@ -1,3 +1,10 @@
+# Auth
+https://developers.google.com/api-client-library/python/auth/web-app
+
+# SSL Cert
+openssl genrsa 1024 > ssl.key
+openssl req -new -x509 -nodes -sha1 -days 365 -key ssl.key > ssl.cert
+
 # Docker
 https://docs.docker.com/get-started/
 https://docs.docker.com/machine/get-started/
@@ -11,9 +18,6 @@ docker-machine create --driver virtualbox eventfinder
 
 # Start host
 docker-machine start eventfinder
-
-# Reset
-docker system prune -a
 
 # Rebuild
 docker-compose build
@@ -35,13 +39,16 @@ docker exec -it eventfinder_app_1 bash
 docker exec -it eventfinder_postgres_1 bash
 docker exec -it eventfinder_redis_1 bash
 
+# Reset
+# docker system prune -a
+
 # docker logs --tail 2500 --follow eb7b166e3d18
 
 # Kubernetes
 kubectl create namespace dev
 kubectl config get-contexts
 kubectl config set-context --namespace=dev minikube
-kubectl create secret docker-registry gcr-json-key --docker-server=https://gcr.io/eventfinder-214723 --docker-username=_json_key --docker-password="$(cat config/eventfinder-214723-3003031bf7d4.json)" --docker-email=mhuailin@gmail.com
+kubectl create secret docker-registry gcr-json-key --docker-server=https://gcr.io/eventfinder-214723 --docker-username=_json_key --docker-password="$(cat config/secrets/EventFinder-559da3adbe81.json)" --docker-email=mhuailin@gmail.com
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "gcr-json-key"}]}'
 kubectl get serviceaccount default
 kubectl get serviceaccount default -o yaml
@@ -50,11 +57,18 @@ kubectl get serviceaccount default -o yaml
 # Minikube
 https://ryaneschinger.com/blog/using-google-container-registry-gcr-with-minikube/
 minikube start
+minikube dashboard
 
 kubectl create deployment eventfinder-node --image=gcr.io/eventfinder-214723/eventfinder-app:latest
 kubectl get deployments
 kubectl get pods
+kubectl expose deployment eventfinder-node --type=NodePort --port=8080 --name=eventfinder-service
+kubectl get services
+kubectl cluster-info
+kubectl get pods -o=custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name
+kubectl exec -it eventfinder-node-5b9559c798-b7g97 --container eventfinder-app -- /bin/bash
 # kubectl delete deployment eventfinder-node
+# kubectl delete service eventfinder-service
 
 # Google Cloud
 https://console.developers.google.com/apis/credentials
