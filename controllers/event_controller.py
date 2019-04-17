@@ -41,7 +41,7 @@ class EventController:
       and_(
         UserEvent.event_id==event_id,
         UserEvent.interest>0,
-        UserEvent.interest<3
+        UserEvent.interest<=4
       )
     ).count()
 
@@ -159,7 +159,7 @@ class EventController:
 
       if interested == 'done':
         user_events = user_events.filter(
-          UserEvent.interest == 3
+          UserEvent.interest >= 3
         )
       elif interested == 'interested':
         user_events = user_events.filter(
@@ -177,7 +177,7 @@ class EventController:
         current_user_events = UserEvent.query.filter(
           and_(
             UserEvent.user_id == current_user.user_id,
-            ~UserEvent.interest.in_([3])
+            ~UserEvent.interest.in_([3,4])
           )
         ).all()
         current_user_events_by_event_id = { x.event_id: x for x in current_user_events }      

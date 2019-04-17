@@ -5,7 +5,10 @@
   <input type='text' class='search_field' name='q' placeholder='{{ placeholder }}'></input>
   <input type='submit' class='nav_link_form icon_search' value=''></input>
   {% if request.args.get('q') %}
-    <a class='cap_button cap_close nav_link_get' href='{{ filter_url_params(url, exclude=["q"]) }}'>
+    <a
+        class='cap_button cap_close nav_link_get'
+        href='{{ filter_url_params(url, exclude=["q"]) }}'
+    >
       {{ request.args.get('q') }}
       <span class='cap_button_close'>X</span>
     </a>

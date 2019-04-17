@@ -243,7 +243,7 @@ def event_update(event_id):
   is_card = request.form.get('card') == 'true'
   go_value = request.form.get('go')
 
-  if go_value in ('3','2','1','0'):
+  if go_value in ('4', '3','2','1','0'):
     interest = str(go_value)
   else:
     interest = None
