@@ -201,7 +201,7 @@ span{
   border: 0px;
   border-radius: 8px;
   height: 40px;
-  margin: 10px 30px 30px 30px;
+  margin: 150px 30px 30px 30px;
 }
 
 .app_search > .cap_button{
@@ -325,6 +325,10 @@ span{
   color: white;
 }
 
+.cap_group::after { 
+  content: " ▼";
+}
+
 .clearfix {
   display: inline-block;
 }
@@ -416,28 +420,28 @@ span{
   margin: 10px 0 20px 0;
 }
 
-.event_cities{
+.event_chips{
   color: white;
-  margin: -10px 0 30px 0;
+  margin: 0 0 20px 0;
   text-align: center;
 }
 
-.event_cities > .cap_button{
+.event_chips > .cap_button{
   border-color: white;
   color: white;
   margin: 5px 2px 5px 2px;
 }
 
-.event_cities > .selected{
+.event_chips > .selected{
   border-color: var(--link-color);
 }
 
-.event_cities > .cap_button:hover{
+.event_chips > .cap_button:hover{
   border-color: var(--mid-color);
   color: white;
 }
 
-.event_cities > .cap_button.selected{
+.event_chips > .cap_button.selected{
   border-color: var(--mid-color);
   color: white;
 }
@@ -567,55 +571,35 @@ span{
   background-color: white;
   border-radius: 5px;
   color: black;
-  float: left;
-  margin: 10px;
+  display: inline-block;
+  margin: 2px;
   text-align: center;
   width: 150px;
 }
 
 .event_section > .button_close{
   color: white;
-  font-size: 30px;
-}
-
-.event_section > .event_section_img{
-  border-radius: 5px 5px 0 0;
-  width: 100%;
-}
-
-.event_section > .event_section_info{
-  background-color: white;
-  border-radius: 0px 0px 5px 5px;
-  height: 50px;
-  margin: -4px 0 0 0;
-  padding: 5px;
-  position: relative;
-}
-
-.event_section.selected{
-  width: 600px;
-}
-
-.event_section.selected > .event_section_info{
-  background-color: var(--dark-color);
-  color: white;
+  font-size: 20px;
 }
 
 .event_section_img{
-  border: 0px;
+  border-radius: 5px;
+  filter: brightness(60%);
   margin: 0px;
   padding: 0px;
+  position: relative;
+  width: 100%;
+  z-index: 5;
 }
 
-.event_section_info > .event_section_title{
-  font-size: 12px;
+.event_section_title{
+  color: white;
+  font-size: 13px;
   font-weight: bold;
-  margin: 4px 0 0 0;
-}
-
-.event_section_info > .event_section_subtitle{
-  font-size: 11px;
-  margin: 6px 0 0 0;
+  margin: -28px 0 0 15px;
+  position: relative;
+  text-align: left;
+  z-index: 6;
 }
 
 .event_sections{
@@ -673,15 +657,7 @@ span{
   fill: white;
 }
 
-.event_skip.card > .event_dates{
-  display: none;
-}
-
 .event_skip.card > .event_description{
-  display: none;
-}
-
-.event_skip.card.event_img_wrapper{
   display: none;
 }
 

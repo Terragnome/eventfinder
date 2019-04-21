@@ -1,3 +1,4 @@
+{% set is_me=is_me or (vargs.is_me if vargs else None) %}
 {% set events=events or (vargs.events if vargs else None) %}
 {% set cities=cities or (vargs.cities if vargs else None) %}
 {% set sections=sections or (vargs.sections if vargs else None) %}
@@ -7,33 +8,27 @@
 </script>
 
 <div class='app_page'>
-  <div class='event_sections float_container'>
-    <div class='float_center'>
+  {% with url=request.url %}
+    {% include "_search_bar.html" %}
+  {% endwith %}
+
+  {% if sections %}
+    <div class='event_sections clearfix'>
       {% for section in sections %}
         {% with vargs=section %}
           {% include "_event_section.html" %}
         {% endwith %}
       {% endfor %}
     </div>
-  </div>
+  {% endif %}
 
-  {% with url=request.url %}
-    {% include "_search_bar.html" %}
-  {% endwith %}
-
-  <div class='event_cities'>
+  <div class='event_chips'>
     {% for city in cities %}
-      {% if city.selected %}
-        <a
-          class='cap_button selected nav_link_get'
-          href='{{ remove_url_params(request.url, remove={"cities": city.city_name}) }}'
-        >{{ city.city_name }} {{ city.ct }} X</a>
-      {% else %}
-        <a
-          class='cap_button nav_link_get'
-          href='{{ add_url_params(request.url, merge={"cities": city.city_name}) }}'
-        >{{ city.city_name }} {{ city.ct }}</a>
-      {% endif %}
+      {% set city_callback=remove_url_params(request.url, remove={"cities": city.city_name}) if city.selected else add_url_params(request.url, merge={"cities": city.city_name})%}
+      <a
+        class='cap_button nav_link_get {{"selected" if city.selected else ""}}'
+        href='{{ city_callback }}'
+      >{{ city.city_name }} {{ city.ct }}</a>
     {% endfor %}
   </div>
 

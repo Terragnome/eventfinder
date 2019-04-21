@@ -116,6 +116,11 @@ class EventController:
       for section in sections:
         section['selected'] = section['section_name'] == tag
 
+    event_types = self.get_sections_for_events(events_with_count_query)
+    if sections:
+      for section in sections:
+        section['selected'] = section['section_name'] == tag
+
     event_cities = self.get_cities_for_events(events_with_count_query)
     # This has to come after the cities list is queries
     if cities:
@@ -143,7 +148,7 @@ class EventController:
       event.interested_user_count = user_count
       results.append(event)
 
-    return (results, sections, event_cities)
+    return (results, sections, event_types, event_cities)
 
   def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, cities=None, page=1):
     current_user = UserController().current_user

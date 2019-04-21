@@ -1,3 +1,4 @@
+{% set is_me=is_me or (vargs.is_me if vargs else None) %}
 {% set event=event or (vargs.event if vargs else None) %}
 {% set card=card or (vargs.card if vargs else None) %}
 {% set event_class='card' if card else 'event_page' %}
@@ -23,33 +24,39 @@
 
 <div id="event_{{ event.event_id }}" class='box_outline {{ event_class }} event {{ event_selected_class }}'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
-    <div class='{{ event_class }} event_img_wrapper {{ "event_skip" if is_skip else ""}}'>
-      {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
-      {% if event.img_url %}
-        <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
-      {% endif %}
-    </div>
+    {% if is_me or not is_selected %}
+      <div class='event_img_wrapper'>
+        {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %}
+        {% if event.img_url %}
+          <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
+        {% endif %}
+      </div>
+    {% endif %}
     <div class='{{ event_class }} event_header {{ "event_skip" if is_skip else ""}}'>  
       <div class='event_title'>{{ event.display_name }}</div>
       {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
-      <div class='event_time'>{{ event.display_time }}</div>
-      <div class='event_dates'>
-        {% with d=event.start_date %}{% include "_date_card.html" %}{% endwith %}
-        {% if event.start_date != event.end_date %}
-          {% with d=event.end_date %}{% include "_date_card.html" %}{% endwith %}
+      {% if not (is_skip or is_done) %}
+        <div class='event_time'>{{ event.display_time }}</div>
+        {% if is_me or not is_selected %}
+          <div class='event_dates'>
+            {% with d=event.start_date %}{% include "_date_card.html" %}{% endwith %}
+            {% if event.start_date != event.end_date %}
+              {% with d=event.end_date %}{% include "_date_card.html" %}{% endwith %}
+            {% endif %}
+          </div>
         {% endif %}
-      </div>
-      <div class='event_address'>
-        {% if card %}
-          <div>{{ event.display_city }}</div>
-        {% else %}
-          {% if event.address %}
-            {% for addr_line in event.address %}
-              <div>{{ addr_line }}</div>
-            {% endfor %}
+        <div class='event_address'>
+          {% if card %}
+            <div>{{ event.display_city }}</div>
+          {% else %}
+            {% if event.address %}
+              {% for addr_line in event.address %}
+                <div>{{ addr_line }}</div>
+              {% endfor %}
+            {% endif %}
           {% endif %}
-        {% endif %}
-      </div>
+        </div>
+      {% endif %}
     </div>
   {% if card %}</a>{% endif %}
   <div class='{{ event_class }} event_body {{ "event_skip" if is_skip else ""}}'>

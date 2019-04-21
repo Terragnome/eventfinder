@@ -280,7 +280,7 @@ def events(
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False
 ):
-  events, sections, event_cities = EventController().get_events(
+  events, sections, event_types, event_cities = EventController().get_events(
     query=query,
     tag=tag,
     cities=cities,
@@ -303,6 +303,7 @@ def events(
   vargs = {
     'events': events,
     'sections': sections,
+    'types': event_types,
     'cities': event_cities,
     'page': page,
     'next_page_url': next_page_url,
@@ -422,6 +423,7 @@ def user(
         section['section_close_url'] = parse_url_for('user', **kwargs)
 
     vargs = {
+      'is_me': user == current_user,
       'current_user': current_user,
       'events': events,
       'sections': sections,
