@@ -280,7 +280,7 @@ def events(
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False
 ):
-  events, sections, event_types, event_cities = EventController().get_events(
+  events, sections, tags, event_cities = EventController().get_events(
     query=query,
     tag=tag,
     cities=cities,
@@ -303,7 +303,7 @@ def events(
   vargs = {
     'events': events,
     'sections': sections,
-    'types': event_types,
+    'tags': tags,
     'cities': event_cities,
     'page': page,
     'next_page_url': next_page_url,
@@ -418,9 +418,6 @@ def user(
 
         if section['section_name'] == Tag.MOVIES: del kwargs['cities']
         section['section_url'] = parse_url_for('user', **kwargs)
-
-        del kwargs['tag']
-        section['section_close_url'] = parse_url_for('user', **kwargs)
 
     vargs = {
       'is_me': user == current_user,

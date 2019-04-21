@@ -111,15 +111,14 @@ class EventController:
       )
     )
 
-    sections = self.get_sections_for_events(events_with_count_query)
-    if sections:
-      for section in sections:
-        section['selected'] = section['section_name'] == tag
-
-    event_types = self.get_sections_for_events(events_with_count_query)
-    if sections:
-      for section in sections:
-        section['selected'] = section['section_name'] == tag
+    tag_selected = False
+    tags = self.get_tags_for_events(events_with_count_query)
+    if tags:
+      for event_tag in tags:
+        is_tag_selected = event_tag['chip_name'] == tag
+        event_tag['selected'] = is_tag_selected
+        if is_tag_selected:
+          tag_selected = is_tag_selected
 
     event_cities = self.get_cities_for_events(events_with_count_query)
     # This has to come after the cities list is queries
@@ -128,7 +127,7 @@ class EventController:
         Event.city.in_(cities)
       )
       for city in event_cities:
-        if city['city_name'] in cities:
+        if city['chip_name'] in cities:
           city['selected'] = True
 
     events_with_count_query = events_with_count_query.order_by(
@@ -148,14 +147,23 @@ class EventController:
       event.interested_user_count = user_count
       results.append(event)
 
-    return (results, sections, event_types, event_cities)
+    sections = []
+    if not is_tag_selected:
+      for event_tag in tags:
+        chip_name = event_tag['chip_name']
+        sections.append({
+          'section_name': chip_name,
+          'section_key': chip_name.lower().replace(" ", "_"),
+        })
+
+    return (results, sections, tags, event_cities)
 
   def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, cities=None, page=1):
     current_user = UserController().current_user
     if not user: user = current_user
 
     results = []
-    sections = []
+    tags = []
     event_cities = []
     if user:
       user_events = UserEvent.query.filter(
@@ -231,10 +239,14 @@ class EventController:
         nullslast(Event.event_id.asc())
       )
 
-      sections = self.get_sections_for_events(events_with_counts)
-      if sections:
-        for section in sections:
-          section['selected'] = section['section_name'] == tag
+      tag_selected = False
+      tags = self.get_tags_for_events(events_with_count_query)
+      if tags:
+        for event_tag in tags:
+          is_tag_selected = event_tag['chip_name'] == tag
+          event_tag['selected'] = is_tag_selected
+          if is_tag_selected:
+            tag_selected = is_tag_selected
 
       event_cities = self.get_cities_for_events(events_with_counts)
       # This has to come after the cities list is queries
@@ -243,7 +255,7 @@ class EventController:
           Event.city.in_(cities)
         )
         for city in event_cities:
-          if city['city_name'] in cities:
+          if city['chip_name'] in cities:
             city['selected'] = True
 
       events_with_counts = events_with_counts.limit(
@@ -258,7 +270,15 @@ class EventController:
         event.interested_user_count = user_event_count
         results.append(event)
 
-    return (results, sections, event_cities)
+    sections = []
+    if not is_tag_selected:
+      for event_tag in tags:
+        chip_name = event_tag['chip_name']
+        sections.append({
+          'section_name': chip_name,
+          'section_key': chip_name.lower().replace(" ", "_"),
+        })
+    return (results, sections, tags, event_cities)
 
   # TODO: Make this operate off the query for performance
   def get_cities_for_events(self, events=None, limit=10):
@@ -294,13 +314,13 @@ class EventController:
 
     return [
       {
-        'city_name': dat[0] or 'Unknown',
+        'chip_name': dat[0] or 'Unknown',
         'ct': dat[1],
       } for dat in cities_query if dat[1]>0
     ]
 
-  def get_sections_for_events(self, events=None, limit=None):
-    section_query = db_session.query(
+  def get_tags_for_events(self, events=None, limit=None):
+    tag_query = db_session.query(
       Tag.tag_name,
       func.count(distinct(EventTag.event_id)).label('ct')
     ).join(
@@ -317,29 +337,28 @@ class EventController:
         'events_table'
       )
 
-      section_query = section_query.join(
+      tag_query = tag_query.join(
         events_table
       )
     else:
-      section_query = section_query.filter(
+      tag_query = tag_query.filter(
         Event.end_time >= datetime.datetime.now()
       )
 
-    section_query = section_query.group_by(
+    tag_query = tag_query.group_by(
       Tag.tag_name
     ).order_by(
       desc('ct')
     )
 
     if limit:
-      section_query = section_query.limit(limit)
+      tag_query = tag_query.limit(limit)
 
     return [
       {
-        'section_name': tag[0],
-        'section_key': tag[0].lower().replace(" ", "_"),
+        'chip_name': tag[0],
         'ct': tag[1],
-      } for tag in section_query if tag[1]>0
+      } for tag in tag_query if tag[1]>0
     ]
 
   def update_event(self, event_id, interest):

@@ -1,5 +1,6 @@
 {% set is_me=is_me or (vargs.is_me if vargs else None) %}
 {% set events=events or (vargs.events if vargs else None) %}
+{% set tags=tags or (vargs.tags if vargs else None) %}
 {% set cities=cities or (vargs.cities if vargs else None) %}
 {% set sections=sections or (vargs.sections if vargs else None) %}
 
@@ -22,15 +23,37 @@
     </div>
   {% endif %}
 
-  <div class='event_chips'>
-    {% for city in cities %}
-      {% set city_callback=remove_url_params(request.url, remove={"cities": city.city_name}) if city.selected else add_url_params(request.url, merge={"cities": city.city_name})%}
+  {% if tags %}
+    <div class='event_chips'>
       <a
-        class='cap_button nav_link_get {{"selected" if city.selected else ""}}'
-        href='{{ city_callback }}'
-      >{{ city.city_name }} {{ city.ct }}</a>
-    {% endfor %}
-  </div>
+        class='cap_button cap_group nav_link_get'
+        href=''
+      >Types</a>
+      {% for chip in tags %}
+        {% set chip_callback=remove_url_params(request.url, remove={"t": chip.chip_name}) if chip.selected else add_url_params(request.url, merge={"t": chip.chip_name})%}
+        <a
+          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
+          href='{{ chip_callback }}'
+        >{{ chip.chip_name }} {{ chip.ct }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if cities %}
+    <div class='event_chips'>
+      <a
+        class='cap_button cap_group nav_link_get'
+        href=''
+      >Cities</a>
+      {% for chip in cities %}
+        {% set chip_callback=remove_url_params(request.url, remove={"cities": chip.chip_name}) if chip.selected else add_url_params(request.url, merge={"cities": chip.chip_name})%}
+        <a
+          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
+          href='{{ chip_callback }}'
+        >{{ chip.chip_name }} {{ chip.ct }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
 
   <ul id='event_list' class='effect_in'>
     {% with vargs=vargs %}
