@@ -127,6 +127,17 @@ def logout():
 def shutdown_session(exception=None):
    db_session.remove()
 
+def _parse_chips(chips):
+  is_selected = False
+  for chip in chips:
+    if 'selected' in chip and chip['selected']:
+      is_selected = True
+      break
+  return {
+    'entries': chips,
+    'selected': is_selected
+  }
+
 def _render_events_list(
   request,
   events,
@@ -303,8 +314,10 @@ def events(
   vargs = {
     'events': events,
     'sections': sections,
-    'tags': tags,
-    'cities': event_cities,
+    'chips': {
+      'tags': _parse_chips(tags),
+      'cities': _parse_chips(event_cities)
+    },
     'page': page,
     'next_page_url': next_page_url,
     'prev_page_url': prev_page_url,
@@ -424,7 +437,10 @@ def user(
       'current_user': current_user,
       'events': events,
       'sections': sections,
-      'cities': event_cities,
+      'chips': {
+        'tags': _parse_chips(tags),
+        'cities': _parse_chips(event_cities)
+      },
       'page': page,
       'next_page_url': next_page_url,
       'prev_page_url': prev_page_url

@@ -1,8 +1,10 @@
 {% set is_me=is_me or (vargs.is_me if vargs else None) %}
 {% set events=events or (vargs.events if vargs else None) %}
-{% set tags=tags or (vargs.tags if vargs else None) %}
-{% set cities=cities or (vargs.cities if vargs else None) %}
 {% set sections=sections or (vargs.sections if vargs else None) %}
+{% set tags=tags or (vargs.chips.tags.entries if vargs else None) %}
+{% set is_tags_selected=is_tags_selected or (vargs.chips.tags.selected if vargs else None) %}
+{% set cities=cities or (vargs.chips.cities.entries if vargs else None) %}
+{% set is_cities_selected=is_cities_selected or (vargs.chips.cities.selected if vargs else None) %}
 
 <script>
   Application.setAppBackground(null)
@@ -26,9 +28,10 @@
   {% if tags %}
     <div class='event_chips'>
       <a
-        class='cap_button cap_group nav_link_get'
+        class='cap_button cap_group nav_link_get {{"selected" if is_tags_selected else ""}}'
         href=''
       >Types</a>
+      {{chip_selected}}
       {% for chip in tags %}
         {% set chip_callback=remove_url_params(request.url, remove={"t": chip.chip_name}) if chip.selected else add_url_params(request.url, merge={"t": chip.chip_name})%}
         <a
@@ -42,7 +45,7 @@
   {% if cities %}
     <div class='event_chips'>
       <a
-        class='cap_button cap_group nav_link_get'
+        class='cap_button cap_group nav_link_get {{"selected" if is_cities_selected else ""}}'
         href=''
       >Cities</a>
       {% for chip in cities %}

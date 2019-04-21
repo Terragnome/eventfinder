@@ -111,14 +111,14 @@ class EventController:
       )
     )
 
-    tag_selected = False
+    is_any_tag_selected = False
     tags = self.get_tags_for_events(events_with_count_query)
     if tags:
       for event_tag in tags:
         is_tag_selected = event_tag['chip_name'] == tag
         event_tag['selected'] = is_tag_selected
         if is_tag_selected:
-          tag_selected = is_tag_selected
+          is_any_tag_selected = is_tag_selected
 
     event_cities = self.get_cities_for_events(events_with_count_query)
     # This has to come after the cities list is queries
@@ -127,8 +127,7 @@ class EventController:
         Event.city.in_(cities)
       )
       for city in event_cities:
-        if city['chip_name'] in cities:
-          city['selected'] = True
+        city['selected'] = city['chip_name'] in cities
 
     events_with_count_query = events_with_count_query.order_by(
         nullslast(desc('ct')),
@@ -148,7 +147,7 @@ class EventController:
       results.append(event)
 
     sections = []
-    if not is_tag_selected:
+    if not is_any_tag_selected:
       for event_tag in tags:
         chip_name = event_tag['chip_name']
         sections.append({
@@ -239,14 +238,14 @@ class EventController:
         nullslast(Event.event_id.asc())
       )
 
-      tag_selected = False
+      is_any_tag_selected = False
       tags = self.get_tags_for_events(events_with_count_query)
       if tags:
         for event_tag in tags:
           is_tag_selected = event_tag['chip_name'] == tag
           event_tag['selected'] = is_tag_selected
           if is_tag_selected:
-            tag_selected = is_tag_selected
+            is_any_tag_selected = is_tag_selected
 
       event_cities = self.get_cities_for_events(events_with_counts)
       # This has to come after the cities list is queries
@@ -255,8 +254,7 @@ class EventController:
           Event.city.in_(cities)
         )
         for city in event_cities:
-          if city['chip_name'] in cities:
-            city['selected'] = True
+          city['selected'] = city['chip_name'] in cities
 
       events_with_counts = events_with_counts.limit(
         self.PAGE_SIZE
@@ -271,7 +269,7 @@ class EventController:
         results.append(event)
 
     sections = []
-    if not is_tag_selected:
+    if not is_any_tag_selected:
       for event_tag in tags:
         chip_name = event_tag['chip_name']
         sections.append({
