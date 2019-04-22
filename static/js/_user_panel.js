@@ -1,7 +1,10 @@
 var UserPanel = UserPanel || {};
 
 UserPanel.init = function(){
+  $(".toggle_user_panel").unbind('click', UserPanel.toggle);
   $(".toggle_user_panel").bind('click', UserPanel.toggle);
+  
+  $("#user_panel > a").unbind('click', UserPanel.hide);
   $("#user_panel > a").bind('click', UserPanel.hide);
 }
 

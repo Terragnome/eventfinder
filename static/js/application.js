@@ -13,9 +13,7 @@ Application.init = function(params) {
     $('#main').removeClass('anim_fade_in');
     Scroll.disable();
   });
-  $(document).ajaxSuccess(Application.onReady);
-  $(document).ajaxComplete(Scroll.enable);
-
+  $(document).ajaxComplete(Application.onReady);
   $(document).ready(Application.onReady);
 }
 
@@ -23,6 +21,7 @@ Application.onReady = function(){
   Application.ajaxifyLinks();
   UserPanel.init();
   Application.initGroupChips();
+  Scroll.enable();
 }
 
 Application.ajaxData = function(e){
@@ -178,27 +177,30 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
   });
 }
 
-Application.initGroupChips = function() {
-  $('#event_group_chips > .cap_button').click(function(e){
-    let clickedBtn = $(e.currentTarget);
+Application.clickGroupChip = function(e){
+  let clickedBtn = $(e.currentTarget);
 
-    let groupBtns = $('#event_group_chips > .cap_button');
-    groupBtns.each(function(i){
-      let curBtn = $(groupBtns[i]);
-      let curGroup = $(curBtn.attr('target'));
-      if(clickedBtn.is(curBtn)){
-        Application.toggleVisibility(curGroup);
-        if(curGroup.is(':visible')){
-          clickedBtn.addClass('highlighted');
-        }else{
-          clickedBtn.removeClass('highlighted');
-        }
+  let groupBtns = $('#event_group_chips > .cap_button');
+  groupBtns.each(function(i){
+    let curBtn = $(groupBtns[i]);
+    let curGroup = $(curBtn.attr('target'));
+    if(clickedBtn.is(curBtn)){
+      Application.toggleVisibility(curGroup);
+      if(curGroup.is(':visible')){
+        clickedBtn.addClass('highlighted');
       }else{
-        curBtn.removeClass('highlighted');
-        curGroup.hide();
+        clickedBtn.removeClass('highlighted');
       }
-    });
+    }else{
+      curBtn.removeClass('highlighted');
+      curGroup.hide();
+    }
   });
+}
+
+Application.initGroupChips = function() {
+  $('#event_group_chips > .cap_button').unbind('click', Application.clickGroupChip);
+  $('#event_group_chips > .cap_button').click(Application.clickGroupChip);
 }
 
 Application.postElem = function(target, url, params, replace=false) {

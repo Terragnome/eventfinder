@@ -250,7 +250,7 @@ class EventController:
       event_cities = self.get_cities_for_events(events_with_counts)
       # This has to come after the cities list is queries
       if cities:
-        events_with_count_query = events_with_count_query.filter(
+        events_with_counts = events_with_counts.filter(
           Event.city.in_(cities)
         )
         for city in event_cities:
