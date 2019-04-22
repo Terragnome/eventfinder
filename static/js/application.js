@@ -13,16 +13,21 @@ Application.init = function(params) {
     $('#main').removeClass('anim_fade_in');
     Scroll.disable();
   });
-  $(document).ajaxSuccess(Application.ajaxifyLinks);
+  $(document).ajaxSuccess(Application.onReady);
   $(document).ajaxComplete(Scroll.enable);
 
-  $(document).ready(Application.ajaxifyLinks);
-  $(document).ready(UserPanel.init);
+  $(document).ready(Application.onReady);
+}
+
+Application.onReady = function(){
+  Application.ajaxifyLinks();
+  UserPanel.init();
+  Application.initGroupChips();
 }
 
 Application.ajaxData = function(e){
-  var targetData = $(e.currentTarget).attr('data');
-  var data = {};
+  let targetData = $(e.currentTarget).attr('data');
+  let data = {};
 
   if(targetData){ data = JSON.parse(targetData); }
   if(!data.target){ data.target = '#main'; }
@@ -32,13 +37,13 @@ Application.ajaxData = function(e){
 
 Application.ajaxGet = function(e){
   e.preventDefault();
-  var data = Application.ajaxData(e);
+  let data = Application.ajaxData(e);
   $(this).click(Application.getElem(data.target, $(this).attr('href')));  
 }
 
 Application.ajaxGetOverlay = function(e){
   e.preventDefault();
-  var data = Application.ajaxData(e);
+  let data = Application.ajaxData(e);
   $(this).click(function(){
     Overlay.open();
     Application.getElem("#app_panel_overlay_main", $(this).attr('href'))
@@ -47,62 +52,62 @@ Application.ajaxGetOverlay = function(e){
 
 Application.ajaxGetReplace = function(e){
   e.preventDefault();
-  var data = Application.ajaxData(e);
+  let data = Application.ajaxData(e);
   $(this).click(Application.getElem(data.target, $(this).attr('href')));
 }
 
 Application.ajaxPost = function(e){
   e.preventDefault();
-  var data = Application.ajaxData(e);
+  let data = Application.ajaxData(e);
   $(this).click(Application.postElem(data.target, $(this).attr('href'), data));
 }
 
 Application.ajaxPostReplace = function(e){
   e.preventDefault();
-  var data = Application.ajaxData(e);
+  let data = Application.ajaxData(e);
   $(this).click(Application.postElem(data.target, $(this).attr('href'), data, true));
 }
 
 Application.ajaxForm = function(e){
   e.preventDefault();
-  var data = Application.ajaxData(e);
-  var form = $(this);
-  var url = form.attr('action');
-  var method = form.attr('method').toLowerCase();
+  let data = Application.ajaxData(e);
+  let form = $(this);
+  let url = form.attr('action');
+  let method = form.attr('method').toLowerCase();
 
-  var urlComponents = url.split('?');
-  var urlRoot = urlComponents[0];
+  let urlComponents = url.split('?');
+  let urlRoot = urlComponents[0];
 
-  var urlQuery;
+  let urlQuery;
   if(urlComponents[1]){
    urlQuery = urlComponents[1].split('&');
   }else{
     urlQuery = [];
   }
-  var urlValues = {};
+  let urlValues = {};
   urlQuery.forEach(function(kv){
-    var pair = kv.split('=');
-    var k = pair[0];
-    var v = pair[1];
+    let pair = kv.split('=');
+    let k = pair[0];
+    let v = pair[1];
     urlValues[k] = v;
   });
 
-  var inputs = form.find($('input'));
+  let inputs = form.find($('input'));
   inputs.each(function() {
     if(this.name != null && this.name != ""){
-      var k = this.name;
-      var v = $(this).val();
+      let k = this.name;
+      let v = $(this).val();
       urlValues[k] = v;
     }
   });
   
   if(method == 'get'){
-    var newUrlQuery = [];
-    for(var k in urlValues){
-      var v = urlValues[k];
+    let newUrlQuery = [];
+    for(let k in urlValues){
+      let v = urlValues[k];
       newUrlQuery.push(k+'='+v);
     }
-    var newUrl = urlRoot+"?"+newUrlQuery.join('&');
+    let newUrl = urlRoot+"?"+newUrlQuery.join('&');
     Application.getElem(data.target, newUrl);
   }
 }
@@ -145,7 +150,7 @@ Application.animateElems = function() {
 Application.backButton = function(e){
   Scroll.disable();
 
-  var state = e.originalEvent.state;
+  let state = e.originalEvent.state;
   if (state != null) {
     if(state.title){ document.title = state.title; }
     Application.getElem('#main', state.url, false);
@@ -159,7 +164,7 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
   }).done(function(response) {
     $(target).addClass('anim_fade_in');
     if(response != '' && push_state){
-      var push_url = url;
+      let push_url = url;
       if(typeof push_state === 'string'){ push_url = push_state; }
       history.pushState({'url':push_url}, null, push_url);
     }
@@ -170,6 +175,29 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
     }
   }).fail(function(xhr, status, error) {
     window.location.replace(Application.url_home);
+  });
+}
+
+Application.initGroupChips = function() {
+  $('#event_group_chips > .cap_button').click(function(e){
+    let clickedBtn = $(e.currentTarget);
+
+    let groupBtns = $('#event_group_chips > .cap_button');
+    groupBtns.each(function(i){
+      let curBtn = $(groupBtns[i]);
+      let curGroup = $(curBtn.attr('target'));
+      if(clickedBtn.is(curBtn)){
+        Application.toggleVisibility(curGroup);
+        if(curGroup.is(':visible')){
+          clickedBtn.addClass('highlighted');
+        }else{
+          clickedBtn.removeClass('highlighted');
+        }
+      }else{
+        curBtn.removeClass('highlighted');
+        curGroup.hide();
+      }
+    });
   });
 }
 
@@ -199,7 +227,7 @@ Application.setAppBackground = function(url) {
 }
 
 Application.toggleVisibility = function(target){
-  var isVisible = $(target).is(':visible');
+  let isVisible = $(target).is(':visible');
   if(isVisible){
     $(target).hide();
   }else{

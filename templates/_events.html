@@ -25,17 +25,17 @@
     </div>
   {% endif %}
 
-  <div class='event_chips'>
+  <div id='event_group_chips' class='event_chips'>
     {% if tags %}
       <span
         class='cap_button cap_group nav_link_get {{"selected" if is_tags_selected else ""}}'
-        onclick="Application.toggleVisibility('#event_tags_chips')"
+        target='#event_tags_chips'
       >Types</span>
     {% endif %}
     {% if cities %}
       <span
         class='cap_button cap_group nav_link_get {{"selected" if is_cities_selected else ""}}'
-        onclick="Application.toggleVisibility('#event_cities_chips')"
+        target='#event_cities_chips'
       >Cities</span>
     {% endif %}
   </div>
