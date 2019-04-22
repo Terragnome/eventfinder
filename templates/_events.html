@@ -25,13 +25,23 @@
     </div>
   {% endif %}
 
-  {% if tags %}
-    <div class='event_chips'>
-      <a
+  <div class='event_chips'>
+    {% if tags %}
+      <span
         class='cap_button cap_group nav_link_get {{"selected" if is_tags_selected else ""}}'
-        href=''
-      >Types</a>
-      {{chip_selected}}
+        onclick="Application.toggleVisibility('#event_tags_chips')"
+      >Types</span>
+    {% endif %}
+    {% if cities %}
+      <span
+        class='cap_button cap_group nav_link_get {{"selected" if is_cities_selected else ""}}'
+        onclick="Application.toggleVisibility('#event_cities_chips')"
+      >Cities</span>
+    {% endif %}
+  </div>
+
+  {% if tags %}
+    <div id='event_tags_chips' class='event_chips hide'>
       {% for chip in tags %}
         {% set chip_callback=remove_url_params(request.url, remove={"t": chip.chip_name}) if chip.selected else add_url_params(request.url, merge={"t": chip.chip_name})%}
         <a
@@ -43,11 +53,7 @@
   {% endif %}
 
   {% if cities %}
-    <div class='event_chips'>
-      <a
-        class='cap_button cap_group nav_link_get {{"selected" if is_cities_selected else ""}}'
-        href=''
-      >Cities</a>
+    <div id='event_cities_chips' class='event_chips hide'>
       {% for chip in cities %}
         {% set chip_callback=remove_url_params(request.url, remove={"cities": chip.chip_name}) if chip.selected else add_url_params(request.url, merge={"cities": chip.chip_name})%}
         <a
