@@ -55,6 +55,7 @@ TEMPLATE_FOLLOWING = "_following.html"
 TEMPLATE_EVENT = "_event.html"
 TEMPLATE_EVENTS = "_events.html"
 TEMPLATE_EVENTS_LIST = "_events_list.html"
+TEMPLATE_EXPLORE = "_explore.html"
 TEMPLATE_USER = "_user.html"
 TEMPLATE_USERS = "_users.html"
 
@@ -323,7 +324,7 @@ def events(
     'prev_page_url': prev_page_url,
   }
 
-  return _render_events_list(request, events, vargs, scroll=scroll)
+  return _render_events_list(request, events, vargs, scroll=scroll, template=TEMPLATE_EXPLORE)
 
 @app.route("/followers/", methods=['GET'])
 @oauth2_required
@@ -410,10 +411,10 @@ def user(
   if user:
     events = []
     sections = []
+    tags = []
     event_cities = []
-    cities = []
     if not Block.blocks(user.user_id, current_user_id):
-      events, sections, event_cities = EventController().get_events_for_user_by_interested(
+      events, sections, tags, event_cities = EventController().get_events_for_user_by_interested(
         user=user,
         query=query,
         tag=tag,

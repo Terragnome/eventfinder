@@ -219,11 +219,11 @@ Application.removeElem = function(target) {
 }
 
 Application.setAppBackground = function(url) {
-  // if(url == null){
-  //   $('.app_background').css('background-image', 'none');
-  // }else{
-  //   $('.app_background').css('background-image', 'url('+url+')');
-  // }
+  if(url == null){
+    $('.app_background').css('background-image', 'none');
+  }else{
+    $('.app_background').css('background-image', 'url('+url+')');
+  }
 }
 
 Application.toggleVisibility = function(target){

@@ -239,7 +239,7 @@ class EventController:
       )
 
       is_any_tag_selected = False
-      tags = self.get_tags_for_events(events_with_count_query)
+      tags = self.get_tags_for_events(events_with_counts)
       if tags:
         for event_tag in tags:
           is_tag_selected = event_tag['chip_name'] == tag
