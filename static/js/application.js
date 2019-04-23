@@ -21,6 +21,7 @@ Application.onReady = function(){
   UserPanel.init();
   Application.ajaxifyLinks();
   Application.initGroupChips();
+  Scroll.init();
   Scroll.enable();
 }
 

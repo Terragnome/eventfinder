@@ -1,5 +1,25 @@
 var Scroll = Scroll || {};
 
+Scroll.init = function(){
+  $('#scroll_top').unbind('click', Scroll.top);
+  $('#scroll_top').click(Scroll.top);
+  $(document).scroll(Scroll.onScroll);
+}
+
+Scroll.onScroll = function(e){
+  let scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+  let cutoff = 500;
+  console.log(scrollPosition)
+  if(scrollPosition > cutoff){
+    $('#scroll_top').show();
+    $('#scroll_top').removeClass('anim_fade_out');
+    $('#scroll_top').addClass('anim_fade_in');
+  }else{
+    $('#scroll_top').removeClass('anim_fade_in');
+    $('#scroll_top').addClass('anim_fade_out');
+  }
+}
+
 Scroll.top = function(y) {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
