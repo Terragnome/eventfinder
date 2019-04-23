@@ -128,15 +128,24 @@ def logout():
 def shutdown_session(exception=None):
    db_session.remove()
 
-def _parse_chips(chips):
-  is_selected = False
-  for chip in chips:
-    if 'selected' in chip and chip['selected']:
-      is_selected = True
-      break
+def _parse_chips(tags, event_cities):
+  def _parse_chip(chips, **kwargs):
+    is_selected = False
+    for chip in chips:
+      if 'selected' in chip and chip['selected']:
+        is_selected = True
+        break
+
+    results = {
+      'entries': chips,
+      'selected': is_selected
+    }
+    results.update(**kwargs)
+    return results
+
   return {
-    'entries': chips,
-    'selected': is_selected
+    'tags': _parse_chip(tags, key="t", display_name="Type"),
+    'cities': _parse_chip(event_cities, key="cities", display_name="Cities")
   }
 
 def _render_events_list(
@@ -315,10 +324,7 @@ def events(
   vargs = {
     'events': events,
     'sections': sections,
-    'chips': {
-      'tags': _parse_chips(tags),
-      'cities': _parse_chips(event_cities)
-    },
+    'chips': _parse_chips(tags, event_cities),
     'page': page,
     'next_page_url': next_page_url,
     'prev_page_url': prev_page_url,
@@ -438,10 +444,7 @@ def user(
       'current_user': current_user,
       'events': events,
       'sections': sections,
-      'chips': {
-        'tags': _parse_chips(tags),
-        'cities': _parse_chips(event_cities)
-      },
+      'chips': _parse_chips(tags, event_cities),
       'page': page,
       'next_page_url': next_page_url,
       'prev_page_url': prev_page_url

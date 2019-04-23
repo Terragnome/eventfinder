@@ -24,7 +24,7 @@
 
 <div id="event_{{ event.event_id }}" class='box_outline {{ event_class }} event {{ event_selected_class }}'>
   {% if card %}<a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">{% endif %}
-    {% if is_me or not is_selected %}
+    {% if is_me or not (card and is_selected) %}
       <div class='event_img_wrapper'>
         <!-- {% if not event.is_free %}<span class='event_paid'>Paid</span>{% endif %} -->
         {% if event.img_url %}

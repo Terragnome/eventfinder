@@ -650,20 +650,13 @@ span{
   color: white;
 }
 
+.event_skip.card{
+  background-color: var(--mid-color);
+  border-radius: 5px;
+}
+
 .event_skip.card > .event_address{
   display: none;
-}
-
-.event_skip.card > .event_choices > .round_button{
-  border-color: var(--neutral-color);
-  color: var(--neutral-color);
-  fill: var(--neutral-color);
-}
-
-.event_skip.card > .event_choices > .selected{
-  background-color: var(--neutral-color);
-  color: white;
-  fill: white;
 }
 
 .event_skip.card > .event_description{
@@ -679,7 +672,7 @@ span{
 }
 
 .event_skip.card > .event_title{
-  color: var(--neutral-color);
+  color: white;
 }
 
 .event_skip.card > .event_users{
@@ -993,7 +986,7 @@ span{
 }
 
 .user_profile_img_placeholder{
-  background-color: white;/*var(--neutral-color);*/
+  background-color: white;
   border-radius: 20px;
   height: 40px;
   width: 40px;

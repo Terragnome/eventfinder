@@ -1,10 +1,7 @@
 {% set is_me=is_me or (vargs.is_me if vargs else None) %}
 {% set events=events or (vargs.events if vargs else None) %}
 {% set sections=sections or (vargs.sections if vargs else None) %}
-{% set tags=tags or (vargs.chips.tags.entries if vargs else None) %}
-{% set is_tags_selected=is_tags_selected or (vargs.chips.tags.selected if vargs else None) %}
-{% set cities=cities or (vargs.chips.cities.entries if vargs else None) %}
-{% set is_cities_selected=is_cities_selected or (vargs.chips.cities.selected if vargs else None) %}
+{% set chips=chips or (vargs.chips if vargs else None) %}
 
 <script>
   Application.setAppBackground(null)
@@ -26,43 +23,30 @@
   {% endif %}
 
   <div id='event_group_chips' class='event_chips'>
-    {% if tags %}
+    {% for chip_name in chips %}
+      {% set chip_data=chips[chip_name] %}
       <span
-        class='cap_button cap_group nav_link_get {{"selected" if is_tags_selected else ""}}'
-        target='#event_tags_chips'
-      >Types</span>
-    {% endif %}
-    {% if cities %}
-      <span
-        class='cap_button cap_group nav_link_get {{"selected" if is_cities_selected else ""}}'
-        target='#event_cities_chips'
-      >Cities</span>
-    {% endif %}
+        class='cap_button cap_group nav_link_get {{"selected" if chip_data.selected else ""}}'
+        target='#event_{{chip_name}}_chips'
+      >{{chip_data.display_name}}</span>  
+    {% endfor %}
   </div>
 
-  {% if tags %}
-    <div id='event_tags_chips' class='event_chips hide'>
-      {% for chip in tags %}
-        {% set chip_callback=remove_url_params(request.url, remove={"t": chip.chip_name}) if chip.selected else add_url_params(request.url, merge={"t": chip.chip_name})%}
-        <a
-          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
-          href='{{ chip_callback }}'
-        >{{ chip.chip_name }} {{ chip.ct }}</a>
-      {% endfor %}
-    </div>
-  {% endif %}
-
-  {% if cities %}
-    <div id='event_cities_chips' class='event_chips hide'>
-      {% for chip in cities %}
-        {% set chip_callback=remove_url_params(request.url, remove={"cities": chip.chip_name}) if chip.selected else add_url_params(request.url, merge={"cities": chip.chip_name})%}
-        <a
-          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
-          href='{{ chip_callback }}'
-        >{{ chip.chip_name }} {{ chip.ct }}</a>
-      {% endfor %}
-    </div>
-  {% endif %}
+  {% for chip_name in chips %}
+    {% set chip_data=chips[chip_name] %}
+    {% for chip in chip_data.entries %}
+      <div id='event_{{chip_name}}_chips' class='event_chips hide'>
+        {% for chip in chip_data.entries %}
+          {% set chip_callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name})%}
+          <a
+            class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
+            href='{{chip_callback}}'
+            target='{{chip.key}}'
+          >{{ chip.chip_name }} {{ chip.ct }}</a>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% endfor %}
 
   <ul id='event_list' class='effect_in'>
     {% with vargs=vargs %}
