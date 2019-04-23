@@ -18,8 +18,8 @@ Application.init = function(params) {
 }
 
 Application.onReady = function(){
-  Application.ajaxifyLinks();
   UserPanel.init();
+  Application.ajaxifyLinks();
   Application.initGroupChips();
   Scroll.enable();
 }
@@ -37,7 +37,7 @@ Application.ajaxData = function(e){
 Application.ajaxGet = function(e){
   e.preventDefault();
   let data = Application.ajaxData(e);
-  $(this).click(Application.getElem(data.target, $(this).attr('href')));  
+  $(this).click(Application.getElem(data.target, $(this).attr('href')));
 }
 
 Application.ajaxGetOverlay = function(e){
@@ -158,7 +158,7 @@ Application.backButton = function(e){
   }
 }
 
-Application.getElem = function(target, url, push_state=true, replace=false) {
+Application.getElem = function(target, url, push_state=true, replace=false, skip_scroll=false) {
   $.get(url, {
   }).done(function(response) {
     $(target).addClass('anim_fade_in');
@@ -171,6 +171,9 @@ Application.getElem = function(target, url, push_state=true, replace=false) {
       $(target).replaceWith(response);  
     }else{
       $(target).html(response);
+    }
+    if( !skip_scroll && !(url.substring(0,9) == "/explore/") ){
+      Scroll.top();
     }
   }).fail(function(xhr, status, error) {
     window.location.replace(Application.url_home);

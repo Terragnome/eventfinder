@@ -1,5 +1,10 @@
 var Scroll = Scroll || {};
 
+Scroll.top = function(y) {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+
 Scroll.disable = function() {
   $(window).off("scroll", Scroll.getNext);
 }
@@ -10,14 +15,14 @@ Scroll.enable = function() {
 }
 
 Scroll.getNext = function(){
-  var scrollHeight = $(document).height();
-  var scrollPosition = $(window).height()+$(window).scrollTop();
+  let scrollHeight = $(document).height();
+  let scrollPosition = $(window).height()+$(window).scrollTop();
 
   if((scrollHeight-scrollPosition)/scrollHeight === 0){
-    var current_url = window.location.pathname+window.location.search;
-    var next_url = $('.pagination:last').find('a:first').attr('href');
+    let current_url = window.location.pathname+window.location.search;
+    let next_url = $('.pagination:last').find('a:first').attr('href');
     if(next_url && next_url != current_url){
-      Application.getElem('.pagination:last', next_url+'&scroll=true', false, true);
+      Application.getElem('.pagination:last', next_url+'&scroll=true', false, true, true);
     }
   }
 }

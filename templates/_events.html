@@ -25,10 +25,12 @@
   <div id='event_group_chips' class='event_chips'>
     {% for chip_name in chips %}
       {% set chip_data=chips[chip_name] %}
-      <span
-        class='cap_button cap_group nav_link_get {{"selected" if chip_data.selected else ""}}'
-        target='#event_{{chip_name}}_chips'
-      >{{chip_data.display_name}}</span>  
+      {% if chip_data.entries|length>0 %}
+        <span
+          class='cap_button cap_group nav_link_get {{"selected" if chip_data.selected else ""}}'
+          target='#event_{{chip_name}}_chips'
+        >{{chip_data.display_name}}</span>
+      {% endif %}
     {% endfor %}
   </div>
 
@@ -37,10 +39,10 @@
     {% for chip in chip_data.entries %}
       <div id='event_{{chip_name}}_chips' class='event_chips hide'>
         {% for chip in chip_data.entries %}
-          {% set chip_callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name})%}
+          {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name})%}
           <a
             class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
-            href='{{chip_callback}}'
+            href='{{callback}}'
             target='{{chip.key}}'
           >{{ chip.chip_name }} {{ chip.ct }}</a>
         {% endfor %}

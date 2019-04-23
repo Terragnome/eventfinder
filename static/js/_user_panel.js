@@ -9,7 +9,7 @@ UserPanel.init = function(){
 }
 
 UserPanel.toggle = function(e){
-  var isVisible = $("#user_panel").is(':visible');
+  let isVisible = $("#user_panel").is(':visible');
   if(isVisible){
     UserPanel.hide();
   }else{
@@ -19,7 +19,7 @@ UserPanel.toggle = function(e){
 }
 
 UserPanel.hide = function(){
-  var isVisible = $("#user_panel").is(':visible');
+  let isVisible = $("#user_panel").is(':visible');
   if(isVisible){
     $("#user_panel").hide();
     $('html').unbind('click', UserPanel.checkHide);
@@ -33,7 +33,7 @@ UserPanel.checkHide = function(e){
 }
 
 UserPanel.show = function(){
-  var isVisible = $("#user_panel").is(':visible');
+  let isVisible = $("#user_panel").is(':visible');
   if(!isVisible){
     $("#user_panel").show();
     $('html').bind('click', UserPanel.checkHide);
