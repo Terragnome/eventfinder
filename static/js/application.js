@@ -153,7 +153,7 @@ Application.backButton = function(e){
   let state = e.originalEvent.state;
   if (state != null) {
     if(state.title){ document.title = state.title; }
-    Application.getElem('#main', state.url, false);
+    Application.getElem('#main', state.url, false, false, true);
   }else{
     window.location.replace('/');
   }
