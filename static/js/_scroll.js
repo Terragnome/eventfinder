@@ -21,8 +21,13 @@ Scroll.onScroll = function(e){
 }
 
 Scroll.top = function(y) {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
+  let dist = document.body.scrollTop || document.documentElement.scrollTop;
+
+  let duration = Math.min(dist/1000.0*500, 1000);
+
+  $('html, body').animate({
+    'scrollTop': 0
+  }, duration);
 }
 
 Scroll.disable = function() {
