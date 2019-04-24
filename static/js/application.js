@@ -173,7 +173,8 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
     }else{
       $(target).html(response);
     }
-    if( !skip_scroll && !(url.substring(0,9) == "/explore/") ){
+
+    if( !skip_scroll && !(url.split('/')[3] == "explore") ){
       Scroll.top();
     }
   }).fail(function(xhr, status, error) {
