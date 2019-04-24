@@ -1,15 +1,15 @@
 var Scroll = Scroll || {};
 
 Scroll.init = function(){
-  $('#scroll_top').unbind('click', Scroll.top);
-  $('#scroll_top').click(Scroll.top);
+  $('#scroll_top').unbind('click', Scroll.onScrollTopClick);
+  $('#scroll_top').click(Scroll.onScrollTopClick);
   $(document).scroll(Scroll.onScroll);
 }
 
 Scroll.onScroll = function(e){
   let scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
   let cutoff = 500;
-  console.log(scrollPosition)
+
   if(scrollPosition > cutoff){
     $('#scroll_top').show();
     $('#scroll_top').removeClass('anim_fade_out');
@@ -20,15 +20,29 @@ Scroll.onScroll = function(e){
   }
 }
 
-Scroll.top = function(y) {
+Scroll.onScrollTopClick = function(e){
+  Scroll.top(4000);
+}
+
+Scroll.top = function(speed=0, max_duration=750){
+  Scroll.to(0, speed, max_duration);
+}
+
+Scroll.to = function(y, speed=0, max_duration=1000){
   let dist = document.body.scrollTop || document.documentElement.scrollTop;
 
-  let duration = Math.min(dist/1000.0*500, 1000);
+  if(speed == 0){
+    document.body.scrollTop = y;
+    document.documentElement.scrollTop = y;
+  }else{
+    let duration = Math.min(dist*1.0/speed*1000, max_duration);
 
-  $('html, body').animate({
-    'scrollTop': 0
-  }, duration);
+    $('html, body').animate({
+      'scrollTop': y
+    }, duration);
+  }
 }
+
 
 Scroll.disable = function() {
   $(window).off("scroll", Scroll.getNext);
