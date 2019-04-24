@@ -36,18 +36,16 @@
 
   {% for chip_name in chips %}
     {% set chip_data=chips[chip_name] %}
-    {% for chip in chip_data.entries %}
-      <div id='event_{{chip_name}}_chips' class='event_chips hide'>
-        {% for chip in chip_data.entries %}
-          {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name})%}
-          <a
-            class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
-            href='{{callback}}'
-            target='{{chip.key}}'
-          >{{ chip.chip_name }} {{ chip.ct }}</a>
-        {% endfor %}
-      </div>
-    {% endfor %}
+    <div id='event_{{chip_name}}_chips' class='event_chips hide'>
+      {% for chip in chip_data.entries %}
+        {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name})%}
+        <a
+          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
+          href='{{callback}}'
+          target='{{chip.key}}'
+        >{{ chip.chip_name }} {{ chip.ct }}</a>
+      {% endfor %}
+    </div>
   {% endfor %}
 
   <ul id='event_list' class='effect_in'>
