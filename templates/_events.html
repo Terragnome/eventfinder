@@ -2,6 +2,7 @@
 {% set events=events or (vargs.events if vargs else None) %}
 {% set sections=sections or (vargs.sections if vargs else None) %}
 {% set chips=chips or (vargs.chips if vargs else None) %}
+{% set selected=selected or (vargs.selected if vargs else None) %}
 
 <script>
   Application.setAppBackground(null)
@@ -25,22 +26,25 @@
   <div id='event_group_chips' class='event_chips'>
     {% for chip_name in chips %}
       {% set chip_data=chips[chip_name] %}
+      {% set is_chip_group_selected = selected == chip_data.key %}
+      {% set callback=remove_url_params(request.url, remove={"selected": chip_data.key}) if is_chip_group_selected else add_url_params(request.url, replace={"selected": chip_data.key})%}
       {% if chip_data.entries|length>0 %}
-        <span
-          class='cap_button cap_group nav_link_get {{"selected" if chip_data.selected else ""}}'
+        <a
+          class='cap_button cap_group nav_link_get skip_transition {{"selected" if chip_data.selected else "highlighted" if is_chip_group_selected else ""}}'
+          href='{{callback}}'
           target='#event_{{chip_name}}_chips'
-        >{{chip_data.display_name}}</span>
+        >{{chip_data.display_name}}</a>
       {% endif %}
     {% endfor %}
   </div>
 
   {% for chip_name in chips %}
     {% set chip_data=chips[chip_name] %}
-    <div id='event_{{chip_name}}_chips' class='event_chips hide'>
+    <div id='event_{{chip_name}}_chips' class='event_chips {{"" if selected == chip_data.key else "hide"}}'>
       {% for chip in chip_data.entries %}
-        {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name})%}
+        {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name, 'selected': chip_data.key})%}
         <a
-          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
+          class='cap_button nav_link_get skip_transition {{"selected" if chip.selected else ""}}'
           href='{{callback}}'
         >{{ chip.chip_name }} {{ chip.ct }}</a>
       {% endfor %}

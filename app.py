@@ -43,7 +43,8 @@ sess.init_app(app)
 param_to_kwarg = {
   'p': 'page',
   'q': 'query',
-  't': 'tag'
+  't': 'tag',
+  'selected': 'selected'
 }
 
 OAUTH2_CALLBACK = "https://www.pursuitofhobbiness.com/oauth2callback"
@@ -299,8 +300,11 @@ def event_update(event_id):
 def events(
   query=None, tag=None, cities=None,
   page=1, next_page_url=None, prev_page_url=None,
-  scroll=False
+  scroll=False, selected=None
 ):
+  if tag == Tag.MOVIES:
+    cities = None
+
   events, sections, tags, event_cities = EventController().get_events(
     query=query,
     tag=tag,
@@ -314,16 +318,12 @@ def events(
       'cities': cities,
       'tag': section['section_name']
     }
-
-    if section['section_name'] == Tag.MOVIES: del kwargs['cities']
     section['section_url'] = parse_url_for('events', **kwargs)
-
-    del kwargs['tag']
-    section['section_close_url'] = parse_url_for('events', **kwargs)
 
   vargs = {
     'events': events,
     'sections': sections,
+    'selected': selected,
     'chips': _parse_chips(tags, event_cities),
     'page': page,
     'next_page_url': next_page_url,

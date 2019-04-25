@@ -20,7 +20,6 @@ Application.init = function(params) {
 Application.onReady = function(){
   UserPanel.init();
   Application.ajaxifyLinks();
-  Application.initGroupChips();
   Scroll.init();
   Scroll.enable();
 }
@@ -39,6 +38,11 @@ Application.ajaxGet = function(e){
   e.preventDefault();
   let data = Application.ajaxData(e);
   $(this).click(Application.getElem(data.target, $(this).attr('href')));
+}
+Application.ajaxGetSkipTransition = function(e){
+  e.preventDefault();
+  let data = Application.ajaxData(e);
+  $(this).click(Application.getElem(data.target, $(this).attr('href'), true, false, false, true));
 }
 
 Application.ajaxGetOverlay = function(e){
@@ -115,8 +119,11 @@ Application.ajaxForm = function(e){
 Application.ajaxifyLinks = function() {
   Application.animateElems();
 
-  $('a.nav_link_get').unbind('click', Application.ajaxGet);
-  $('a.nav_link_get').click(Application.ajaxGet);
+  $('a.nav_link_get:not(".skip_transition")').unbind('click', Application.ajaxGet);
+  $('a.nav_link_get:not(".skip_transition")').click(Application.ajaxGet);
+
+  $('a.nav_link_get.skip_transition').unbind('click', Application.ajaxGetSkipTransition);
+  $('a.nav_link_get.skip_transition').click(Application.ajaxGetSkipTransition);
 
   $('a.nav_link_get_replace').unbind('click', Application.ajaxGetReplace);
   $('a.nav_link_get_replace').click(Application.ajaxGetReplace);
@@ -159,10 +166,12 @@ Application.backButton = function(e){
   }
 }
 
-Application.getElem = function(target, url, push_state=true, replace=false, skip_scroll=false) {
+Application.getElem = function(target, url, push_state=true, replace=false, skip_scroll=false, skip_transition=false) {
   $.get(url, {
   }).done(function(response) {
-    $(target).addClass('anim_fade_in');
+    if(!skip_transition){
+      $(target).addClass('anim_fade_in');      
+    }
     if(response != '' && push_state){
       let push_url = url;
       if(typeof push_state === 'string'){ push_url = push_state; }
@@ -182,31 +191,31 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
   });
 }
 
-Application.clickGroupChip = function(e){
-  let clickedBtn = $(e.currentTarget);
+// Application.clickGroupChip = function(e){
+//   let clickedBtn = $(e.currentTarget);
 
-  let groupBtns = $('#event_group_chips > .cap_button');
-  groupBtns.each(function(i){
-    let curBtn = $(groupBtns[i]);
-    let curGroup = $(curBtn.attr('target'));
-    if(clickedBtn.is(curBtn)){
-      Application.toggleVisibility(curGroup);
-      if(curGroup.is(':visible')){
-        clickedBtn.addClass('highlighted');
-      }else{
-        clickedBtn.removeClass('highlighted');
-      }
-    }else{
-      curBtn.removeClass('highlighted');
-      curGroup.hide();
-    }
-  });
-}
+//   let groupBtns = $('#event_group_chips > .cap_button');
+//   groupBtns.each(function(i){
+//     let curBtn = $(groupBtns[i]);
+//     let curGroup = $(curBtn.attr('target'));
+//     if(clickedBtn.is(curBtn)){
+//       Application.toggleVisibility(curGroup);
+//       if(curGroup.is(':visible')){
+//         clickedBtn.addClass('highlighted');
+//       }else{
+//         clickedBtn.removeClass('highlighted');
+//       }
+//     }else{
+//       curBtn.removeClass('highlighted');
+//       curGroup.hide();
+//     }
+//   });
+// }
 
-Application.initGroupChips = function() {
-  $('#event_group_chips > .cap_button').unbind('click', Application.clickGroupChip);
-  $('#event_group_chips > .cap_button').click(Application.clickGroupChip);
-}
+// Application.initGroupChips = function() {
+//   $('#event_group_chips > .cap_button').unbind('click', Application.clickGroupChip);
+//   $('#event_group_chips > .cap_button').click(Application.clickGroupChip);
+// }
 
 Application.postElem = function(target, url, params, replace=false) {
   $.post(url, params, {
