@@ -127,6 +127,10 @@ class UserController:
     user = None
     if user_id:
       user = User.query.filter(User.user_id == user_id).first()
+
+    if not user:
+      self._logout()
+
     return user
 
   def follow_user(self, identifier, active):
@@ -145,19 +149,24 @@ class UserController:
 
   def get_blocking(self, user=None):
     if user is None: user = self.current_user
+    if user is None: return []
     return user.blocked_users.filter(Block.active).all()
 
   def get_followers(self, user=None):
     if user is None: user = self.current_user
+    if user is None: return []
     return user.follower_users.filter(Follow.active).all()
 
   def get_following(self, user=None):
     if user is None: user = self.current_user
+    if user is None: return []
+
     return user.following_users.filter(Follow.active).all()
 
   # TODO: Add ranking algorithm
   def get_following_recommended(self, user=None):
     if user is None: user = self.current_user
+    if user is None: return []
 
     already_following_user_ids = alias(
       db_session.query(
