@@ -54,6 +54,13 @@ kubectl get serviceaccount default
 kubectl get serviceaccount default -o yaml
 # kubectl delete secret gcr-json-key
 
+kubectl apply -f ./app-deployment.yaml
+kubectl apply -f ./app-claim0-persistentvolumeclaim.yaml
+kubectl apply -f ./postgres-deployment.yaml
+kubectl apply -f ./redis-deployment.yaml
+kubectl apply -f ./redis-claim0-persistentvolumeclaim.yaml
+kubectl apply -f ./postgres-claim0-persistentvolumeclaim.yaml
+
 # Minikube
 https://ryaneschinger.com/blog/using-google-container-registry-gcr-with-minikube/
 minikube start
