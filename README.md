@@ -11,27 +11,26 @@ https://docs.docker.com/machine/get-started/
 https://blog.codeship.com/docker-machine-compose-and-swarm-how-they-work-together/
 * docker-machine: VM that hosts docker containers
 * docker-compose: Coordinates between multiple containers
-* kubectl: Converts from compose to orchestrator (Kubernetes)
+* kompose: Converts from compose to orchestrator (Kubernetes)
 
 # Create host
 docker-machine create --driver virtualbox eventfinder
 
-# Start host
+# Start host and get ip address
 docker-machine start eventfinder
+docker-machine ip eventfinder
 
-# Rebuild
+# Rebuild and start
 docker-compose build
-
-# Build and push/pull to container registry
-docker-compose push
-docker-compose pull
-
-# Start
-eval "$(docker-machine env eventfinder)"
 docker-compose up
 
-# Get host ip address
-docker-machine ip eventfinder
+# Destroy
+# docker-compose down
+# docker system prune -a
+
+# Push/pull to container registry
+docker-compose push
+docker-compose pull
 
 # Connect to services
 eval "$(docker-machine env eventfinder)"
@@ -39,27 +38,20 @@ docker exec -it eventfinder_app_1 bash
 docker exec -it eventfinder_postgres_1 bash
 docker exec -it eventfinder_redis_1 bash
 
-# Reset
-# docker system prune -a
-
-# docker logs --tail 2500 --follow eb7b166e3d18
-
 # Kubernetes
 kubectl create namespace dev
 kubectl config get-contexts
 kubectl config set-context --namespace=dev minikube
+
 kubectl create secret docker-registry gcr-json-key --docker-server=https://gcr.io/eventfinder-214723 --docker-username=_json_key --docker-password="$(cat config/secrets/EventFinder-559da3adbe81.json)" --docker-email=mhuailin@gmail.com
+# kubectl delete secret gcr-json-key
+
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "gcr-json-key"}]}'
 kubectl get serviceaccount default
 kubectl get serviceaccount default -o yaml
-# kubectl delete secret gcr-json-key
 
-kubectl apply -f ./app-deployment.yaml
-kubectl apply -f ./app-claim0-persistentvolumeclaim.yaml
-kubectl apply -f ./postgres-deployment.yaml
-kubectl apply -f ./redis-deployment.yaml
-kubectl apply -f ./redis-claim0-persistentvolumeclaim.yaml
-kubectl apply -f ./postgres-claim0-persistentvolumeclaim.yaml
+kubectl apply -f ./postgres-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./postgres-deployment.yaml
+kubectl apply -f ./redis-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./redis-deployment.yaml
 
 # Minikube
 https://ryaneschinger.com/blog/using-google-container-registry-gcr-with-minikube/
@@ -67,15 +59,27 @@ minikube start
 minikube dashboard
 
 kubectl create deployment eventfinder-node --image=gcr.io/eventfinder-214723/eventfinder-app:latest
-kubectl get deployments
-kubectl get pods
-kubectl expose deployment eventfinder-node --type=NodePort --port=8080 --name=eventfinder-service
-kubectl get services
-kubectl cluster-info
-kubectl get pods -o=custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name
-kubectl exec -it eventfinder-node-5b9559c798-b7g97 --container eventfinder-app -- /bin/bash
+kubectl scale --replicas=3 deployment/eventfinder-node
+kubectl scale --replicas=2 deployment/postgres
+kubectl scale --replicas=2 deployment/redis
+kubectl expose deployment eventfinder-node --type=NodePort --port=80 --target-port=5000 --name=eventfinder-service
+kubectl expose deployment/postgres
+kubectl expose deployment/redis
 # kubectl delete deployment eventfinder-node
 # kubectl delete service eventfinder-service
+
+kubectl get pods
+kubectl get deployments
+kubectl get replicasets
+kubectl get services
+kubectl cluster-info
+
+minikube service eventfinder-service
+minikube service --url eventfinder-service
+
+# Run commands on kubectl node
+kubectl get pods -o=custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name
+kubectl exec -it eventfinder-node-5b9559c798-4jcpw --container eventfinder-app -- /bin/bash
 
 # Google Cloud
 https://console.developers.google.com/apis/credentials
@@ -91,9 +95,3 @@ gcloud container clusters create eventfinder-cluster --num-nodes=1
 gcloud container clusters get-credentials eventfinder-cluster
 gcloud compute instances list
 # gcloud container clusters delete eventfinder-cluster
-
-kubectl run eventfinder-node --image=gcr.io/eventfinder-214723/eventfinder-app:latest --port 8080
-kubectl get pods
-# kubectl expose deployment eventfinder-node --type=LoadBalancer --port 80 --target-port 8080
-# kubectl get service
-# kubectl delete service eventfinder-node
