@@ -20,5 +20,5 @@ EXPOSE 6379
 # Populate the events db
 # RUN sh scripts/sync.sh
 
-ENTRYPOINT ["python"]
-CMD ["app.py"]
+ENTRYPOINT ["python", "app.py"]
+CMD ["python", "app.py"]
