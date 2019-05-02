@@ -40,12 +40,17 @@ docker exec -it eventfinder_redis_1 bash
 
 # Kubernetes
 kubectl create -f namespace-dev.json
-kubectl create -f namespace-prod.json
-kubectl config get-contexts
 kubectl config set-context minikube --namespace=dev
+kubectl config use-context minikube --namespace=dev
+
+kubectl create -f namespace-prod.json
+kubectl config set-context default --namespace=prod
+kubectl config use-context default --namespace=prod
+
+kubectl config get-contexts
 kubectl config current-context
 
-kubectl create secret docker-registry gcr-json-key --docker-server=https://gcr.io/eventfinder-214723 --docker-username=_json_key --docker-password="$(cat config/secrets/EventFinder-559da3adbe81.json)" --docker-email=mhuailin@gmail.com
+kubectl create secret docker-registry gcr-json-key --docker-server=https://gcr.io/eventfinder-239405 --docker-username=_json_key --docker-password="$(cat config/secrets/EventFinder-9a13920d2b2c.json)" --docker-email=mhuailin@gmail.com
 # kubectl delete secret gcr-json-key
 
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "gcr-json-key"}]}'
@@ -60,7 +65,7 @@ https://ryaneschinger.com/blog/using-google-container-registry-gcr-with-minikube
 minikube start
 minikube dashboard
 
-kubectl create deployment eventfinder-node --image=gcr.io/eventfinder-214723/eventfinder-app:latest
+kubectl create deployment eventfinder-node --image=gcr.io/eventfinder-239405/eventfinder-app:latest
 kubectl scale --replicas=3 deployment/eventfinder-node
 # kubectl scale --replicas=1 deployment/postgres
 # kubectl scale --replicas=1 deployment/redis
@@ -89,7 +94,7 @@ https://cloud.google.com/container-registry/docs/pushing-and-pulling
 https://cloud.google.com/compute/docs/containers/deploying-containers
 gcloud auth configure-docker
 gcloud auth login
-gcloud config set project eventfinder-214723
+gcloud config set project eventfinder-239405
 gcloud config set compute/zone us-east1-b
 
 https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app

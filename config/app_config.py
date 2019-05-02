@@ -1,5 +1,5 @@
 app_config = {
-    'PROJECT_ID': "eventfinder-214723",
+    'PROJECT_ID': "eventfinder-239405",
     "AUTH": {
         "CLIENT_SECRETS_FILE": "config/secrets/client_secret.json",
         "SCOPES": [

@@ -22,7 +22,7 @@ services:
         - 6379:6379
   app:
     restart: always
-    image: gcr.io/eventfinder-214723/eventfinder-app:latest
+    image: gcr.io/eventfinder-239405/eventfinder-app:latest
     build: .
     volumes:
       - .:/app
