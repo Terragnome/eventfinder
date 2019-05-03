@@ -29,12 +29,16 @@ spec:
         - containerPort: 5000
         resources: {}
         volumeMounts:
-        - mountPath: /etc/secret-volume
-          name: secret-volume
+        - mountPath: /etc/ssl-cert
+          name: ssl-cert
+        - mountPath: /etc/ssl-key
+          name: ssl-key
       restartPolicy: Always
       volumes:
-      - name: secret-volume
+      - name: ssl-cert
+        secret:
+          secretName: ssl-cert
+      - name: ssl-key
         secret:
           secretName: ssl-key
-          secretName: ssl-cert
 status: {}

@@ -71,13 +71,13 @@ gcloud container clusters get-credentials eventfinder-cluster
 gcloud compute instances list
 # gcloud container clusters delete eventfinder-cluster
 
-# ============================== #
-# Kubernetes                     #
-# ============================== #
 kubectl create -f ./config/namespace-prod.json
 kubectl config set-context gke_eventfinder-239405_us-east1-b_eventfinder-cluster --namespace=prod
 kubectl config use-context gke_eventfinder-239405_us-east1-b_eventfinder-cluster --namespace=prod
 
+# ============================== #
+# Kubernetes                     #
+# ============================== #
 kubectl config get-contexts
 kubectl config current-context
 
@@ -94,13 +94,13 @@ kubectl get serviceaccount default -o yaml
 kubectl apply -f ./config/postgres-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/postgres-deployment.yaml
 kubectl apply -f ./config/redis-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/redis-deployment.yaml
 kubectl apply -f ./config/eventfinder-node-deployment.yaml
-# kubectl create deployment eventfinder-node --image=gcr.io/eventfinder-239405/eventfinder-app:latest
 # kubectl scale --replicas=3 deployment/eventfinder-node
+# kubectl delete deployment eventfinder-node
 
-kubectl expose deployment eventfinder-node --type=NodePort --port=8080 --target-port=5000 --name=eventfinder-service
+kubectl expose deployment eventfinder-node --type=NodePort --port=80 --target-port=5000 --name=eventfinder-service
+# kubectl expose deployment eventfinder-node --type=LoadBalancer --port=80 --target-port=5000 --name=eventfinder-service
 kubectl expose deployment/postgres
 kubectl expose deployment/redis
-# kubectl delete deployment eventfinder-node
 # kubectl delete service eventfinder-service
 
 kubectl get pods
@@ -111,4 +111,4 @@ kubectl cluster-info
 
 # Run commands on kubectl node
 kubectl get pods -o=custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name
-kubectl exec -it eventfinder-node-5c549577fd-j26dm --container eventfinder-container -- /bin/bash
+kubectl exec -it eventfinder-node-9bdf865b4-658qd --container eventfinder-container -- /bin/bash
