@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: eventfinder-node
+  name: eventfinder-node
+spec:
+  replicas: 
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: eventfinder-node
+    spec:
+      containers:
+      - command:
+        - python
+        - app.py
+        - run
+        image: gcr.io/eventfinder-239405/eventfinder-app:latest
+        name: eventfinder-container
+        ports:
+        - containerPort: 5000
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/secret-volume
+          name: secret-volume
+      restartPolicy: Always
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: ssl-key
+          secretName: ssl-cert
+status: {}

@@ -25,7 +25,7 @@ from utils.config_utils import load_config
 from utils.get_from import get_from
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-context.load_cert_chain('config/certs/ssl.cert', 'config/certs/ssl.key')
+context.load_cert_chain('/etc/secret-volume/ssl-cert', '/etc/secret-volume/ssl-certs')
 
 app = Flask(__name__)
 app.config.update(**app_config)
