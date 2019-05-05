@@ -22,6 +22,7 @@ Application.onReady = function(){
   Application.ajaxifyLinks();
   Scroll.init();
   Scroll.enable();
+  Application.initGroupChips();
 }
 
 Application.ajaxData = function(e){
@@ -183,7 +184,7 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
       $(target).html(response);
     }
 
-    if( !skip_scroll && !(url.split('/')[3] == "explore") ){
+    if( !skip_scroll && !(url && url.split('/')[3] == "explore") ){
       Scroll.top();
     }
   }).fail(function(xhr, status, error) {
@@ -191,31 +192,31 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
   });
 }
 
-// Application.clickGroupChip = function(e){
-//   let clickedBtn = $(e.currentTarget);
+Application.clickGroupChip = function(e){
+  let clickedBtn = $(e.currentTarget);
 
-//   let groupBtns = $('#event_group_chips > .cap_button');
-//   groupBtns.each(function(i){
-//     let curBtn = $(groupBtns[i]);
-//     let curGroup = $(curBtn.attr('target'));
-//     if(clickedBtn.is(curBtn)){
-//       Application.toggleVisibility(curGroup);
-//       if(curGroup.is(':visible')){
-//         clickedBtn.addClass('highlighted');
-//       }else{
-//         clickedBtn.removeClass('highlighted');
-//       }
-//     }else{
-//       curBtn.removeClass('highlighted');
-//       curGroup.hide();
-//     }
-//   });
-// }
+  let groupBtns = $('#event_group_chips > .cap_group');
+  groupBtns.each(function(i){
+    let curBtn = $(groupBtns[i]);
+    let curGroup = $(curBtn.attr('target'));
+    if(clickedBtn.is(curBtn)){
+      Application.toggleVisibility(curGroup);
+      if(curGroup.is(':visible')){
+        clickedBtn.addClass('highlighted');
+      }else{
+        clickedBtn.removeClass('highlighted');
+      }
+    }else{
+      curBtn.removeClass('highlighted');
+      curGroup.hide();
+    }
+  });
+}
 
-// Application.initGroupChips = function() {
-//   $('#event_group_chips > .cap_button').unbind('click', Application.clickGroupChip);
-//   $('#event_group_chips > .cap_button').click(Application.clickGroupChip);
-// }
+Application.initGroupChips = function() {
+  $('#event_group_chips > .cap_group').unbind('click', Application.clickGroupChip);
+  $('#event_group_chips > .cap_group').click(Application.clickGroupChip);
+}
 
 Application.postElem = function(target, url, params, replace=false) {
   $.post(url, params, {
