@@ -25,7 +25,10 @@ from utils.config_utils import load_config
 from utils.get_from import get_from
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-context.load_cert_chain('/etc/ssl-cert/ssl.cert', '/etc/ssl-key/ssl.key')
+try:
+  context.load_cert_chain('/etc/ssl-cert/ssl.cert', '/etc/ssl-key/ssl.key')
+except Exception as e:
+  context.load_cert_chain('config/certs/ssl.cert', 'config/certs/ssl.key')
 
 app = Flask(__name__)
 app.config.update(**app_config)
@@ -501,4 +504,3 @@ def user_action(identifier):
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)
-  # app.run(host='0.0.0.0', port=5000, debug=True)

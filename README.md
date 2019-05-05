@@ -1,4 +1,10 @@
 # ============================== #
+# Config                         #
+# ============================== #
+# Needs config/secrets/client_secret.json
+# Needs config/secrets/EventFinder-xxxx.json
+
+# ============================== #
 # Auth                           #
 # ============================== #
 https://developers.google.com/api-client-library/python/auth/web-app
@@ -6,8 +12,9 @@ https://developers.google.com/api-client-library/python/auth/web-app
 # ============================== #
 # SSL Cert                       #
 # ============================== #
-openssl genrsa 1024 > ssl.key
-openssl req -new -x509 -nodes -sha1 -days 365 -key ssl.key > ssl.cert
+openssl genrsa 1024 > config/certs/ssl.key
+openssl req -new -x509 -nodes -sha1 -days 365 -key config/certs/ssl.key > config/certs/ssl.cert
+# gcloud compute ssl-certificates create eventfinder-ssl --certificate config/certs/ssl.cert --private-key config/certs/ssl.key
 
 # ============================== #
 # Docker                         #
@@ -44,15 +51,16 @@ docker exec -it eventfinder_redis_1 bash
 # ============================== #
 # Minikube                       #
 # ============================== #
-https://ryaneschinger.com/blog/using-google-container-registry-gcr-with-minikube/
-minikube start
-minikube dashboard
-minikube service eventfinder-service --namespace=dev
-minikube service --url eventfinder-service
+# https://ryaneschinger.com/blog/using-google-container-registry-gcr-with-minikube/
+# minikube start
+# minikube dashboard
+# minikube service eventfinder-service --namespace=dev
+# minikube service --url eventfinder-service
+# minikube stop
 
-kubectl create -f ./config/namespace-dev.json
-kubectl config set-context minikube --namespace=dev
-kubectl config use-context minikube --namespace=dev
+# kubectl create -f ./config/namespaces/namespace-dev.json
+# kubectl config set-context minikube --namespace=dev
+# kubectl config use-context minikube --namespace=dev
 
 # ============================== #
 # Google Cloud                   #
@@ -71,7 +79,7 @@ gcloud container clusters get-credentials eventfinder-cluster
 gcloud compute instances list
 # gcloud container clusters delete eventfinder-cluster
 
-kubectl create -f ./config/namespace-prod.json
+kubectl create -f ./config/namespaces/namespace-prod.json
 kubectl config set-context gke_eventfinder-239405_us-east1-b_eventfinder-cluster --namespace=prod
 kubectl config use-context gke_eventfinder-239405_us-east1-b_eventfinder-cluster --namespace=prod
 
@@ -91,9 +99,9 @@ kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "gcr-jso
 kubectl get serviceaccount default
 kubectl get serviceaccount default -o yaml
 
-kubectl apply -f ./config/postgres-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/postgres-deployment.yaml
-kubectl apply -f ./config/redis-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/redis-deployment.yaml
-kubectl apply -f ./config/eventfinder-node-deployment.yaml
+kubectl apply -f ./config/yaml/postgres-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/yaml/postgres-deployment.yaml
+kubectl apply -f ./config/yaml/redis-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/yaml/redis-deployment.yaml
+kubectl apply -f ./config/yaml/eventfinder-node-deployment.yaml
 # kubectl scale --replicas=3 deployment/eventfinder-node
 # kubectl delete deployment eventfinder-node
 
