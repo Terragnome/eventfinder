@@ -172,6 +172,7 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
     if(!skip_transition){
       $(target).addClass('anim_fade_in');      
     }
+
     if(response != '' && push_state){
       let push_url = url;
       if(typeof push_state === 'string'){ push_url = push_state; }
@@ -183,7 +184,7 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
       $(target).html(response);
     }
 
-    if( !skip_scroll && !(url.split('/')[3] == "explore") ){
+    if( !skip_scroll && !(url.split('/')[1] == "explore") ){
       Scroll.top();
     }
   }).fail(function(xhr, status, error) {

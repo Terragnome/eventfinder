@@ -12,9 +12,12 @@ https://developers.google.com/api-client-library/python/auth/web-app
 # ============================== #
 # SSL Cert                       #
 # ============================== #
-openssl genrsa 1024 > config/certs/ssl.key
-openssl req -new -x509 -nodes -sha1 -days 365 -key config/certs/ssl.key > config/certs/ssl.cert
+https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
+openssl genrsa 2048 > config/certs/ssl.key
+openssl req -new -x509 -nodes -sha1 -days 365 -key config/certs/ssl.key > config/certs/ssl.cert -subj "/CN=pursuitofhobbiness.com"
 # gcloud compute ssl-certificates create eventfinder-ssl --certificate config/certs/ssl.cert --private-key config/certs/ssl.key
+# gcloud compute ssl-certificates list
+# gcloud compute ssl-certificates describe eventfinder-ssl
 
 # ============================== #
 # Docker                         #
@@ -62,6 +65,8 @@ docker exec -it eventfinder_redis_1 bash
 # kubectl config set-context minikube --namespace=dev
 # kubectl config use-context minikube --namespace=dev
 
+# Needs NodePort for eventfinder-service
+
 # ============================== #
 # Google Cloud                   #
 # ============================== #
@@ -102,19 +107,22 @@ kubectl get serviceaccount default -o yaml
 kubectl apply -f ./config/yaml/postgres-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/yaml/postgres-deployment.yaml
 kubectl apply -f ./config/yaml/redis-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/yaml/redis-deployment.yaml
 kubectl apply -f ./config/yaml/eventfinder-node-deployment.yaml
-# kubectl scale --replicas=3 deployment/eventfinder-node
 # kubectl delete deployment eventfinder-node
 
-kubectl expose deployment eventfinder-node --type=NodePort --port=80 --target-port=5000 --name=eventfinder-service
-# kubectl expose deployment eventfinder-node --type=LoadBalancer --port=80 --target-port=5000 --name=eventfinder-service
+kubectl expose deployment eventfinder-node --type=LoadBalancer --port=8080 --target-port=5000 --name=eventfinder-service
 kubectl expose deployment/postgres
 kubectl expose deployment/redis
 # kubectl delete service eventfinder-service
 
-kubectl get pods
-kubectl get deployments
-kubectl get replicasets
-kubectl get services
+https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer
+kubectl apply -f ./config/yaml/eventfinder-ingress.yaml
+# kubectl get ingress
+# kubectl delete ingress eventfinder-ingress
+
+kubectl get pod
+kubectl get deployment
+kubectl get replicaset
+kubectl get service
 kubectl cluster-info
 
 # Run commands on kubectl node
