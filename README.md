@@ -14,10 +14,9 @@ https://developers.google.com/api-client-library/python/auth/web-app
 # ============================== #
 https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
 openssl genrsa 2048 > config/certs/ssl.key
-openssl req -new -x509 -nodes -sha1 -days 365 -key config/certs/ssl.key > config/certs/ssl.cert -subj "/CN=pursuitofhobbiness.com"
-# gcloud compute ssl-certificates create eventfinder-ssl --certificate config/certs/ssl.cert --private-key config/certs/ssl.key
-# gcloud compute ssl-certificates list
-# gcloud compute ssl-certificates describe eventfinder-ssl
+openssl req -new -x509 -nodes -sha1 -days 365 -key config/certs/ssl.key > config/certs/ssl.cert -subj "/CN=howtobeagrownassman.com"
+kubectl create secret tls eventfinder-ssl --cert config/certs/ssl.cert --key config/certs/ssl.key
+# kubectl delete secret eventfinder-ssl
 
 # ============================== #
 # Docker                         #
