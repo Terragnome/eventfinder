@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: eventfinder-node
   name: eventfinder-node
 spec:
-  replicas: 
+  replicas: 1
   strategy:
     type: Recreate
   template:

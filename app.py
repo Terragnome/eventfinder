@@ -50,7 +50,7 @@ param_to_kwarg = {
   'selected': 'selected'
 }
 
-OAUTH2_CALLBACK = "https://www.pursuitofhobbiness.com/oauth2callback"
+OAUTH2_CALLBACK = "https://www.howtobeagrownassman.com/oauth2callback"
 
 TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING = "_blocking.html"
