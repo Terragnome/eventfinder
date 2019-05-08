@@ -24,6 +24,7 @@ spec:
         - app.py
         - run
         image: gcr.io/eventfinder-239405/eventfinder-app:latest
+        imagePullPolicy: "Always"
         name: eventfinder-container
         ports:
         - containerPort: 5000

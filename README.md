@@ -22,15 +22,6 @@ kubectl create secret tls eventfinder-ssl --cert config/certs/ssl.cert --key con
 # Docker                         #
 # ============================== #
 https://docs.docker.com/get-started/
-https://docs.docker.com/machine/get-started/
-https://blog.codeship.com/docker-machine-compose-and-swarm-how-they-work-together/
-
-# Create host
-docker-machine create --driver virtualbox eventfinder
-
-# Start host and get ip address
-docker-machine start eventfinder
-docker-machine ip eventfinder
 
 # Rebuild and start
 docker-compose build
@@ -45,7 +36,6 @@ docker-compose push
 docker-compose pull
 
 # Connect to services
-eval "$(docker-machine env eventfinder)"
 docker exec -it eventfinder_app_1 bash
 docker exec -it eventfinder_postgres_1 bash
 docker exec -it eventfinder_redis_1 bash
@@ -117,6 +107,9 @@ https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer
 kubectl apply -f ./config/yaml/eventfinder-ingress.yaml
 # kubectl get ingress
 # kubectl delete ingress eventfinder-ingress
+
+kubectl set image deployment/eventfinder-node eventfinder-container=gcr.io/eventfinder-239405/eventfinder-app:latest
+kubectl set image deployment/eventfinder-node eventfinder-container=gcr.io/eventfinder-239405/eventfinder-app
 
 kubectl get pod
 kubectl get deployment
