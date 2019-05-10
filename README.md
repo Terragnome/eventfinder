@@ -85,6 +85,7 @@ kubectl config current-context
 
 kubectl create secret generic ssl-cert --from-file=./config/certs/ssl.cert
 kubectl create secret generic ssl-key --from-file=./config/certs/ssl.key
+kubectl create secret generic client-secret --from-file=./config/secrets/client_secret.json
 
 kubectl create secret docker-registry gcr-json-key --docker-server=https://gcr.io/eventfinder-239405 --docker-username=_json_key --docker-password="$(cat config/secrets/EventFinder-9a13920d2b2c.json)" --docker-email=mhuailin@gmail.com
 # kubectl delete secret gcr-json-key
