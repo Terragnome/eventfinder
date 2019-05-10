@@ -93,7 +93,7 @@ a{
 }
 
 body{
-  background-color: white;/*var(--mid-color);*/
+  background-color: white;
   border: 0px;
   font-family: Roboto,sans-serif;
   margin: 0px;
@@ -994,14 +994,12 @@ span{
 
 #user_panel{
   position: absolute;
-  right: 0px;
   background-color: white;
-  border-radius: 5px;
   display: none;
   font-size: 18px;
-  margin: 5px;
-  padding: 10px 20px 10px 20px;
-  text-align: right;
+  padding: 20px 0px 30px 0px;
+  text-align: center;
+  width: 100%;
   z-index: 20;
 }
 

@@ -1,0 +1,17 @@
+:root{
+  --darkest-color: #707070;
+  --dark-color: #A0A0A0;
+  --mid-color: #D0D0D0;
+  --light-color: #F0F0F0;
+  /*--darkest-color: #C2823C;
+  --dark-color: #D69249;
+  --mid-color: #E5B256;
+  --light-color: #E5B256;*/
+  --dark-neutral-color: #808080;
+  --neutral-color: #DEDEDE;
+
+  --link-color: black;
+  /*--link-color: var(--dark-color);*/
+  --searchbar-color: white;
+  --weekend-color: var(--darkest-color);
+}
