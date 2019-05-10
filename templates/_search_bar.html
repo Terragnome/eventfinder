@@ -6,8 +6,8 @@
   <input type='submit' class='nav_link_form icon_search' value=''></input>
   {% if request.args.get('q') %}
     <a
-        class='cap_button cap_close nav_link_get'
-        href='{{ filter_url_params(url, exclude=["q"]) }}'
+      class='cap_button cap_close nav_link_get'
+      href='{{ filter_url_params(url, exclude=["q"]) }}'
     >
       {{ request.args.get('q') }}
     </a>

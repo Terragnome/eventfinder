@@ -185,8 +185,15 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
       $(target).html(response);
     }
 
-    if( !skip_scroll && !(url.split('/')[1] == "explore") ){
-      Scroll.top();
+    if(!skip_scroll){
+      let route = false;
+      try{
+        route = url.split('/')[3].split('?')[0];
+      }catch(e){}
+
+      if(!route || ["", "explore"].indexOf(route)<0){
+        Scroll.top();
+      }
     }
   }).fail(function(xhr, status, error) {
     window.location.replace(Application.url_home);
