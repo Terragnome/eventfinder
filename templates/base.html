@@ -1,22 +1,23 @@
 {% set app_name="Ventful" %}
+{% set cachebreaker = range(1, 100000) | random %}
 
 <!doctype html>
 <head>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"></link>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rubik"></link>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/_animation.css', v=(range(1, 100000) | random)) }}"></link>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/_fonts.css', v=(range(1, 100000) | random)) }}"></link>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=(range(1, 100000) | random)) }}"></link>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/_animation.css', v=cachebreaker) }}"></link>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/_fonts.css', v=cachebreaker) }}"></link>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=cachebreaker) }}"></link>
   <script type='application/javascript' src="{{ url_for('static', filename='js/lib/jquery.min.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/lib/modernizr.custom.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/lib/masonry.pkgd.min.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/lib/imagesloaded.js') }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/lib/classie.js') }}"></script>
-  <script type='application/javascript' src="{{ url_for('static', filename='js/AnimOnScroll.js', v=(range(1, 100000) | random)) }}"></script>
-  <script type='application/javascript' src="{{ url_for('static', filename='js/_overlay.js', v=(range(1, 100000) | random)) }}"></script>
-  <script type='application/javascript' src="{{ url_for('static', filename='js/_scroll.js', v=(range(1, 100000) | random)) }}"></script>
-  <script type='application/javascript' src="{{ url_for('static', filename='js/_user_panel.js', v=(range(1, 100000) | random)) }}"></script>
-  <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=(range(1, 100000) | random)) }}"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/AnimOnScroll.js', v=cachebreaker) }}"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/_overlay.js', v=cachebreaker) }}"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/_scroll.js', v=cachebreaker) }}"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/_user_panel.js', v=cachebreaker) }}"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=cachebreaker) }}"></script>
   
   {% block scripts %}{% endblock %}
 </head>

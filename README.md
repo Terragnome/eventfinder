@@ -12,23 +12,16 @@ https://developers.google.com/api-client-library/python/auth/web-app
 # ============================== #
 # SSL Cert                       #
 # ============================== #
-openssl genrsa 1024 > config/certs/ssl.key
-openssl req -new -x509 -nodes -sha1 -days 365 -key config/certs/ssl.key > config/certs/ssl.cert
-# gcloud compute ssl-certificates create eventfinder-ssl --certificate config/certs/ssl.cert --private-key config/certs/ssl.key
+https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
+openssl genrsa 2048 > config/certs/ssl.key
+openssl req -new -x509 -nodes -sha1 -days 365 -key config/certs/ssl.key > config/certs/ssl.cert -subj "/CN=howtobeagrownassman.com"
+kubectl create secret tls eventfinder-ssl --cert config/certs/ssl.cert --key config/certs/ssl.key
+# kubectl delete secret eventfinder-ssl
 
 # ============================== #
 # Docker                         #
 # ============================== #
 https://docs.docker.com/get-started/
-https://docs.docker.com/machine/get-started/
-https://blog.codeship.com/docker-machine-compose-and-swarm-how-they-work-together/
-
-# Create host
-docker-machine create --driver virtualbox eventfinder
-
-# Start host and get ip address
-docker-machine start eventfinder
-docker-machine ip eventfinder
 
 # Rebuild and start
 docker-compose build
@@ -43,7 +36,6 @@ docker-compose push
 docker-compose pull
 
 # Connect to services
-eval "$(docker-machine env eventfinder)"
 docker exec -it eventfinder_app_1 bash
 docker exec -it eventfinder_postgres_1 bash
 docker exec -it eventfinder_redis_1 bash
@@ -61,6 +53,8 @@ docker exec -it eventfinder_redis_1 bash
 # kubectl create -f ./config/namespaces/namespace-dev.json
 # kubectl config set-context minikube --namespace=dev
 # kubectl config use-context minikube --namespace=dev
+
+# Needs NodePort for eventfinder-service
 
 # ============================== #
 # Google Cloud                   #
@@ -91,6 +85,7 @@ kubectl config current-context
 
 kubectl create secret generic ssl-cert --from-file=./config/certs/ssl.cert
 kubectl create secret generic ssl-key --from-file=./config/certs/ssl.key
+kubectl create secret generic client-secret --from-file=./config/secrets/client_secret.json
 
 kubectl create secret docker-registry gcr-json-key --docker-server=https://gcr.io/eventfinder-239405 --docker-username=_json_key --docker-password="$(cat config/secrets/EventFinder-9a13920d2b2c.json)" --docker-email=mhuailin@gmail.com
 # kubectl delete secret gcr-json-key
@@ -102,19 +97,25 @@ kubectl get serviceaccount default -o yaml
 kubectl apply -f ./config/yaml/postgres-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/yaml/postgres-deployment.yaml
 kubectl apply -f ./config/yaml/redis-claim0-persistentvolumeclaim.yaml; kubectl apply -f ./config/yaml/redis-deployment.yaml
 kubectl apply -f ./config/yaml/eventfinder-node-deployment.yaml
-# kubectl scale --replicas=3 deployment/eventfinder-node
 # kubectl delete deployment eventfinder-node
 
-kubectl expose deployment eventfinder-node --type=NodePort --port=80 --target-port=5000 --name=eventfinder-service
-# kubectl expose deployment eventfinder-node --type=LoadBalancer --port=80 --target-port=5000 --name=eventfinder-service
+kubectl expose deployment eventfinder-node --type=LoadBalancer --port=8080 --target-port=5000 --name=eventfinder-service
 kubectl expose deployment/postgres
 kubectl expose deployment/redis
 # kubectl delete service eventfinder-service
 
-kubectl get pods
-kubectl get deployments
-kubectl get replicasets
-kubectl get services
+https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer
+kubectl apply -f ./config/yaml/eventfinder-ingress.yaml
+# kubectl get ingress
+# kubectl delete ingress eventfinder-ingress
+
+kubectl set image deployment/eventfinder-node eventfinder-container=gcr.io/eventfinder-239405/eventfinder-app:latest
+kubectl set image deployment/eventfinder-node eventfinder-container=gcr.io/eventfinder-239405/eventfinder-app
+
+kubectl get pod
+kubectl get deployment
+kubectl get replicaset
+kubectl get service
 kubectl cluster-info
 
 # Run commands on kubectl node

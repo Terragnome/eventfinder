@@ -3,7 +3,7 @@ import json
 import os
 
 import flask
-from flask import Flask
+from flask import Flask, Response
 from flask import current_app, session
 from flask import redirect, render_template, request
 from flask import url_for
@@ -50,7 +50,7 @@ param_to_kwarg = {
   'selected': 'selected'
 }
 
-OAUTH2_CALLBACK = "https://www.pursuitofhobbiness.com/oauth2callback"
+OAUTH2_CALLBACK = "https://www.howtobeagrownassman.com/oauth2callback"
 
 TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING = "_blocking.html"
@@ -71,11 +71,18 @@ def debug():
 def oauth2callback():
   state = session['state']
 
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-    app.config['AUTH']['CLIENT_SECRETS_FILE'],
-    scopes=app.config['AUTH']['SCOPES'],
-    state=state
-  )
+  try:
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+      "config/secrets/client_secret.json",
+      scopes=app.config['AUTH']['SCOPES'],
+      state=state
+    )
+  except Exception as e:
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+      "/etc/client-secret/client_secret.json",
+      scopes=app.config['AUTH']['SCOPES'],
+      state=state
+    )
   flow.redirect_uri = OAUTH2_CALLBACK#flask.url_for('oauth2callback', _external=True)
 
   authorization_response = flask.request.url
@@ -96,10 +103,16 @@ def oauth2callback():
 
 @app.route("/authorize/")
 def authorize():
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-    app.config['AUTH']['CLIENT_SECRETS_FILE'],
-    scopes=app.config['AUTH']['SCOPES'],
-  )
+  try:
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+      "config/secrets/client_secret.json",
+      scopes=app.config['AUTH']['SCOPES']
+    )
+  except Exception as e:
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+      "/etc/client-secret/client_secret.json",
+      scopes=app.config['AUTH']['SCOPES']
+    )
   flow.redirect_uri = OAUTH2_CALLBACK#flask.url_for('oauth2callback', _external=True)
 
   authorization_url, state = flow.authorization_url(
@@ -503,4 +516,7 @@ def user_action(identifier):
   return redirect(request.referrer or '/')
 
 if __name__ == '__main__':
+  # try:
+  #   app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)
+  # except Exception as e:
   app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)

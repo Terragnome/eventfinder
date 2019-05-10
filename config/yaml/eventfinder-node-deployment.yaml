@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: eventfinder-node
   name: eventfinder-node
 spec:
-  replicas: 
+  replicas: 1
   strategy:
     type: Recreate
   template:
@@ -24,6 +24,7 @@ spec:
         - app.py
         - run
         image: gcr.io/eventfinder-239405/eventfinder-app:latest
+        imagePullPolicy: "Always"
         name: eventfinder-container
         ports:
         - containerPort: 5000
@@ -41,4 +42,7 @@ spec:
       - name: ssl-key
         secret:
           secretName: ssl-key
+      - name: client-secret
+        secret:
+          secretName: client-secret
 status: {}

@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: eventfinder-ingress
+spec:
+  tls:
+  - secretName: eventfinder-ssl
+  rules:
+  - http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: eventfinder-service
+          servicePort: 8080
