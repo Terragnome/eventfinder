@@ -57,7 +57,7 @@ Scroll.getNext = function(){
   let scrollHeight = $(document).height();
   let scrollPosition = $(window).height()+$(window).scrollTop();
 
-  if((scrollHeight-scrollPosition)/scrollHeight === 0){
+  if((scrollHeight-scrollPosition)/scrollHeight < 0.1){
     let current_url = window.location.pathname+window.location.search;
     let next_url = $('.pagination:last').find('a:first').attr('href');
     if(next_url && next_url != current_url){
