@@ -5,24 +5,28 @@ Application.init = function(params) {
   Application.url_auth = urls['auth'];
   Application.url_home = urls['home'];
 
-  Scroll.enable();
-
   $(window).on('popstate', Application.backButton);
 
-  $(document).ajaxStart(function(e){
-    $('#main').removeClass('anim_fade_in');
-    Scroll.disable();
-  });
-  $(document).ajaxComplete(Application.onReady);
+  $(document).ajaxStart(Application.onAjaxStart);
+  $(document).ajaxComplete(Application.onAjaxComplete);
   $(document).ready(Application.onReady);
 }
 
 Application.onReady = function(){
   UserPanel.init();
-  Application.ajaxifyLinks();
   Scroll.init();
-  Scroll.enable();
+  Application.onAjaxComplete();
+}
+
+Application.onAjaxStart = function(){
+  $('#main').removeClass('anim_fade_in');
+  Scroll.disable();
+}
+
+Application.onAjaxComplete = function(){
+  Application.ajaxifyLinks();
   Application.initGroupChips();
+  Scroll.enable();
 }
 
 Application.ajaxData = function(e){

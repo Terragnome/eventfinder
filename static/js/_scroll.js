@@ -3,6 +3,7 @@ var Scroll = Scroll || {};
 Scroll.init = function(){
   $('#scroll_top').unbind('click', Scroll.onScrollTopClick);
   $('#scroll_top').click(Scroll.onScrollTopClick);
+  $(document).unbind('scroll', Scroll.onScroll);
   $(document).scroll(Scroll.onScroll);
 }
 
@@ -58,10 +59,13 @@ Scroll.getNext = function(){
   let scrollPosition = $(window).height()+$(window).scrollTop();
 
   if((scrollHeight-scrollPosition)/scrollHeight < 0.1){
-    let current_url = window.location.pathname+window.location.search;
+    Scroll.disable();
     let next_url = $('.pagination:last').find('a:first').attr('href');
-    if(next_url && next_url != current_url){
-      Application.getElem('.pagination:last', next_url+'&scroll=true', false, true, true, false, '#events_spinner');
+    if(next_url){
+      if(Scroll.last_scroll_url != next_url){
+        Scroll.last_scroll_url = next_url;
+        Application.getElem('.pagination:last', next_url+'&scroll=true', false, true, true, false, '#events_spinner');
+      }
     }
   }
 }

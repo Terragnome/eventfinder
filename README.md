@@ -109,6 +109,7 @@ kubectl apply -f ./config/yaml/eventfinder-ingress.yaml
 # kubectl get ingress
 # kubectl delete ingress eventfinder-ingress
 
+# Update image
 kubectl set image deployment/eventfinder-node eventfinder-container=gcr.io/eventfinder-239405/eventfinder-app:latest
 kubectl set image deployment/eventfinder-node eventfinder-container=gcr.io/eventfinder-239405/eventfinder-app
 
