@@ -22,48 +22,49 @@
   {% block scripts %}{% endblock %}
 </head>
 <title>{% block title %}{{ app_name }}{% endblock %}</title>
-<div>
-  <div class='app_background box_outline'>
-    <!-- <div class='app_background_inset box_outline'></div> -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <div>
+    <div class='app_background box_outline'>
+      <!-- <div class='app_background_inset box_outline'></div> -->
+    </div>
   </div>
-</div>
-<div id='app_panel_overlay'>
-  <a class='nav_link_get button_close' onclick="Application.overlayClose()">X</a>
-  <div id='app_panel_overlay_main' class='box_outine'></div>
-  <div id='app_panel_blocker'></div>
-</div>
-<header class='app_header'>
-  <a class='app_title nav_link_get' href="{{ url_for('events') }}">
-    {% block header %}{{ app_name }}{% endblock %}
-  </a>
-  <div class='app_login'>
+  <div id='app_panel_overlay'>
+    <a class='nav_link_get button_close' onclick="Application.overlayClose()">X</a>
+    <div id='app_panel_overlay_main' class='box_outine'></div>
+    <div id='app_panel_blocker'></div>
+  </div>
+  <header class='app_header'>
+    <a class='app_title nav_link_get' href="{{ url_for('events') }}">
+      {% block header %}{{ app_name }}{% endblock %}
+    </a>
+    <div class='app_login'>
+      {% if session.user %}
+        <a class="right toggle_user_panel">
+          {% if session.user.image_url %}
+            <img class="app_login_img user_profile_img" src="{{ session.user.image_url }}"></img>
+          {% else %}
+            <img class="app_login_img user_profile_img_placeholder"></img>
+          {% endif %}
+        </a>
+        <a class="app_nav_link nav_link_get right" href="{{ url_for('home') }}">{{ session.user.username }}</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">
+          <img class="app_login_img right user_profile_img_placeholder"></img>
+        </a>
+        <a class="app_nav_link right" href="{{ url_for('login') }}">Sign In</a>
+      {% endif %}
+    </div>
+  </header>
+  <section class="content">
     {% if session.user %}
-      <a class="right toggle_user_panel">
-        {% if session.user.image_url %}
-          <img class="app_login_img user_profile_img" src="{{ session.user.image_url }}"></img>
-        {% else %}
-          <img class="app_login_img user_profile_img_placeholder"></img>
-        {% endif %}
-      </a>
-      <a class="app_nav_link nav_link_get right" href="{{ url_for('home') }}">{{ session.user.username }}</a>
-    {% else %}
-      <a href="{{ url_for('login') }}">
-        <img class="app_login_img right user_profile_img_placeholder"></img>
-      </a>
-      <a class="app_nav_link right" href="{{ url_for('login') }}">Sign In</a>
+      {% include "_user_panel.html" %}
     {% endif %}
-  </div>
-</header>
-<section class="content">
-  {% if session.user %}
-    {% include "_user_panel.html" %}
-  {% endif %}
-  <div id='main'>
-  	{% block content %}{% endblock %}
-  </div>
-  <div id='scroll_top' class='box_outline'>⌃</div>
-</section>
-</html>
+    <div id='main'>
+    	{% block content %}{% endblock %}
+    </div>
+    <div id='scroll_top' class='box_outline'>⌃</div>
+  </section>
+</meta>
 
 <script>
   Application.init({
