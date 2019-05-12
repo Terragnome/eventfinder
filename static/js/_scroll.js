@@ -61,7 +61,7 @@ Scroll.getNext = function(){
     let current_url = window.location.pathname+window.location.search;
     let next_url = $('.pagination:last').find('a:first').attr('href');
     if(next_url && next_url != current_url){
-      Application.getElem('.pagination:last', next_url+'&scroll=true', false, true, true, false, false);
+      Application.getElem('.pagination:last', next_url+'&scroll=true', false, true, true, false, '#events_spinner');
     }
   }
 }

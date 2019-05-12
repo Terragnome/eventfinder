@@ -167,9 +167,9 @@ Application.backButton = function(e){
   }
 }
 
-Application.getElem = function(target, url, push_state=true, replace=false, skip_scroll=false, skip_transition=false, skip_spinner=true){
-  if(!skip_spinner){
-    $(target).html("<div class='spinner'><div class='rect1'></div> <div class='rect2'></div> <div class='rect3'></div> <div class='rect4'></div></div>");
+Application.getElem = function(target, url, push_state=true, replace=false, skip_scroll=false, skip_transition=false, spinner=true){
+  if(spinner != false){
+    $(spinner).html("<div class='spinner'><div class='rect1'></div> <div class='rect2'></div> <div class='rect3'></div> <div class='rect4'></div></div>");
   }
 
   $.get(url, {
@@ -178,7 +178,7 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
       $(target).addClass('anim_fade_in');      
     }
 
-    if(response != '' && push_state){
+    if(response!='' && push_state){
       let push_url = url;
       if(typeof push_state === 'string'){ push_url = push_state; }
       history.pushState({'url':push_url}, null, push_url);
@@ -199,8 +199,10 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
         Scroll.top();
       }
     }
+    if(spinner != false){ $(spinner).html(""); }
   }).fail(function(xhr, status, error) {
     window.location.replace(Application.url_home);
+    if(spinner != false){ $(spinner).html(""); }
   });
 }
 
