@@ -428,7 +428,7 @@ span{
   border-radius: 5px;
   margin: 0 10px 30px 10px;
   text-align: center;
-  width: 350px;
+  width: 320px;
 }
 
 .event_card > .event.event_selected{
@@ -873,7 +873,7 @@ span{
 }
 
 .spinner > div {
-  background-color: white;
+  background-color: black;
   display: inline-block;
   height: 100%;
   width: 6px;

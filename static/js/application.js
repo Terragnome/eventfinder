@@ -167,7 +167,11 @@ Application.backButton = function(e){
   }
 }
 
-Application.getElem = function(target, url, push_state=true, replace=false, skip_scroll=false, skip_transition=false) {
+Application.getElem = function(target, url, push_state=true, replace=false, skip_scroll=false, skip_transition=false, skip_spinner=true){
+  if(!skip_spinner){
+    $(target).html("<div class='spinner'><div class='rect1'></div> <div class='rect2'></div> <div class='rect3'></div> <div class='rect4'></div></div>");
+  }
+
   $.get(url, {
   }).done(function(response) {
     if(!skip_transition){
