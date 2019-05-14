@@ -31,7 +31,7 @@
       {% set callback=remove_url_params(request.url, remove={"selected": chip_data.key}) if is_chip_group_selected else add_url_params(request.url, replace={"selected": chip_data.key})%}
       {% if chip_data.entries|length>0 %}
         <span
-          class='cap_button cap_group nav_link_get skip_transition {{"selected" if chip_data.selected else ""}} {{"highlighted" if is_chip_group_selected else ""}}'
+          class='cap_button cap_group {{"selected" if chip_data.selected else ""}} {{"highlighted" if is_chip_group_selected else ""}}'
           target='#event_{{chip_name}}_chips'
         >{{chip_data.display_name}}</span>
       {% endif %}
@@ -44,7 +44,7 @@
       {% for chip in chip_data.entries %}
         {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key})%}
         <a
-          class='cap_button nav_link_get skip_transition {{"selected" if chip.selected else ""}}'
+          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
           href='{{callback}}'
         >{{ chip.chip_name }} {{ chip.ct }}</a>
       {% endfor %}

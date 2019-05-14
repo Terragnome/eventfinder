@@ -60,11 +60,12 @@ Scroll.getNext = function(){
 
   if((scrollHeight-scrollPosition)/scrollHeight < 0.1){
     Scroll.disable();
-    let next_url = $('.pagination:last').find('a:first').attr('href');
-    if(next_url){
-      if(Scroll.last_scroll_url != next_url){
-        Scroll.last_scroll_url = next_url;
-        Application.getElem('.pagination:last', next_url+'&scroll=true', false, true, true, false, '#events_spinner');
+    let nextUrl = $('.pagination:last').find('a:first').attr('href');
+    if(nextUrl){
+      if(Scroll.lastScrollUrl != nextUrl){
+        Scroll.lastScrollUrl = nextUrl;
+        let pushUrl = UrlParams.delParam('scroll');
+        Application.getElem('.pagination:last', nextUrl+'&scroll=true', nextUrl, true, true, false, '#events_spinner');
       }
     }
   }

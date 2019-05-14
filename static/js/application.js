@@ -165,27 +165,28 @@ Application.backButton = function(e){
   let state = e.originalEvent.state;
   if (state != null) {
     if(state.title){ document.title = state.title; }
-    Application.getElem('#main', state.url, false, false, true);
+    Application.getElem('#main', state.url, false, false, true, false, true);
   }else{
     window.location.replace('/');
   }
 }
 
-Application.getElem = function(target, url, push_state=true, replace=false, skip_scroll=false, skip_transition=false, spinner=true){
+Application.getElem = function(target, url, pushState=true, replace=false, skipScroll=false, skipTransition=false, spinner=false){
   if(spinner != false){
-    $(spinner).html("<div class='spinner'><div class='rect1'></div> <div class='rect2'></div> <div class='rect3'></div> <div class='rect4'></div></div>");
+    let spinnerTarget = spinner == true ? target : spinner;
+    $(spinnerTarget).html("<div class='spinner'><div class='rect1'></div> <div class='rect2'></div> <div class='rect3'></div> <div class='rect4'></div></div>");
   }
 
   $.get(url, {
   }).done(function(response) {
-    if(!skip_transition){
+    if(!skipTransition){
       $(target).addClass('anim_fade_in');      
     }
 
-    if(response!='' && push_state){
-      let push_url = url;
-      if(typeof push_state === 'string'){ push_url = push_state; }
-      history.pushState({'url':push_url}, null, push_url);
+    if(response!='' && pushState){
+      let pushUrl = url;
+      if(typeof pushState === 'string'){ pushUrl = pushState; }
+      history.pushState({'url':pushUrl}, null, pushUrl);
     }
     if(replace){
       $(target).replaceWith(response);  
@@ -193,7 +194,7 @@ Application.getElem = function(target, url, push_state=true, replace=false, skip
       $(target).html(response);
     }
 
-    if(!skip_scroll){
+    if(!skipScroll){
       let route = false;
       try{
         route = url.split('/')[3].split('?')[0];
