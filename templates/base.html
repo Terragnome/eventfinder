@@ -60,6 +60,7 @@
     {% if session.user %}
       {% include "_user_panel.html" %}
     {% endif %}
+    <div id='main_spinner'></div>
     <div id='main'>
     	{% block content %}{% endblock %}
     </div>

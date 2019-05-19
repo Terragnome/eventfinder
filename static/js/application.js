@@ -172,6 +172,10 @@ Application.backButton = function(e){
 }
 
 Application.getElem = function(target, url, pushState=true, replace=false, skipScroll=false, skipTransition=false, spinner=false){
+  if(target == "#main" && spinner == false){
+    spinner = "#main_spinner";
+  }
+
   if(spinner != false){
     let spinnerTarget = spinner == true ? target : spinner;
     $(spinnerTarget).html("<div class='spinner'><div class='rect1'></div> <div class='rect2'></div> <div class='rect3'></div> <div class='rect4'></div></div>");

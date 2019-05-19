@@ -796,6 +796,15 @@ span{
   z-index: 1;
 }
 
+#main_spinner{
+  pointer-events: none;
+  position: fixed;
+  left: 50%;
+  margin-left: -15px;
+  top: 50%;
+  z-index: 100;
+}
+
 .pagination{
   margin: 10px 0 10px 0;
 }
