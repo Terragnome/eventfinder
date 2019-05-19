@@ -223,6 +223,7 @@ class ConnectorEB:
                         or ("kindergarten" in lower_event_name)
                         or ("gluten" in lower_event_name)
                         or ("health" in lower_event_name)
+                        or ("school" in lower_event_name and "reunion" in lower_event_name)
                         or ("job" in lower_event_name and "fair" in lower_event_name)
                         or ("kid" in lower_event_name)
                         or ("kids" in lower_event_name)
@@ -302,8 +303,8 @@ class ConnectorEB:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--address', default='San Francisco, CA')
-    parser.add_argument('--distance', default='30mi')
-    parser.add_argument('--categories', default=EBEventType.FOOD_DRINK)
+    parser.add_argument('--distance', default='100mi')
+    parser.add_argument('--categories', default=[EBEventType.FOOD_DRINK, EBEventType.MUSIC, EBEventType.PERFORMING_VISUAL_ARTS])
     parser.add_argument('--sort_by', default="distance")
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--today', action='store_true')

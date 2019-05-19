@@ -85,7 +85,7 @@ class ConnectorTMDB:
         event_name = row_connector_event.data['title']
         event_description = row_connector_event.data['overview']
         event_short_name = row_connector_event.data['title']
-        event_img_url = 'https://image.tmdb.org/t/p/w780{}'.format(row_connector_event.data['poster_path'])
+        event_img_url = 'https://image.tmdb.org/t/p/w342{}'.format(row_connector_event.data['poster_path'])
         event_backdrop_url = 'https://image.tmdb.org/t/p/original{}'.format(row_connector_event.data['backdrop_path'])
 
         event_start_time = datetime.datetime.strptime(row_connector_event.data['release_date'], "%Y-%m-%d")
