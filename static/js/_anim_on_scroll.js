@@ -12,10 +12,10 @@
 	
 	'use strict';
 	
-	var docElem = window.document.documentElement;
+	let docElem = window.document.documentElement;
 
 	function getViewportH() {
-		var client = docElem['clientHeight'],
+		let client = docElem['clientHeight'],
 			inner = window['innerHeight'];
 		
 		if( client < inner )
@@ -30,7 +30,7 @@
 
 	// http://stackoverflow.com/a/5598797/989439
 	function getOffset( el ) {
-		var offsetTop = 0, offsetLeft = 0;
+		let offsetTop = 0, offsetLeft = 0;
 		do {
 			if ( !isNaN( el.offsetTop ) ) {
 				offsetTop += el.offsetTop;
@@ -61,7 +61,7 @@
 	}
 
 	function extend( a, b ) {
-		for( var key in b ) { 
+		for( let key in b ) { 
 			if( b.hasOwnProperty( key ) ) {
 				a[key] = b[key];
 			}
@@ -91,7 +91,7 @@
 			this.itemsRenderedCount = 0;
 			this.didScroll = false;
 
-			var self = this;
+			let self = this;
 			imagesLoaded(this.el, function(){
   			// initialize masonry
         new Masonry(
@@ -123,18 +123,18 @@
 			});
 		},
 		_onScrollFn : function() {
-			var self = this;
+			let self = this;
 			if( !this.didScroll ) {
 				this.didScroll = true;
 				setTimeout( function() { self._scrollPage(); }, 60 );
 			}
 		},
 		_scrollPage : function() {
-			var self = this;
+			let self = this;
 			this.items.forEach( function( el, i ) {
 				if( !classie.has( el, 'shown' ) && !classie.has( el, 'animate' ) && inViewport( el, self.options.viewportFactor ) ) {
 					setTimeout( function() {
-						var perspY = scrollY() + getViewportH() / 2;
+						let perspY = scrollY() + getViewportH() / 2;
 						self.el.style.WebkitPerspectiveOrigin = '50% ' + perspY + 'px';
 						self.el.style.MozPerspectiveOrigin = '50% ' + perspY + 'px';
 						self.el.style.perspectiveOrigin = '50% ' + perspY + 'px';
@@ -142,7 +142,7 @@
 						self._checkTotalRendered();
 
 						if( self.options.minDuration && self.options.maxDuration ) {
-							var randDuration = ( Math.random() * ( self.options.maxDuration - self.options.minDuration ) + self.options.minDuration ) + 's';
+							let randDuration = ( Math.random() * ( self.options.maxDuration - self.options.minDuration ) + self.options.minDuration ) + 's';
 							el.style.WebkitAnimationDuration = randDuration;
 							el.style.MozAnimationDuration = randDuration;
 							el.style.animationDuration = randDuration;
@@ -155,7 +155,7 @@
 			this.didScroll = false;
 		},
 		_resizeHandler : function() {
-			var self = this;
+			let self = this;
 			function delayed() {
 				self._scrollPage();
 				self.resizeTimeout = null;

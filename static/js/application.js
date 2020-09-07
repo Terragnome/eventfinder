@@ -1,7 +1,7 @@
 var Application = Application || {};
 
 Application.init = function(params) {
-  var urls = params['urls'];
+  let urls = params['urls'];
   Application.url_auth = urls['auth'];
   Application.url_home = urls['home'];
 

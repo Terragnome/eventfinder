@@ -16,13 +16,11 @@ from utils.get_from import get_from
 class ConnectorTMDB:
   CONNECTOR_TYPE = "TMDB"
 
-  API_KEY = 'c612e1e264c4769e607aa20fa5f5a166'
-
   @classmethod
   def parse_time_args(
-      klass,
-      start_date=None,
-      end_date=None
+    klass,
+    start_date=None,
+    end_date=None
   ):
     today = datetime.date.today()
     start_release_date = today-datetime.timedelta(days=120)
@@ -33,7 +31,9 @@ class ConnectorTMDB:
     }
 
   def __init__(self):
-    tmdb.API_KEY = self.API_KEY
+    with open("config/secrets/api_keys.json", "r") as f:
+      api_key = json.load(f)[self.CONNECTOR_TYPE]["api_key"]
+    tmdb.API_KEY = api_key
 
   def get_events(
     self,
