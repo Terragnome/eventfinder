@@ -12,7 +12,10 @@ https://developers.google.com/api-client-library/python/auth/web-app
 # ============================== #
 # SSL Cert                       #
 # ============================== #
+https://letsencrypt.org/getting-started/
 https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
+chrome://flags/#allow-insecure-localhost
+# Change to localhost:5000
 openssl genrsa 2048 > config/certs/ssl.key
 openssl req -new -x509 -nodes -sha1 -days 365 -key config/certs/ssl.key > config/certs/ssl.cert -subj "/CN=linfamily.us"
 kubectl create secret tls eventfinder-ssl --cert config/certs/ssl.cert --key config/certs/ssl.key

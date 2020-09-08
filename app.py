@@ -50,7 +50,7 @@ param_to_kwarg = {
   'selected': 'selected'
 }
 
-OAUTH2_CALLBACK = "https://www.howtobeagrownassman.com/oauth2callback"
+OAUTH2_CALLBACK = "https://www.linfamily.us/oauth2callback"
 
 TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING = "_blocking.html"
@@ -516,7 +516,8 @@ def user_action(identifier):
   return redirect(request.referrer or '/')
 
 if __name__ == '__main__':
-  # try:
-  #   app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)
-  # except Exception as e:
-  app.run(host='0.0.0.0', port=5000)
+  # app.run(host='0.0.0.0', port=5000)
+  # app.run(host='0.0.0.0', port=5000, ssl_context=context)
+
+  app.run(host='0.0.0.0', port=5000, ssl_context="adhoc", debug=True)
+  # app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)
