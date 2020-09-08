@@ -150,10 +150,10 @@ class EventController:
     if not is_any_tag_selected:
       for event_tag in tags:
         chip_name = event_tag['chip_name']
-        sections.append({
-          'section_name': chip_name,
-          'section_key': chip_name.lower().replace(" ", "_"),
-        })
+        # sections.append({
+        #   'section_name': chip_name,
+        #   'section_key': chip_name.lower().replace(" ", "_"),
+        # })
 
     return (results, sections, tags, event_cities)
 
@@ -272,10 +272,10 @@ class EventController:
     if not is_any_tag_selected:
       for event_tag in tags:
         chip_name = event_tag['chip_name']
-        sections.append({
-          'section_name': chip_name,
-          'section_key': chip_name.lower().replace(" ", "_"),
-        })
+        # sections.append({
+        #   'section_name': chip_name,
+        #   'section_key': chip_name.lower().replace(" ", "_"),
+        # })
     return (results, sections, tags, event_cities)
 
   # TODO: Make this operate off the query for performance
