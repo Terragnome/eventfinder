@@ -9,7 +9,6 @@ from sqlalchemy.sql import func
 from controllers.user_controller import UserController
 from models.base import db_session
 from models.connector_event import ConnectorEvent
-from models.data.connector_eb import ConnectorEB, EBEventType
 from models.event import Event
 from models.event_tag import EventTag
 from models.follow import Follow
@@ -187,12 +186,13 @@ class EventController:
 
       if current_user:
         current_user_events = UserEvent.query.filter(
-          and_(
-            UserEvent.user_id == current_user.user_id,
-            ~UserEvent.interest.in_([3,4])
-          )
+          # and_(
+          #   UserEvent.user_id == current_user.user_id,
+          #   ~UserEvent.interest.in_([3,4])
+          # )
+          UserEvent.user_id == current_user.user_id
         ).all()
-        current_user_events_by_event_id = { x.event_id: x for x in current_user_events }      
+        current_user_events_by_event_id = { x.event_id: x for x in current_user_events }
 
       events_with_counts = db_session.query(
         Event,
@@ -265,6 +265,7 @@ class EventController:
       for event, user_event_count in events_with_counts:
         if current_user:
           event.current_user_event = get_from(current_user_events_by_event_id, [event.event_id])
+
         event.interested_user_count = user_event_count
         results.append(event)
 

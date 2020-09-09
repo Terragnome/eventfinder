@@ -310,7 +310,7 @@ def event_update(event_id):
   return redirect(request.referrer or '/')
 
 @app.route("/", methods=['GET'])
-@app.route("/explore/", methods=['GET'])
+@app.route("/home/", methods=['GET'])
 @parse_url_params
 @paginated
 def events(
@@ -392,22 +392,22 @@ def following():
     return render_template(template, vargs=vargs, **vargs)
   return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
-@app.route("/events", methods=['GET'])
+@app.route("/saved/", methods=['GET'])
 @oauth2_required
 @parse_url_params
 @paginated
-def home(**kwargs):
+def saved(**kwargs):
   current_user = UserController().current_user
   kwargs.update({
     'identifier': current_user.username
   })
   return user(**kwargs)
 
-@app.route("/events/history", methods=['GET'])
+@app.route("/history/", methods=['GET'])
 @oauth2_required
 @parse_url_params
 @paginated
-def home_done(**kwargs):
+def history(**kwargs):
   current_user = UserController().current_user
   kwargs.update({
     'identifier': current_user.username,

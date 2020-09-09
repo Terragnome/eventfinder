@@ -47,7 +47,7 @@
             <img class="app_login_img user_profile_img_placeholder"></img>
           {% endif %}
         </a>
-        <a class="app_nav_link nav_link_get right" href="{{ url_for('home') }}">{{ session.user.username }}</a>
+        <a class="app_nav_link nav_link_get right" href="{{ url_for('saved') }}">{{ session.user.username }}</a>
       {% else %}
         <a href="{{ url_for('login') }}">
           <img class="app_login_img right user_profile_img_placeholder"></img>
