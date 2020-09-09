@@ -1,5 +1,4 @@
 alembic == 0.9.9
-eventbrite == 3.3.3
 flask == 1.0.2
 flask-session == 0.3.1
 geocoder == 1.38
