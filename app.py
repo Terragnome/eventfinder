@@ -423,7 +423,7 @@ def user(
   interested='interested',
   query=None, tag=None, cities=None,
   page=1, next_page_url=None, prev_page_url=None,
-  scroll=False
+  scroll=False, selected = None
 ):
   current_user = UserController().current_user
   current_user_id = UserController().current_user_id
