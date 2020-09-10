@@ -230,6 +230,9 @@ span{
   right: 70px;
   top: 0px;
 }
+.app_search > .cap_button::after {
+  content: " ✖";
+}
 
 .app_search > .search_field{
   background-color: var(--searchbar-color);
@@ -476,6 +479,13 @@ span{
 .event_chips > .cap_button.selected{
   border-color: var(--mid-color);
   color: white;
+}
+
+.event_chips > .cap_button.selected::after { 
+  content: " ✖";
+}
+.event_chips > .cap_button.cap_group.selected::after { 
+  content: " ▼";
 }
 
 .event_collapse{
