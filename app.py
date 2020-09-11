@@ -10,6 +10,7 @@ from flask import url_for
 from flask_session import Session
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
+import random
 import redis
 import ssl
 
@@ -19,6 +20,7 @@ from controllers.user_controller import UserController
 from helpers.jinja_helper import add_url_params, filter_url_params, remove_url_params
 from models.base import db_session
 from models.block import Block
+from models.category import Category
 from models.follow import Follow
 from models.tag import Tag
 from utils.config_utils import load_config
@@ -56,12 +58,18 @@ TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING = "_blocking.html"
 TEMPLATE_FOLLOWERS = "_followers.html"
 TEMPLATE_FOLLOWING = "_following.html"
-TEMPLATE_EVENT = "_event.html"
-TEMPLATE_EVENTS = "_events.html"
-TEMPLATE_EVENTS_LIST = "_events_list.html"
-TEMPLATE_EXPLORE = "_explore.html"
-TEMPLATE_USER = "_user.html"
-TEMPLATE_USERS = "_users.html"
+TEMPLATE_EVENT = "events/_event.html"
+TEMPLATE_EVENTS = "events/_events.html"
+TEMPLATE_EVENTS_LIST = "events/_events_list.html"
+TEMPLATE_HOME = "events/_home.html"
+TEMPLATE_GUIDE = "cards/_cards.html"
+TEMPLATE_USER = "users/_user.html"
+TEMPLATE_USERS = "users/_users.html"
+
+def error_handler():
+  if request.is_xhr:
+    return abort(404)
+  return redirect(request.referrer or '/')  
 
 @app.route("/debug/", methods=['GET'])
 def debug():
@@ -99,7 +107,7 @@ def oauth2callback():
   }
 
   UserController()._request_user_info()
-  return redirect(request.referrer or '/')
+  return error_handler()
 
 @app.route("/authorize/")
 def authorize():
@@ -134,7 +142,7 @@ def oauth2_required(fn):
 @app.route("/login/")
 @oauth2_required
 def login():
-  return redirect(request.referrer or '/')
+  return error_handler()
 
 @app.route("/logout/")
 def logout():
@@ -273,7 +281,7 @@ def event(event_id):
     if request.is_xhr:
       return render_template(template, vargs=vargs, **vargs)
     return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
-  return redirect(request.referrer or '/')
+  return error_handler()
 
 @app.route("/event/<int:event_id>/", methods=['POST'])
 @oauth2_required
@@ -307,10 +315,29 @@ def event_update(event_id):
     if callback:
       return redirect(callback)
     return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
-  return redirect(request.referrer or '/')
+  return error_handler()
 
 @app.route("/", methods=['GET'])
 @app.route("/home/", methods=['GET'])
+@parse_url_params
+def home(**kwargs):
+  cards = []
+  colors = ["#f44321", "#5091cd", "#f9a541", "#7ac143"]
+  for i, c in enumerate(Category.all()):
+    cards.append({
+      "id": i,
+      "title": "{}".format(c),
+      "bg": random.choice(colors),
+      "url": ""
+    })  
+
+  vargs = {
+    "cards": cards
+  }
+
+  return render_template(TEMPLATE_MAIN, template=TEMPLATE_GUIDE, vargs=vargs, **vargs)
+
+@app.route("/events/", methods=['GET'])
 @parse_url_params
 @paginated
 def events(
@@ -346,7 +373,7 @@ def events(
     'prev_page_url': prev_page_url,
   }
 
-  return _render_events_list(request, events, vargs, scroll=scroll, template=TEMPLATE_EXPLORE)
+  return _render_events_list(request, events, vargs, scroll=scroll, template=TEMPLATE_HOME)
 
 @app.route("/followers/", methods=['GET'])
 @oauth2_required
@@ -476,7 +503,7 @@ def user(
         user.is_blocked = current_user.is_blocks_user(user)
 
       return _render_events_list(request, events, vargs, template=TEMPLATE_USER, scroll=scroll)
-  return redirect(request.referrer or '/')    
+  return error_handler()
 
 @app.route("/user/<identifier>/", methods=['POST'])
 @oauth2_required
@@ -512,8 +539,7 @@ def user_action(identifier):
       return events()
     elif 'user':
       return user(identifier=identifier)
-
-  return redirect(request.referrer or '/')
+  return error_handler()
 
 if __name__ == '__main__':
   # app.run(host='0.0.0.0', port=5000)

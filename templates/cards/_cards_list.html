@@ -1,0 +1,11 @@
+{% if cards %}
+  {% for card in cards %}
+    <li id="event_card_{{ card.id }}" class='box_outline event_card'>
+      {% with vargs=vargs, card=card %}
+        {% include "cards/_card.html"%}
+      {% endwith %}
+    </li>
+  {% endfor %}
+{% else %}
+  {% include "_empty.html" %}
+{% endif %}

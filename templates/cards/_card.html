@@ -1,0 +1,11 @@
+{% set card=card or (vargs.card if vargs else None) %}
+
+<script>
+  Application.setAppBackground(null);
+</script>
+
+<a class='nav_link_get' href="{{ card.url }}">
+  <div id="event_{{ card.id }}" class='box_outline card category_card', style="background-color: {{ card.bg }}">
+    {{ card.title }}
+  </div>
+</a>

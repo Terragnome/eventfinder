@@ -1,0 +1,16 @@
+<script>
+  Application.setAppBackground(null)
+</script>
+
+<div class='app_page'>
+  {% with url=request.url %}
+    {% include "_search_bar.html" %}
+  {% endwith %}
+
+  <ul id='event_list' class='effect_in'>
+    {% with vargs=vargs %}
+      {% include "cards/_cards_list.html" %}
+    {% endwith %}
+  </ul>
+  <div id='events_spinner'></div>
+</div>
