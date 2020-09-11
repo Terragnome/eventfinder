@@ -68,12 +68,8 @@ TEMPLATE_USERS = "users/_users.html"
 
 def error_handler():
   if request.is_xhr:
-    return abort(404)
+    abort(404)
   return redirect(request.referrer or '/')  
-
-@app.route("/debug/", methods=['GET'])
-def debug():
-  user_info = UserController()._request_user_info()
 
 @app.route("/oauth2callback/", methods=['GET'])
 def oauth2callback():
@@ -539,6 +535,10 @@ def user_action(identifier):
       return events()
     elif 'user':
       return user(identifier=identifier)
+  return error_handler()
+
+@app.route('/<path:u_path>')
+def catch_all(u_path):
   return error_handler()
 
 if __name__ == '__main__':
