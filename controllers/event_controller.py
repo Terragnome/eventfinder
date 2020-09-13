@@ -1,14 +1,15 @@
 import datetime
-import traceback
 
-from flask import current_app, session
+from flask import render_template, request
 from sqlalchemy import alias, asc, case, desc, distinct, nullslast
 from sqlalchemy import and_, or_
 from sqlalchemy.sql import func
 
+from controllers.auth_controller import AuthController
 from controllers.user_controller import UserController
+from helpers.app_helper import paginated, parse_chips, parse_url_for, parse_url_params, render
+from helpers.template_helper import Template
 from models.base import db_session
-from models.connector_event import ConnectorEvent
 from models.event import Event
 from models.event_tag import EventTag
 from models.follow import Follow
@@ -19,6 +20,124 @@ from utils.get_from import get_from
 
 class EventController:
   PAGE_SIZE = 48
+
+  @classmethod
+  def _render_events_list(
+    cls,
+    request,
+    events,
+    vargs,
+    scroll=False,
+    template=Template.EVENTS
+  ):
+    if request.is_xhr:
+      if scroll:
+        template = Template.EVENTS_LIST
+        if not events: return ''
+      return render_template(template, vargs=vargs, **vargs)
+    return render_template(Template.MAIN, template=template, vargs=vargs, **vargs)
+
+  ##############################  
+
+  def event(event_id):
+    event = EventController().get_event(event_id=event_id)
+    if event:
+      vargs = { 'event': event }
+      return render(template=Template.EVENT, vargs=vargs)
+    
+    from app import error_handler
+    return error_handler()
+
+  @AuthController.oauth2_required
+  def event_update(event_id):
+    is_card = request.form.get('card') == 'true'
+    go_value = request.form.get('go')
+
+    if go_value in ('4', '3','2','1','0'):
+      interest = str(go_value)
+    else:
+      interest = None
+
+    callback = request.form.get('cb')
+    if callback == "/": callback = 'events'
+
+    event = EventController().update_event(
+      event_id=event_id,
+      interest=interest
+    )
+
+    if event:
+      vargs = {
+        'event': event,
+        'card': is_card
+      }
+
+      if callback:
+        return redirect(callback)
+      return render(template=Template.EVENT, vargs=vargs)
+
+    from app import error_handler
+    return app.error_handler()
+
+  @parse_url_params
+  @paginated
+  def events(
+    query=None, tag=None, cities=None,
+    page=1, next_page_url=None, prev_page_url=None,
+    scroll=False, selected=None
+  ):
+    if tag == Tag.MOVIES:
+      cities = None
+
+    events, sections, tags, event_cities = EventController().get_events(
+      query=query,
+      tag=tag,
+      cities=cities,
+      page=page
+    )
+
+    for section in sections:
+      kwargs = {
+        'query': query,
+        'cities': cities,
+        'tag': section['section_name']
+      }
+      section['section_url'] = parse_url_for('events', **kwargs)
+
+    vargs = {
+      'events': events,
+      'sections': sections,
+      'selected': selected,
+      'chips': parse_chips(tags, event_cities),
+      'page': page,
+      'next_page_url': next_page_url,
+      'prev_page_url': prev_page_url,
+    }
+
+    return EventController._render_events_list(request, events, vargs, scroll=scroll, template=Template.HOME)
+
+  @AuthController.oauth2_required
+  @parse_url_params
+  @paginated
+  def saved(**kwargs):
+    current_user = UserController().current_user
+    kwargs.update({
+      'identifier': current_user.username
+    })
+    return UserController.user(**kwargs)
+
+  @AuthController.oauth2_required
+  @parse_url_params
+  @paginated
+  def history(**kwargs):
+    current_user = UserController().current_user
+    kwargs.update({
+      'identifier': current_user.username,
+      'interested': 'done'
+    })
+    return UserController.user(**kwargs)
+
+  ##############################
 
   def get_event(self, event_id):
     event = Event.query.filter(Event.event_id == event_id).first()

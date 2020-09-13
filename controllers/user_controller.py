@@ -1,12 +1,11 @@
-import httplib2
-import json
-
-import flask
-from flask import current_app, session
+from flask import current_app, request, session
 import google.oauth2.credentials
 from googleapiclient.discovery import build
 from sqlalchemy import alias, and_, or_
 
+from controllers.auth_controller import AuthController
+from helpers.app_helper import paginated, parse_chips, parse_url_params
+from helpers.template_helper import Template
 from models.base import db_session
 from models.auth import Auth
 from models.block import Block
@@ -14,10 +13,113 @@ from models.follow import Follow
 from models.user import User
 from models.user_auth import UserAuth
 
-from utils.config_utils import load_config
-from utils.get_from import get_from
-
 class UserController:
+
+  ##############################  
+
+  @parse_url_params
+  @paginated
+  def user(
+    identifier,
+    interested='interested',
+    query=None, tag=None, cities=None,
+    page=1, next_page_url=None, prev_page_url=None,
+    scroll=False, selected = None
+  ):
+    from controllers.event_controller import EventController
+
+    current_user = UserController().current_user
+    current_user_id = UserController().current_user_id
+
+    user = UserController().get_user(identifier)
+
+    if user:
+      events = []
+      sections = []
+      tags = []
+      event_cities = []
+      if not Block.blocks(user.user_id, current_user_id):
+        events, sections, tags, event_cities = EventController().get_events_for_user_by_interested(
+          user=user,
+          query=query,
+          tag=tag,
+          cities=cities,
+          interested=interested,
+          page=page
+        )
+        for section in sections:
+          kwargs = {
+            'identifier': identifier,
+            'query': query,
+            'cities': cities,
+            'tag': section['section_name']
+          }
+
+          if section['section_name'] == Tag.MOVIES: del kwargs['cities']
+          section['section_url'] = parse_url_for('user', **kwargs)
+
+      vargs = {
+        'is_me': user == current_user,
+        'current_user': current_user,
+        'events': events,
+        'sections': sections,
+        'chips': parse_chips(tags, event_cities),
+        'page': page,
+        'next_page_url': next_page_url,
+        'prev_page_url': prev_page_url
+      }
+
+      if user.user_id == current_user_id:
+        return EventController._render_events_list(request, events, vargs, scroll=scroll)
+      else:
+        vargs['user'] = user
+
+        if current_user:
+          user.is_followed = current_user.is_follows_user(user)
+          user.is_blocked = current_user.is_blocks_user(user)
+
+        return EventController._render_events_list(request, events, vargs, template=Template.USER, scroll=scroll)
+    return error_handler()
+
+  @AuthController.oauth2_required
+  def user_action(identifier):
+    from controllers.event_controller import EventController
+
+    current_user = UserController().current_user
+    current_user_id = UserController().current_user_id
+
+    action = request.form.get('action')
+    active = request.form.get('active') == 'true'
+    callback = request.form.get('cb')
+
+    if action == 'block':
+      u = UserController().block_user(identifier, active)
+    elif action == 'follow':
+      u = UserController().follow_user(identifier, active)
+
+    if u:
+      events = []
+      if not Block.blocks(u.user_id, current_user_id):
+        events = EventController().get_events_for_user_by_interested(
+          user=u,
+          interested='interested'
+        )
+
+      # TODO: Replace this with something generic but safe
+      if 'blocking' in callback:
+        return blocking()
+      elif 'followers' in callback:
+        return followers()
+      elif 'following' in callback:
+        return following()
+      elif 'events' in callback:
+        return events()
+      elif 'user':
+        return user(identifier=identifier)
+    return error_handler()
+
+  ##############################
+
   #TODO: Make sure that you can't set your username to a number to get another person's account
   def _get_user(self, identifier):
     if identifier.__class__ is int:

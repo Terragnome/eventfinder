@@ -75,14 +75,14 @@
 }
 
 @-webkit-keyframes anim-stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  0%, 40%, 100% { -webkit-transform: scaleY(0.6) }  
   20% { -webkit-transform: scaleY(1.0) }
 }
 
 @keyframes anim-stretchdelay {
   0%, 40%, 100% { 
-    transform: scaleY(0.4);
-    -webkit-transform: scaleY(0.4);
+    transform: scaleY(0.6);
+    -webkit-transform: scaleY(0.6);
   }  20% { 
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
@@ -904,8 +904,9 @@ span{
 .spinner > div {
   background-color: black;
   display: inline-block;
-  height: 100%;
-  width: 6px;
+  height: 150px;
+  width: 35px;
+  margin: 0 2px 0 2px;
 
   -webkit-animation: anim-stretchdelay 1.2s infinite ease-in-out;
   animation: anim-stretchdelay 1.2s infinite ease-in-out;
