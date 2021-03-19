@@ -28,7 +28,6 @@ from utils.get_from import get_from
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 app = Flask(__name__)
-app.debug = not is_prod()
 app.config.update(**app_config)
 
 redis_url = os.getenv('REDIS_URL', 'redis://redis:6379/')
@@ -64,13 +63,13 @@ TEMPLATE_USER = "_user.html"
 TEMPLATE_USERS = "_users.html"
 
 def get_oauth2_callback():
-  if is_prod():
-    return flask.url_for(
+  if not is_prod():
+    return "https://linfamily.us/oauth2callback/"
+  return flask.url_for(
       'oauth2callback',
       _scheme='https',
       _external=True
     )
-  return "https://linfamily.us/oauth2callback/"
 
 def get_oauth2_config(**keys):
   try:
@@ -524,7 +523,7 @@ if __name__ == '__main__':
   port = int(os.environ.get("PORT", 5000))
 
   if is_prod():
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port)
   else:
     # app.run(host='0.0.0.0', port=port, ssl_context='adhoc', debug=True)
     import ssl
