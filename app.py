@@ -9,6 +9,7 @@ from flask import current_app, session
 from flask import redirect, render_template, request
 from flask import url_for
 from flask_session import Session
+from flask_sslify import SSLify
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 
@@ -36,6 +37,8 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.jinja_env.globals.update(add_url_params=add_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
 app.jinja_env.globals.update(remove_url_params=remove_url_params)
+
+sslify = SSLify(app)
 
 sess = Session()
 sess.init_app(app)
