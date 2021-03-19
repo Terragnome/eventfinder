@@ -17,5 +17,7 @@ EXPOSE 5000
 EXPOSE 5432
 EXPOSE 6379
 
-ENTRYPOINT ["python", "app.py"]
+RUN useradd -m ventful_admin
+USER ventful_admin
+
 CMD ["python", "app.py"]

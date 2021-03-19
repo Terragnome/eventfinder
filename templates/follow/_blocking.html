@@ -1,0 +1,12 @@
+{% set users=users or (vargs.users if vargs else None) %}
+
+<div class='app_page'>
+  <div class='app_section'>
+    {% if users %}
+      <div class='title'>Blocking</div>
+    {% endif %}
+    {% with vargs=vargs, user_elem_id_modifier='blocking' %}
+      {% include "users/_users.html" %}
+    {% endwith %}
+  </div>
+</div>

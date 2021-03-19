@@ -344,14 +344,14 @@ class EventController:
         Event.end_time >= datetime.datetime.now()
       )
 
+    if limit:
+      tag_query = tag_query.limit(limit)
+
     tag_query = tag_query.group_by(
       Tag.tag_name
     ).order_by(
       desc('ct')
     )
-
-    if limit:
-      tag_query = tag_query.limit(limit)
 
     return [
       {

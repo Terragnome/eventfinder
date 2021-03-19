@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import json
+import os
 import re
 
 from sqlalchemy import and_
@@ -31,8 +32,10 @@ class ConnectorTMDB:
     }
 
   def __init__(self):
-    with open("config/secrets/api_keys.json", "r") as f:
-      api_key = json.load(f)[self.CONNECTOR_TYPE]["api_key"]
+    api_key = os.getenv('TMDB_API_KEY', None)
+    if api_key is None:
+      with open("config/secrets/api_keys.json", "r") as f:
+        api_key = json.load(f)[self.CONNECTOR_TYPE]["api_key"]
     tmdb.API_KEY = api_key
 
   def get_events(

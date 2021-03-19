@@ -1,8 +1,8 @@
 version: '3'
 services:
   postgres:
-    restart: always
     image: postgres:10
+    restart: always
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
@@ -13,16 +13,16 @@ services:
     ports:
       - 5432:5432
   redis:
-    restart: always
-    command: redis-server --appendonly yes
     image: redis
+    restart: always
     volumes:
       - ./data/redis:/var/lib/redis/data
     ports:
         - 6379:6379
+    command: redis-server --appendonly yes
   app:
-    restart: always
     image: gcr.io/eventfinder-239405/eventfinder-app:latest
+    restart: always
     build: .
     volumes:
       - .:/app
@@ -31,4 +31,4 @@ services:
     depends_on:
       - postgres
       - redis
-    entrypoint: ["python", "app.py", "run"]
+    command: ["python", "app.py", "run"]

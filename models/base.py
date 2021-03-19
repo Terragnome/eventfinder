@@ -1,13 +1,11 @@
-from alembic.config import Config
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-alembic_cfg = Config("./alembic.ini")
-engine = create_engine(
-  alembic_cfg.get_main_option("sqlalchemy.url"),
-  convert_unicode = True
-)
+import os
+db_url = os.getenv('DATABASE_URL', 'postgresql://root:root@postgres/eventfinder')
+
+engine = create_engine(db_url, convert_unicode = True)
 db_session = scoped_session(sessionmaker(bind=engine))
 
 class Base:

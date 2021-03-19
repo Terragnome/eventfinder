@@ -1,0 +1,15 @@
+{% set recommended_follows=recommended_follows or (vargs.recommended_follows if vargs else None) %}
+{% set users=users or (vargs.users if vargs else None) %}
+
+<div class='app_page'>
+  <div class='app_section'>
+    {% if users %}
+      <div class='title'>Followers</div>
+    {% endif %}
+    <div class='body'>
+      {% with vargs=vargs, user_elem_id_modifier='follower' %}
+        {% include "users/_users.html" %}
+      {% endwith %}
+    </div>
+  </div>
+</div>

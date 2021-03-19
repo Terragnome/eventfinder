@@ -1,0 +1,14 @@
+setup:
+  # config:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+    - plan: heroku-redis
+      as: REDIS
+build:
+  docker:
+    web: Dockerfile
+# release:
+#   image: web
+#   command:
+#     - alembic upgrade head

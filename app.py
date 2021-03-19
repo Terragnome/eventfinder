@@ -1,6 +1,7 @@
 import functools
 import json
 import os
+import redis
 
 import flask
 from flask import Flask, Response
@@ -10,12 +11,11 @@ from flask import url_for
 from flask_session import Session
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
-import redis
-import ssl
 
 from config.app_config import app_config
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
+from helpers.env_helper import is_prod
 from helpers.jinja_helper import add_url_params, filter_url_params, remove_url_params
 from models.base import db_session
 from models.block import Block
@@ -24,16 +24,12 @@ from models.tag import Tag
 from utils.config_utils import load_config
 from utils.get_from import get_from
 
-context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-try:
-  context.load_cert_chain('/etc/ssl-cert/ssl.cert', '/etc/ssl-key/ssl.key')
-except Exception as e:
-  context.load_cert_chain('config/certs/ssl.cert', 'config/certs/ssl.key')
-
 app = Flask(__name__)
 app.config.update(**app_config)
+
+redis_url = os.getenv('REDIS_URL', 'redis://redis:6379/')
 app.config['SESSION_TYPE'] = 'redis'
-app.config['SESSION_REDIS'] = redis.from_url('redis://redis:6379/')
+app.config['SESSION_REDIS'] = redis.from_url(redis_url)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 app.jinja_env.globals.update(add_url_params=add_url_params)
@@ -50,8 +46,6 @@ param_to_kwarg = {
   'selected': 'selected'
 }
 
-OAUTH2_CALLBACK = "https://www.linfamily.us/oauth2callback"
-
 TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING = "_blocking.html"
 TEMPLATE_FOLLOWERS = "_followers.html"
@@ -63,6 +57,31 @@ TEMPLATE_EXPLORE = "_explore.html"
 TEMPLATE_USER = "_user.html"
 TEMPLATE_USERS = "_users.html"
 
+def get_oauth2_callback():
+  if is_prod():
+    return flask.url_for(
+      'oauth2callback',
+      _scheme='https',
+      _external=True
+    )
+  return "https://www.linfamily.us/oauth2callback"
+
+def get_oauth2_config(**keys):
+  try:
+    client_secret_json = json.loads(os.getenv('OAUTH2_CLIENT_SECRET'))
+    flow = google_auth_oauthlib.flow.Flow.from_client_config(
+      client_secret_json,
+      scopes=app.config['AUTH']['SCOPES'],
+      **keys
+    )
+  except Exception as e:
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+      "config/secrets/client_secret.json",
+      scopes=app.config['AUTH']['SCOPES'],
+      **keys
+    )
+  return flow
+
 @app.route("/debug/", methods=['GET'])
 def debug():
   user_info = UserController()._request_user_info()
@@ -71,19 +90,8 @@ def debug():
 def oauth2callback():
   state = session['state']
 
-  try:
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      "config/secrets/client_secret.json",
-      scopes=app.config['AUTH']['SCOPES'],
-      state=state
-    )
-  except Exception as e:
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      "/etc/client-secret/client_secret.json",
-      scopes=app.config['AUTH']['SCOPES'],
-      state=state
-    )
-  flow.redirect_uri = OAUTH2_CALLBACK#flask.url_for('oauth2callback', _external=True)
+  flow = get_oauth2_config(state=state)
+  flow.redirect_uri = get_oauth2_callback()
 
   authorization_response = flask.request.url
   flow.fetch_token(authorization_response=authorization_response)
@@ -103,17 +111,8 @@ def oauth2callback():
 
 @app.route("/authorize/")
 def authorize():
-  try:
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      "config/secrets/client_secret.json",
-      scopes=app.config['AUTH']['SCOPES']
-    )
-  except Exception as e:
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      "/etc/client-secret/client_secret.json",
-      scopes=app.config['AUTH']['SCOPES']
-    )
-  flow.redirect_uri = OAUTH2_CALLBACK#flask.url_for('oauth2callback', _external=True)
+  flow = get_oauth2_config()
+  flow.redirect_uri = get_oauth2_callback()
 
   authorization_url, state = flow.authorization_url(
     access_type='offline',
@@ -516,8 +515,12 @@ def user_action(identifier):
   return redirect(request.referrer or '/')
 
 if __name__ == '__main__':
-  # app.run(host='0.0.0.0', port=5000)
-  # app.run(host='0.0.0.0', port=5000, ssl_context=context)
+  port = int(os.environ.get("PORT", 5000))
 
-  app.run(host='0.0.0.0', port=5000, ssl_context="adhoc", debug=True)
-  # app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)
+  # if is_prod():
+  app.run(host='0.0.0.0', port=port, debug=True)
+  # else:
+  #   import ssl
+  #   context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+  #   context.load_cert_chain('config/certs/ssl.cert', 'config/certs/ssl.key')
+  #   app.run(host='0.0.0.0', port=port, ssl_context=context)
