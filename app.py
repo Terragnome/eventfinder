@@ -25,6 +25,7 @@ from utils.config_utils import load_config
 from utils.get_from import get_from
 
 app = Flask(__name__)
+app.debug = not is_prod()
 app.config.update(**app_config)
 
 redis_url = os.getenv('REDIS_URL', 'redis://redis:6379/')
@@ -64,7 +65,7 @@ def get_oauth2_callback():
       _scheme='https',
       _external=True
     )
-  return "https://www.linfamily.us/oauth2callback"
+  return "https://linfamily.us/oauth2callback/"
 
 def get_oauth2_config(**keys):
   try:
@@ -517,10 +518,11 @@ def user_action(identifier):
 if __name__ == '__main__':
   port = int(os.environ.get("PORT", 5000))
 
-  # if is_prod():
-  app.run(host='0.0.0.0', port=port, debug=True)
-  # else:
-  #   import ssl
-  #   context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-  #   context.load_cert_chain('config/certs/ssl.cert', 'config/certs/ssl.key')
-  #   app.run(host='0.0.0.0', port=port, ssl_context=context)
+  if is_prod():
+    app.run(host='0.0.0.0', port=port, debug=True)
+  else:
+    # app.run(host='0.0.0.0', port=port, ssl_context='adhoc', debug=True)
+    import ssl
+    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+    context.load_cert_chain('config/certs/ssl.cert', 'config/certs/ssl.key')
+    app.run(host='0.0.0.0', port=port, ssl_context=context, debug=True)

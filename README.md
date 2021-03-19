@@ -3,6 +3,7 @@
 # ============================== #
 # Needs config/secrets/client_secret.json
 # Needs config/secrets/EventFinder-xxxx.json
+# chrome://flags/#allow-insecure-localhost
 
 # ============================== #
 # Auth                           #
