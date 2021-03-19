@@ -25,6 +25,8 @@ from models.tag import Tag
 from utils.config_utils import load_config
 from utils.get_from import get_from
 
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 app = Flask(__name__)
 app.debug = not is_prod()
 app.config.update(**app_config)
