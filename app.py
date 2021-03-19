@@ -38,7 +38,7 @@ app.jinja_env.globals.update(add_url_params=add_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
 app.jinja_env.globals.update(remove_url_params=remove_url_params)
 
-sslify = SSLify(app)
+sslify = SSLify(app, subdomains=True)
 
 sess = Session()
 sess.init_app(app)
