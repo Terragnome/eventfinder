@@ -2,6 +2,7 @@ import functools
 import json
 import os
 import redis
+from urllib.parse import urlparse
 
 import flask
 from flask import Flask, Response
@@ -38,8 +39,7 @@ app.jinja_env.globals.update(add_url_params=add_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
 app.jinja_env.globals.update(remove_url_params=remove_url_params)
 
-sess = Session()
-sess.init_app(app)
+Session(app)
 
 param_to_kwarg = {
   'p': 'page',
@@ -108,16 +108,31 @@ def oauth2callback():
     'scopes': credentials.scopes
   }
 
+  if 'state' in session:
+    del session['state']
+
   UserController()._request_user_info()
-  return redirect(request.referrer or '/')
+  ref_parsed = urlparse(request.referrer)
+  home_parsed = urlparse(url_for('events'))
+
+  redirect_url = '/'
+  if (
+    ref_parsed.scheme == home_parsed.scheme
+    and ref_parsed.netloc == home_parsed.netloc
+  ):
+    redirect_url = request.referrer
+  return redirect(redirect_url)
 
 @app.route("/authorize/")
 def authorize():
+  session.clear()
+
   flow = get_oauth2_config()
   flow.redirect_uri = get_oauth2_callback()
 
   authorization_url, state = flow.authorization_url(
     access_type='offline',
+    prompt='select_account',
     include_granted_scopes='true'
   )
   session['state'] = state
@@ -520,7 +535,7 @@ if __name__ == '__main__':
   port = int(os.environ.get("PORT", 5000))
 
   if is_prod():
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
   else:
     # app.run(host='0.0.0.0', port=port, ssl_context='adhoc', debug=True)
     import ssl

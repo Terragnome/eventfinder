@@ -27,12 +27,8 @@ class UserController:
     return user
 
   def _logout(self):
-    if 'user' in session:
-      del session['user']
+    session.clear()
     session.modified = True
-
-    if 'credentials' in session:
-      del session['credentials']
 
   def _request_user_info(self):
     credentials = google.oauth2.credentials.Credentials(**session['credentials'])
