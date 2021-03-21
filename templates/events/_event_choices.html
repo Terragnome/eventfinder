@@ -1,0 +1,17 @@
+<div class='event_choices {{ event_class }} {{ event_selected_class }}'>
+  {% if is_done %}
+    {% with icon="check", go=event.current_user_event.interest-2, selected=True, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+  {% elif is_go %}
+    {% with icon="heart", selected=True, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+    {% with icon="check", go=event.current_user_event.interest+2, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+  {% elif is_maybe %}
+    {% with icon="plus",  selected=True, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+    {% with icon="check", go=event.current_user_event.interest+2, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+  {% elif is_skip %}
+    {% with icon="ex",    selected=True, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+  {% else %}
+    {% with icon="ex",    go=0, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+    {% with icon="plus",  go=1, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+    {% with icon="heart", go=2, event=event, card=card %}{% include "events/button/_event_choice.html" %}{% endwith %}
+  {% endif %}
+</div>

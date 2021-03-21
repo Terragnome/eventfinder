@@ -1,0 +1,16 @@
+<div class='event_time'>{{ event.display_time }}</div>
+<div class='event_dates'>
+  {% with d=event.start_date %}{% include "_date_card.html" %}{% endwith %}
+  {% if event.start_date != event.end_date %}{% with d=event.end_date %}{% include "_date_card.html" %}{% endwith %}{% endif %}
+</div>
+<div class='event_address'>
+  {% if card %}
+    <div>{{ event.display_city }}</div>
+  {% else %}
+    {% if event.address %}
+      {% for addr_line in event.address %}
+        <div>{{ addr_line }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+</div>

@@ -435,7 +435,7 @@ span{
 }
 
 .event_card > .event.event_selected{
-  background-color: black;
+  background-color: var(--darkest-color);
   color: white;
 }
 
@@ -648,16 +648,6 @@ span{
   margin: 20px 0 50px 0;
 }
 
-.event_selected.card.event_choices > .round_button{
-  border-color: white;
-  color: white;
-  fill: white;
-}
-
-.card > .round_button:hover{
-  border-color: var(--link-color);
-}
-
 .event_selected.card.event_users_count{
   border-color: white;
   color: white;
@@ -832,10 +822,16 @@ span{
   height: 38px;
   width: 38px;
 }
+.round_button:hover{
+  background-color: var(--link-color);
+  color: white;
+  fill: white;
+  transition: 0.3s;
+}
 
 .round_button.selected{
   background-color: var(--link-color);
-  border-color: white;
+  border-color: var(--link-color);
   color: white;
   fill: white;
 }
@@ -845,7 +841,7 @@ span{
   width: 18px;
 }
 
-.round_button > svg.icon_ex{
+/*.round_button > svg.icon_ex{
 }
 
 .round_button > svg.icon_heart{
@@ -855,14 +851,8 @@ span{
 }
 
 .round_button > svg.icon_plus{
-}
+}*/
 
-.round_button:hover{
-  background-color: var(--link-color);
-  color: white;
-  fill: white;
-  transition: 0.3s;
-}
 
 #scroll_top{
   background-color: white;
