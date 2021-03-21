@@ -25,6 +25,7 @@ from models.tag import Tag
 from utils.config_utils import load_config
 from utils.get_from import get_from
 
+# TODO: Remove this when have SSL
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 app = Flask(__name__)
@@ -49,15 +50,15 @@ param_to_kwarg = {
 }
 
 TEMPLATE_MAIN = "main.html"
-TEMPLATE_BLOCKING = "_blocking.html"
-TEMPLATE_FOLLOWERS = "_followers.html"
-TEMPLATE_FOLLOWING = "_following.html"
-TEMPLATE_EVENT = "_event.html"
-TEMPLATE_EVENTS = "_events.html"
-TEMPLATE_EVENTS_LIST = "_events_list.html"
-TEMPLATE_EXPLORE = "_explore.html"
-TEMPLATE_USER = "_user.html"
-TEMPLATE_USERS = "_users.html"
+TEMPLATE_BLOCKING     = "users/_blocking.html"
+TEMPLATE_FOLLOWERS    = "users/_followers.html"
+TEMPLATE_FOLLOWING    = "users/_following.html"
+TEMPLATE_EVENT        = "events/_event.html"
+TEMPLATE_EVENTS       = "events/_events.html"
+TEMPLATE_EVENTS_LIST  = "events/_events_list.html"
+TEMPLATE_EXPLORE      = "events/_explore.html"
+TEMPLATE_USER         = "users/_user.html"
+TEMPLATE_USERS        = "users/_users.html"
 
 def get_oauth2_callback():
   if not is_prod():
@@ -535,6 +536,7 @@ if __name__ == '__main__':
   port = int(os.environ.get("PORT", 5000))
 
   if is_prod():
+    # TODO: Remove debug when staging is setu
     app.run(host='0.0.0.0', port=port, debug=True)
   else:
     # app.run(host='0.0.0.0', port=port, ssl_context='adhoc', debug=True)

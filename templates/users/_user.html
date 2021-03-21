@@ -5,12 +5,12 @@
   <div id="user_feed" class='user_feed'>
     {% if user %}
       {% with vargs=vargs %}
-        {% include "_user_card.html" %}
+        {% include "users/_user_card.html" %}
       {% endwith %}
     {% endif %}
   </div>
 
   {% with vargs=vargs %}
-    {% include "_events.html" %}
+    {% include "events/_events.html" %}
   {% endwith %}
 </div>

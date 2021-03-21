@@ -7,7 +7,7 @@
       <div class='title'>Recommended</div>
       <div class='body'>
         {% with vargs=vargs, users=recommended_users, user_elem_id_modifier='recommend_following' %}
-          {% include "_users.html" %}
+          {% include "users/_users.html" %}
         {% endwith %}
       </div>
     </div>
@@ -19,7 +19,7 @@
     {% endif %}
     <div class='body'>
       {% with vargs=vargs, user_elem_id_modifier='following' %}
-        {% include "_users.html" %}
+        {% include "users/_users.html" %}
       {% endwith %}
     </div>
   </div>

@@ -1,0 +1,14 @@
+{% set icon=icon %}
+{% set icon_template="icon/_"+icon+".html" %}
+
+{% set event=event %}
+
+{% set card=card %}
+{% set is_card_json = 'true' if card else 'false' %}
+{% set selected_class = "selected" if selected else "" %}
+
+<a
+  class='round_button {{ selected_class }} event_choice nav_link_post_replace'
+  href="{{ url_for('event', event_id=event.event_id) }}"
+  data='{"target": "#event_{{ event.event_id }}", "go": {{ go|default("null") }}, "card": "{{ is_card_json }}"}'
+>{% include icon_template %}</a>

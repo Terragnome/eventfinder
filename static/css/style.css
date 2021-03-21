@@ -308,7 +308,7 @@ span{
 }
 
 .button_close{
-  color: black;
+  color: var(--link-color);
   cursor: pointer;
   font-size: 20px;
   margin: 8px;
@@ -435,7 +435,7 @@ span{
 }
 
 .event_card > .event.event_selected{
-  background-color: var(--mid-color);
+  background-color: black;
   color: white;
 }
 
@@ -653,10 +653,8 @@ span{
   color: white;
   fill: white;
 }
-.event_selected.card.event_choices > .round_button.selected{
-  border-color: var(--link-color);
-}
-.event_selected.card > .round_button:hover{
+
+.card > .round_button:hover{
   border-color: var(--link-color);
 }
 
@@ -684,7 +682,7 @@ span{
 }
 
 .event_skip.card{
-  background-color: var(--mid-color);
+  background-color: var(--darkest-color);
   border-radius: 5px;
 }
 
@@ -837,7 +835,7 @@ span{
 
 .round_button.selected{
   background-color: var(--link-color);
-  border-color: var(--link-color);
+  border-color: white;
   color: white;
   fill: white;
 }
@@ -854,6 +852,9 @@ span{
 }
 
 .round_button > svg.icon_star{
+}
+
+.round_button > svg.icon_plus{
 }
 
 .round_button:hover{

@@ -8,7 +8,7 @@
       {% for user in users %}
         <div class='float_child left'>
           {% with vargs=vargs, user=user, user_elem_id_modifier=user_elem_id_modifier %}
-            {% include "_user_card.html" %}
+            {% include "users/_user_card.html" %}
           {% endwith %}
         </div>
       {% endfor %}
