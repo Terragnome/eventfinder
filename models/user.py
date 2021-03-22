@@ -23,13 +23,9 @@ class User(Base):
   auth = relationship('Auth', secondary='user_auths')
   events = relationship('Event', secondary='user_events', lazy='dynamic')
   squads = relationship('Squad', secondary='squad_users')
-  squad_users = relationship('SquadUser', cascade="all, delete-orphan")
+  squad_users = relationship('SquadUser', cascade="all,delete-orphan")
 
-  _user_events = relationship(
-    'UserEvent',
-    cascade="all, delete-orphan",
-    lazy='dynamic'
-  )
+  _user_events = relationship('UserEvent', cascade="all,delete-orphan", lazy='dynamic')
   @property
   def user_events(self):
     return self._user_events.filter(

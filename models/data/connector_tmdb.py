@@ -17,6 +17,72 @@ from utils.get_from import get_from
 class ConnectorTMDB:
   CONNECTOR_TYPE = "TMDB"
 
+  MOVIE_GENRE_MAP = {
+    28: "Action",
+    12: "Adventure",
+    16: "Animation",
+    35: "Comedy",
+    80: "Crime",
+    99: "Documentary",
+    18: "Drama",
+    10751: "Family",
+    14: "Fantasy",
+    36: "History",
+    27: "Horror",
+    10402: "Music",
+    9648: "Mystery",
+    10749: "Romance",
+    878: "Science Fiction",
+    10770: "TV Movie",
+    53: "Thriller",
+    10752: "War",
+    37: "Western"
+  }
+
+  TV_GENRE_MAP = {
+    10759: "Action & Adventure",
+    16: "Animation",           
+    35: "Comedy",
+    80: "Crime",
+    99: "Documentary",
+    18: "Drama",
+    10751: "Family",
+    10762: "Kids",
+    9648: "Mystery",
+    10763: "News",
+    10764: "Reality",
+    10765: "Sci-Fi & Fantasy",
+    10766: "Soap",
+    10767: "Talk",
+    10768: "War & Politics",
+    37: "Western"
+  }
+
+  @classmethod
+  def genre_is_movie(klass, genre_id):
+    return genre_id in klass.MOVIE_GENRE_MAP
+
+  @classmethod
+  def genre_is_tv(klass, genre_id):
+    return genre_id in klass.TV_GENRE_MAP
+
+  @classmethod
+  def genre_by_id(klass, genre_id):
+    if genre_id in klass.MOVIE_GENRE_MAP:
+      return klass.MOVIE_GENRE_MAP[genre_id]
+    if genre_id in klass.TV_GENRE_MAP:
+      return klass.TV_GENRE_MAP[genre_id]
+    return None
+
+  @classmethod
+  def genres_by_ids(klass, genre_ids):
+    genre_set = set()
+    for genre_id in genre_ids:
+      if klass.genre_is_movie(genre_id):  genre_set.add("Movie")
+      if klass.genre_is_tv(genre_id):     genre_set.add("TV")
+      genre_set.add(klass.genre_by_id(genre_id))
+    return list(genre_set)
+
   @classmethod
   def parse_time_args(
     klass,
@@ -101,6 +167,8 @@ class ConnectorTMDB:
         event_start_time = datetime.datetime.strptime(row_connector_event.data['release_date'], "%Y-%m-%d")
         event_end_time = event_start_time+datetime.timedelta(days=180)
 
+        genres = self.genres_by_ids(row_connector_event.data['genre_ids'])
+
         if row_connector_event.event_id:
           row_event = Event.query.filter(Event.event_id == row_connector_event.event_id).first()
           row_event.name = event_name
@@ -129,12 +197,14 @@ class ConnectorTMDB:
           db_session.merge(row_connector_event)
           db_session.commit()
 
-        row_event.add_tag(Tag.MOVIES)
+        row_event.add_tag(Tag.TVM)
+        for genre in genres:
+          row_event.add_tag(genre)
 
         yield row_event
 
       del raw_events['results']
-      print(raw_events)
+
       sentinel = raw_events['page'] < raw_events['total_pages']
       if sentinel:
         event_params['page'] = raw_events['page']+1

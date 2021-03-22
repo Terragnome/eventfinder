@@ -335,7 +335,7 @@ def events(
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected=None
 ):
-  if tag == Tag.MOVIES:
+  if tag == Tag.TVM:
     cities = None
 
   events, sections, tags, event_cities = EventController().get_events(
@@ -469,7 +469,7 @@ def user(
           'tag': section['section_name']
         }
 
-        if section['section_name'] == Tag.MOVIES: del kwargs['cities']
+        if section['section_name'] == Tag.TVM: del kwargs['cities']
         section['section_url'] = parse_url_for('user', **kwargs)
 
     vargs = {

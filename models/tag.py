@@ -5,7 +5,7 @@ from .base import Base
 
 class Tag(Base):
   FOOD_DRINK = "Food + Drink"
-  MOVIES = "Movies"
+  TVM = "TV + MOVIES"
 
   __tablename__ = 'tags'
   tag_id = Column(Integer, primary_key=True, autoincrement=True)
