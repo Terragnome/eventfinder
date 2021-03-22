@@ -7,7 +7,7 @@ import re
 from sqlalchemy import and_
 import tmdbsimple as tmdb
 
-from models.base import db_session
+from models.base import db_session 
 from models.connector_event import ConnectorEvent
 from models.event import Event
 from models.tag import Tag
@@ -24,11 +24,18 @@ class ConnectorTMDB:
     end_date=None
   ):
     today = datetime.date.today()
-    start_release_date = today-datetime.timedelta(days=120)
-    end_release_date = today+datetime.timedelta(days=120)
+    
+    if not start_date:
+      start_release_date = today-datetime.timedelta(days=365)
+      start_date = start_release_date.strftime("%Y-%m-%d")
+
+    if not end_date:
+      end_release_date = today+datetime.timedelta(days=365)
+      end_date = end_release_date.strftime("%Y-%m-%d ")
+
     return {
-      'primary_release_date.gte': start_release_date.strftime("%Y-%m-%d"),
-      'primary_release_date.lte': end_release_date.strftime("%Y-%m-%d"),
+      'primary_release_date.gte': start_date,
+      'primary_release_date.lte': end_date
     }
 
   def __init__(self):
