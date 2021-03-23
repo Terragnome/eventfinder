@@ -114,12 +114,12 @@ def oauth2callback():
 
   UserController()._request_user_info()
   ref_parsed = urlparse(request.referrer)
-  home_parsed = urlparse(url_for('events'))
+  app_parsed = urlparse(url_for('events'))
 
   redirect_url = '/'
   if (
-    ref_parsed.scheme == home_parsed.scheme
-    and ref_parsed.netloc == home_parsed.netloc
+    ref_parsed.scheme == app_parsed.scheme
+    and ref_parsed.netloc == app_parsed.netloc
   ):
     redirect_url = request.referrer
   return redirect(redirect_url)
@@ -327,7 +327,7 @@ def event_update(event_id):
   return redirect(request.referrer or '/')
 
 @app.route("/", methods=['GET'])
-@app.route("/home/", methods=['GET'])
+@app.route("/explore/", methods=['GET'])
 @parse_url_params
 @paginated
 def events(

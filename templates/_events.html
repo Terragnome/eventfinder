@@ -14,16 +14,6 @@
     {% include "_search_bar.html" %}
   {% endwith %}
 
-<!--   {% if sections %}
-    <div class='event_sections clearfix'>
-      {% for section in sections %}
-        {% with vargs=section %}
-          {% include "events/_event_section.html" %}
-        {% endwith %}
-      {% endfor %}
-    </div>
-  {% endif %} -->
-
   <div id='event_group_chips' class='event_chips'>
     {% for chip_name in chips %}
       {% set chip_data=chips[chip_name] %}
@@ -43,10 +33,7 @@
     <div id='event_{{chip_name}}_chips' class='event_chips {{"" if chip_data.key in selected_list else "hide"}}'>
       {% for chip in chip_data.entries %}
         {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key})%}
-        <a
-          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
-          href='{{callback}}'
-        >{{ chip.chip_name }} {{ chip.ct }}</a>
+        <a class='cap_button nav_link_get {{"selected" if chip.selected else ""}}' href='{{callback}}' >{{ chip.chip_name }} {{ chip.ct }}</a>
       {% endfor %}
     </div>
   {% endfor %}

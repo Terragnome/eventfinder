@@ -200,6 +200,7 @@ class ConnectorTMDB:
         row_event.add_tag(Tag.TVM)
         for genre in genres:
           row_event.add_tag(genre)
+        print("\t{}\t{}".format(event_name, genres))
 
         yield row_event
 

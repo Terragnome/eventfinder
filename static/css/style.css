@@ -453,13 +453,12 @@ span{
 
 .event_chips{
   color: white;
-  margin: 0 0 20px 0;
   text-align: center;
 }
 
 .event_chips > .cap_button{
-  border-color: white;
-  color: white;
+  border-color: var(--link-color);
+  color: var(--link-color);
   margin: 5px 2px 5px 2px;
 }
 
@@ -560,7 +559,7 @@ span{
 #event_list {
   border: 0px;
   list-style: none;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 0px;
 }
 

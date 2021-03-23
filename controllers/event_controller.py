@@ -50,6 +50,7 @@ class EventController:
 
   def get_events(self, user=None, query=None, tag=None, cities=None, page=1):
     user = UserController().current_user
+    selected_tags = tag.split(',') if tag else []
 
     event_scores = alias(
       db_session.query(
@@ -91,7 +92,7 @@ class EventController:
         Tag,
         EventTag.tag_id == Tag.tag_id
       ).filter(
-        Tag.tag_name == tag
+        Tag.tag_name.in_(selected_tags)
       )
 
     if user:
@@ -114,7 +115,7 @@ class EventController:
     tags = self.get_tags_for_events(events_with_count_query)
     if tags:
       for event_tag in tags:
-        is_tag_selected = event_tag['chip_name'] == tag
+        is_tag_selected = event_tag['chip_name'] in selected_tags
         event_tag['selected'] = is_tag_selected
         if is_tag_selected:
           is_any_tag_selected = is_tag_selected
@@ -159,6 +160,7 @@ class EventController:
   def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, cities=None, page=1):
     current_user = UserController().current_user
     if not user: user = current_user
+    selected_tags = tag.split(',') if tag else []
 
     results = []
     tags = []
@@ -225,7 +227,7 @@ class EventController:
           Tag,
           EventTag.tag_id == Tag.tag_id
         ).filter(
-          Tag.tag_name == tag
+          Tag.tag_name.in_(selected_tags)
         )
 
       events_with_counts = events_with_counts.join(
@@ -242,7 +244,7 @@ class EventController:
       tags = self.get_tags_for_events(events_with_counts)
       if tags:
         for event_tag in tags:
-          is_tag_selected = event_tag['chip_name'] == tag
+          is_tag_selected = event_tag['chip_name'] in selected_tags
           event_tag['selected'] = is_tag_selected
           if is_tag_selected:
             is_any_tag_selected = is_tag_selected

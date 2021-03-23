@@ -3,7 +3,7 @@ var Application = Application || {};
 Application.init = function(params) {
   let urls = params['urls'];
   Application.url_auth = urls['auth'];
-  Application.url_home = urls['home'];
+  Application.url_explore = urls['explore'];
 
   $(window).on('popstate', Application.backButton);
 
@@ -210,7 +210,7 @@ Application.getElem = function(target, url, pushState=true, replace=false, skipS
     }
     if(spinner != false){ $(spinner).html(""); }
   }).fail(function(xhr, status, error) {
-    window.location.replace(Application.url_home);
+    window.location.replace(Application.url_explore);
     if(spinner != false){ $(spinner).html(""); }
   });
 }

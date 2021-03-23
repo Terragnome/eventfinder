@@ -8,7 +8,7 @@
 {% set is_maybe = event.current_user_event and event.current_user_event.is_maybe %}
 {% set is_skip = event.current_user_event and event.current_user_event.is_skip %}
 {% set is_selected = is_done or is_go or is_maybe or is_skip %}
-{% set event_selected_class = "event_skip" if is_skip else "event_selected" if (is_selected) else "" %}
+{% set event_selected_class = "" if is_me else "event_skip" if is_skip else "event_selected" if (is_selected) else "" %}
 
 {% set show_details = not (is_skip or is_done) %}
 
@@ -30,10 +30,10 @@
         {% if event.img_url %}
           <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
         {% endif %}
-        {% if show_details %}
+      </div>
+      {% if show_details %}
           {% with event=event, card=card %}{% include "events/_event_details.html" %}{% endwith %}
         {% endif %}
-      </div>
     {% endif %}
     <div class='{{ event_class }} event_header {{ "event_skip" if is_skip else ""}}'>  
       <div class='event_title'>{{ event.display_name }}</div>
