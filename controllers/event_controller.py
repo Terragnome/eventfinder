@@ -48,7 +48,7 @@ class EventController:
 
     return event
 
-  def get_events(self, user=None, query=None, tag=None, cities=None, page=1):
+  def get_events(self, user=None, query=None, tag=None, cities=None, page=1, future_only=False):
     user = UserController().current_user
     selected_tags = tag.split(',') if tag else []
 
@@ -104,12 +104,13 @@ class EventController:
         )
       )
 
-    events_with_count_query = events_with_count_query.filter(
-      or_(
-        Event.start_time >= datetime.datetime.now(),
-        Event.end_time >= datetime.datetime.now()
+    if future_only:
+      events_with_count_query = events_with_count_query.filter(
+        or_(
+          Event.start_time >= datetime.datetime.now(),
+          Event.end_time >= datetime.datetime.now()
+        )
       )
-    )
 
     is_any_tag_selected = False
     tags = self.get_tags_for_events(events_with_count_query)
@@ -157,7 +158,7 @@ class EventController:
 
     return (results, sections, tags, event_cities)
 
-  def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, cities=None, page=1):
+  def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, cities=None, page=1, future_only=False):
     current_user = UserController().current_user
     if not user: user = current_user
     selected_tags = tag.split(',') if tag else []
@@ -196,18 +197,26 @@ class EventController:
         ).all()
         current_user_events_by_event_id = { x.event_id: x for x in current_user_events }
 
-      events_with_counts = db_session.query(
-        Event,
-        func.count(Event.user_events).label('ct')
-      ).filter(
-        and_(
-          Event.event_id.in_(user_events_by_event_id.keys()),
-          or_(
-            Event.start_time >= datetime.datetime.now(),
-            Event.end_time >= datetime.datetime.now()
+      if future_only:
+        events_with_counts = db_session.query(
+          Event,
+          func.count(Event.user_events).label('ct')
+        ).filter(
+          and_(
+            Event.event_id.in_(user_events_by_event_id.keys()),
+            or_(
+              Event.start_time >= datetime.datetime.now(),
+              Event.end_time >= datetime.datetime.now()
+            )
           )
         )
-      )
+      else:
+        events_with_counts = db_session.query(
+          Event,
+          func.count(Event.user_events).label('ct')
+        ).filter(
+            Event.event_id.in_(user_events_by_event_id.keys())
+        )        
 
       if query:
         events_with_counts = events_with_counts.filter(
@@ -282,7 +291,7 @@ class EventController:
     return (results, sections, tags, event_cities)
 
   # TODO: Make this operate off the query for performance
-  def get_cities_for_events(self, events=None, limit=10):
+  def get_cities_for_events(self, events=None, limit=10, future_only=False):
     cities_query = db_session.query(
       Event.city,
       func.count(distinct(Event.event_id)).label('ct')
@@ -300,7 +309,8 @@ class EventController:
         events_table,
         Event.event_id == events_table.c.events_event_id
       )
-    else:
+    
+    if future_only:
       cities_query = cities_query.filter(
         Event.end_time >= datetime.datetime.now()
       )
@@ -320,7 +330,7 @@ class EventController:
       } for dat in cities_query if dat[1]>0
     ]
 
-  def get_tags_for_events(self, events=None, limit=None):
+  def get_tags_for_events(self, events=None, limit=None, future_only=False):
     tag_query = db_session.query(
       Tag.tag_name,
       func.count(distinct(EventTag.event_id)).label('ct')
@@ -341,7 +351,8 @@ class EventController:
       tag_query = tag_query.join(
         events_table
       )
-    else:
+
+    if future_only:
       tag_query = tag_query.filter(
         Event.end_time >= datetime.datetime.now()
       )

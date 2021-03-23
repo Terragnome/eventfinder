@@ -200,9 +200,9 @@ class ConnectorTMDB:
         row_event.add_tag(Tag.TVM)
         for genre in genres:
           row_event.add_tag(genre)
-        print("\t{}\t{}".format(event_name, genres))
 
-        yield row_event
+        db_session.commit()
+        yield (row_event, genres)
 
       del raw_events['results']
 
@@ -220,5 +220,6 @@ if __name__ == '__main__':
   e = ConnectorTMDB()
   events = e.get_events(**vars(args))
   if events:
-    for i, event in enumerate(events):
-      print(i, event.name)
+    for i, entry in enumerate(events):
+      event, genres = entry
+      print(i, event.name, genres)

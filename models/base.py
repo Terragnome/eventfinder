@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import os
-db_url = os.getenv('DATABASE_URL', 'postgresql://root:root@postgres/eventfinder')
+db_url = os.getenv('DATABASE_URL', 'postgresql://dev:dev@postgres/eventfinder')
 
 engine = create_engine(db_url, convert_unicode = True)
 db_session = scoped_session(sessionmaker(bind=engine))

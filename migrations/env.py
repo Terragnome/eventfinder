@@ -4,7 +4,7 @@ from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 
 import os
-db_url = db_url = os.getenv('DATABASE_URL', 'postgresql://root:root@postgres/eventfinder')
+db_url = db_url = os.getenv('DATABASE_URL', 'postgresql://dev:dev@postgres/eventfinder')
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
