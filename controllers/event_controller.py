@@ -20,6 +20,30 @@ from utils.get_from import get_from
 class EventController:
   PAGE_SIZE = 48
 
+  @classmethod
+  def _filter_events_by_tags(klass, events, tags):
+    event_matches = alias(
+      db_session.query(
+        EventTag.event_id.label('event_id'),
+        func.count(distinct(Tag.tag_id)).label('tag_count')
+      ).join(
+        Tag,
+        Tag.tag_id == EventTag.tag_id
+      ).filter(
+        Tag.tag_name.in_(tags)
+      ).group_by(
+        EventTag.event_id
+      ),
+      'event_matches'
+    )
+
+    return events.join(
+      event_matches,
+      Event.event_id == event_matches.c.event_id
+    ).filter(
+      event_matches.c.tag_count>=len(tags)
+    )
+
   def get_event(self, event_id):
     event = Event.query.filter(Event.event_id == event_id).first()
     if not event: return None
@@ -84,16 +108,8 @@ class EventController:
         )
       )
 
-    if tag:
-      events_with_count_query = events_with_count_query.join(
-        EventTag,
-        EventTag.event_id == Event.event_id
-      ).join(
-        Tag,
-        EventTag.tag_id == Tag.tag_id
-      ).filter(
-        Tag.tag_name.in_(selected_tags)
-      )
+    if selected_tags:
+      events_with_count_query = self._filter_events_by_tags(events_with_count_query, selected_tags)
 
     if user:
       user_events = user.user_events
@@ -167,22 +183,13 @@ class EventController:
     tags = []
     event_cities = []
     if user:
-      user_events = UserEvent.query.filter(
-        UserEvent.user_id == user.user_id
-      )
-
+      user_events = UserEvent.query.filter(UserEvent.user_id == user.user_id)
       if interested == 'done':
-        user_events = user_events.filter(
-          UserEvent.interest >= 3
-        )
+        user_events = user_events.filter(UserEvent.interest >= 3)
       elif interested == 'interested':
-        user_events = user_events.filter(
-          UserEvent.interest.in_([1,2])
-        )
+        user_events = user_events.filter(UserEvent.interest.in_([1,2]))
       else:
-        user_events = user_events.filter(
-          UserEvent.interest == 0
-        )
+        user_events = user_events.filter(UserEvent.interest == 0)
 
       user_events = user_events.all()
       user_events_by_event_id = { x.event_id: x for x in user_events }
@@ -228,16 +235,8 @@ class EventController:
           )
         )
 
-      if tag:
-        events_with_counts = events_with_counts.join(
-          EventTag,
-          EventTag.event_id == Event.event_id
-        ).join(
-          Tag,
-          EventTag.tag_id == Tag.tag_id
-        ).filter(
-          Tag.tag_name.in_(selected_tags)
-        )
+      if selected_tags:
+        events_with_counts = self._filter_events_by_tags(events_with_counts, selected_tags)
 
       events_with_counts = events_with_counts.join(
         Event.user_events
