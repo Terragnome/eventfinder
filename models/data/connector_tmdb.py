@@ -97,7 +97,7 @@ class ConnectorTMDB:
 
     if not end_date:
       end_release_date = today+datetime.timedelta(days=365)
-      end_date = end_release_date.strftime("%Y-%m-%d ")
+      end_date = end_release_date.strftime("%Y-%m-%d")
 
     return {
       'primary_release_date.gte': start_date,
