@@ -159,8 +159,22 @@ span{
   margin: 10px 5px 0 5px;
 }
 
-.app_login_img{
-  margin: 0 0 0 10px;
+.app_menu{
+  background: url(/static/icons/svg/hamburger.svg) no-repeat;
+  background-position: center center;
+  background-size: auto 48px;
+  background-repeat: no-repeat;
+
+  height: 48px;
+  width: 48px;
+}
+
+.app_nav_link.right{
+  margin-right: 10px;
+}
+
+.app_nav_link.left{
+  margin-left: 10px;
 }
 
 .app_nav{
@@ -171,13 +185,13 @@ span{
   color: var(--link-color);
   float: left;
   font-family: Rubik,sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   margin: 18px 10px 0 0;
 }
 
 .app_page{
   height: 100%;
-  margin: 20px 0 0 0;
+  margin: 10px 0 0 0;
   position: relative;
   width: 100%;
   text-align: center;
@@ -218,9 +232,9 @@ span{
 .app_search{
   background-color: var(--searchbar-color);
   border: 0px;
-  border-radius: 8px;
+  border-radius: 20px;
   height: 40px;
-  margin: 30px 30px 30px 30px;
+  margin: 10px 30px 10px 30px;
 }
 
 .app_search > .cap_button{
@@ -236,7 +250,7 @@ span{
 
 .app_search > .search_field{
   background-color: var(--searchbar-color);
-  border-radius: 5px;
+  border-radius: 20px;
   color: black;
   display: inline-block;
   font-size: 16px;
@@ -270,7 +284,7 @@ span{
 .app_search > .icon_search{
   background: url(/static/icons/svg/search.svg) no-repeat;
   background-position: center center;
-  background-size: auto 30px;
+  background-size: auto 20px;
   background-repeat: no-repeat;
 
   cursor: pointer;
@@ -458,9 +472,8 @@ span{
   white-space: nowrap;
 
   width: 100%;
-  height: 50px;
   text-align: center;
-  margin: 0px;
+  margin: 0 0 5px 0;
   padding: 0px;
 }
 
@@ -757,11 +770,6 @@ span{
   text-align: center;
 }
 
-.explore > .title{
-  font-size: 80px;
-  margin: 10px 0 100px 0;
-}
-
 .float_container{
   overflow: auto;
 }
@@ -863,18 +871,21 @@ span{
 
 #scroll_top{
   background-color: white;
-  border-radius: 5px;
+  background: url(/static/icons/svg/up.svg) no-repeat;
+  background-position: center;
+  background-size: auto 20px;
+  border-radius: 24px;
   bottom: 15px;
   cursor: pointer;
   display: none;
   font-size: 30px;
-  height: 30px;
+  height: 40px;
   opacity: 0;
   padding: 6px 0 1px 0;
   position: fixed;
   right: 10px;
   text-align: center;
-  width: 40px;
+  width: 48px;
   z-index: 10;
 }
 
@@ -1016,7 +1027,7 @@ span{
   margin: 0 15px 0 0;
 }
 
-#user_panel{
+.app_panel{
   position: absolute;
   background-color: white;
   display: none;
@@ -1025,15 +1036,17 @@ span{
   text-align: center;
   width: 100%;
   z-index: 20;
+
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-#user_panel > a{
+.app_panel > a{
   border-radius: 5px;
   display: block;
-  padding: 5px;
+  padding: 5px; 
 }
 
-#user_panel > a:hover{
+.app_panel > a:hover{
   color: white;
   background-color: var(--link-color);
 }
@@ -1045,7 +1058,12 @@ span{
 }
 
 .user_profile_img_placeholder{
+  background: url(/static/icons/svg/user.svg) no-repeat;
   background-color: white;
+  background-position: center center;
+  background-size: auto 22px;
+  background-repeat: no-repeat;
+  
   border-radius: 20px;
   height: 40px;
   width: 40px;

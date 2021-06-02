@@ -136,6 +136,7 @@ class EventController:
         event_tag['selected'] = is_tag_selected
         if is_tag_selected:
           is_any_tag_selected = is_tag_selected
+    tags = sorted([t for t in tags if t['selected']], key=lambda t: t['chip_name'])+sorted([t for t in tags if not t['selected']], key=lambda t: t['ct']*-1)
 
     event_cities = self.get_cities_for_events(events_with_count_query)
     # This has to come after the cities list is queries

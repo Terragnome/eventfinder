@@ -78,8 +78,8 @@ class ConnectorTMDB:
   def genres_by_ids(klass, genre_ids):
     genre_set = set()
     for genre_id in genre_ids:
-      if klass.genre_is_movie(genre_id):  genre_set.add("Movie")
-      if klass.genre_is_tv(genre_id):     genre_set.add("TV")
+      # if klass.genre_is_movie(genre_id):  genre_set.add("Movie")
+      # if klass.genre_is_tv(genre_id):     genre_set.add("TV")
       genre_set.add(klass.genre_by_id(genre_id))
     return list(genre_set)
 

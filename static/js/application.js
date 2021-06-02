@@ -13,6 +13,7 @@ Application.init = function(params) {
 }
 
 Application.onReady = function(){
+  AppPanel.init();
   UserPanel.init();
   Scroll.init();
   Application.onAjaxComplete();

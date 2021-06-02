@@ -16,6 +16,7 @@
   <script type='application/javascript' src="{{ url_for('static', filename='js/_anim_on_scroll.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_overlay.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_scroll.js', v=cachebreaker) }}"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/_app_panel.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_user_panel.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_url_params.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=cachebreaker) }}"></script>
@@ -35,6 +36,7 @@
     <div id='app_panel_blocker'></div>
   </div>
   <header class='app_header'>
+    <a class="left app_menu toggle_app_panel"></a>
     <a class='app_title nav_link_get' href="{{ url_for('events') }}">
       {% block header %}{{ app_name }}{% endblock %}
     </a>
@@ -42,29 +44,28 @@
       {% if session.user %}
         <a class="right toggle_user_panel">
           {% if session.user.image_url %}
-            <img class="app_login_img user_profile_img" src="{{ session.user.image_url }}"></img>
+            <img class="user_profile_img" src="{{ session.user.image_url }}"></img>
           {% else %}
-            <img class="app_login_img user_profile_img_placeholder"></img>
+            <img class="user_profile_img_placeholder"></img>
           {% endif %}
         </a>
         <a class="app_nav_link nav_link_get right" href="{{ url_for('saved') }}">{{ session.user.username }}</a>
       {% else %}
-        <a href="{{ url_for('login') }}">
-          <img class="app_login_img right user_profile_img_placeholder"></img>
-        </a>
+        <a class="right user_profile_img_placeholder" href="{{ url_for('login') }}"></a>
         <a class="app_nav_link right" href="{{ url_for('login') }}">Sign In</a>
       {% endif %}
     </div>
   </header>
   <section class="content">
+    {% include "panels/_app_panel.html" %}
     {% if session.user %}
-      {% include "users/_user_panel.html" %}
+      {% include "panels/_user_panel.html" %}
     {% endif %}
     <div id='main_spinner'></div>
     <div id='main'>
     	{% block content %}{% endblock %}
     </div>
-    <div id='scroll_top' class='box_outline'>⌃</div>
+    <div id='scroll_top' class='box_outline'></div>
   </section>
 </meta>
 

@@ -39,6 +39,9 @@
       <div class='event_title'>{{ event.display_name }}</div>
       {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
     </div>
+    {% for t in event.tags %}
+      {% if not t.selected %}<a class='cap_button'>{{t.tag_name}}</a>{% endif %}
+    {% endfor %}
   {% if card %}</a>{% endif %}
   <div class='{{ event_class }} event_body {{ "event_skip" if is_skip else ""}}'>
     {% if not card %}
