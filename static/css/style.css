@@ -1,4 +1,4 @@
-:root{
+ :root{
   --darkest-color: #707070;
   --dark-color: #A0A0A0;
   --mid-color: #D0D0D0;
@@ -15,6 +15,7 @@
   --searchbar-color: white;
   --weekend-color: var(--darkest-color);
 }
+
 
 @-ms-viewport{
   width: device-width;
@@ -75,14 +76,14 @@
 }
 
 @-webkit-keyframes anim-stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  0%, 40%, 100% { -webkit-transform: scaleY(0.6) }  
   20% { -webkit-transform: scaleY(1.0) }
 }
 
 @keyframes anim-stretchdelay {
   0%, 40%, 100% { 
-    transform: scaleY(0.4);
-    -webkit-transform: scaleY(0.4);
+    transform: scaleY(0.6);
+    -webkit-transform: scaleY(0.6);
   }  20% { 
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
@@ -133,7 +134,7 @@ span{
 .app_background{
   position: absolute;
   background-attachment: fixed;
-  background-color: var(--mid-color);
+  /*background-color: var(--mid-color);*/
   background-position: center center;
   background-repeat: none;
   background-size: cover;
@@ -152,11 +153,12 @@ span{
 .app_login{
   display: inline-block;
   float: right;
-  margin: 8px 8px 0 0;
+  font-size: 20px;
+  margin: 6px 8px 0 0;
 }
 
 .app_login > .app_nav_link{
-  margin: 10px 5px 0 5px;
+  margin: 6px 5px 0 5px;
 }
 
 .app_menu{
@@ -164,6 +166,8 @@ span{
   background-position: center center;
   background-size: auto 48px;
   background-repeat: no-repeat;
+
+  margin: 2px 0 0 5px;
 
   height: 48px;
   width: 48px;
@@ -234,7 +238,7 @@ span{
   border: 0px;
   border-radius: 20px;
   height: 40px;
-  margin: 10px 30px 10px 30px;
+  margin: 20px 30px 10px 30px;
 }
 
 .app_search > .cap_button{
@@ -311,8 +315,8 @@ span{
   color: var(--link-color);
   float: left;
   font-family: Rubik,sans-serif;
-  font-size: 24px;
-  margin: 10px 10px 0 10px;
+  font-size: 18px;
+  margin: 12px auto;
   text-decoration: none;
 }
 
@@ -386,7 +390,7 @@ span{
 }
 
 .empty{  
-  color: white;
+  color: black;
   font-size: 40px;
   height: 100%;
   margin: 50px 0 0 0;
@@ -399,8 +403,8 @@ span{
 }
 
 .event{
-  border-radius: 10px;
   position: relative;
+  border-radius: 10px;
   text-align: center;
   z-index: 1;
 }
@@ -408,35 +412,35 @@ span{
 .event.event_page{
   position: fixed;
   bottom: 0px;
-  left: 10px;
   background-color: white;
   border-radius: 10px;
-  margin-top: 30px auto 30px auto;
+  margin: 10px 10px 20px 10px;
   max-width: 1024px;
-  padding-bottom: 20px;
   text-align: left;
-  width: 100%;
 }
 
+.event_page > .event_img_wrapper {
+  float: left;
+}
 
-.event.event_page > .event_img_wrapper > .event_img{
+.event_page > .event_img_wrapper > .event_img{
   border-top-left-radius: 10px;
   border-top-right-radius: 0px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 0px;
-  height: 250px;
+  height: 200px;
   margin: auto 15px auto auto;
   object-fit: contain;
   width: auto;
 }
 
 .event_page > .event_title{
-  font-size: 45px;
+  font-size: 26px;
 }
 
 .event_page > .event_description{
-  font-size: 18px;
-  margin: 30px 10px 20px 10px;
+  font-size: 16px;
+  margin: 20px 10px 20px 10px;
 }
 
 .event_page > .event_img{
@@ -477,6 +481,7 @@ span{
 
 .event_choices{
   margin: 10px 0 20px 0;
+  text-align: center;
 }
 
 .event_chips{
@@ -680,6 +685,10 @@ span{
 .event_tags{
 }
 
+.event_tags > .cap_button{
+  margin: 2px auto 2px auto;
+}
+
 .event_time{
   font-size: 11px;
   margin: 5px 0 0 0;
@@ -862,8 +871,9 @@ span{
 .spinner > div {
   background-color: black;
   display: inline-block;
-  height: 100%;
-  width: 6px;
+  height: 70px;
+  margin: 0 2px 0 2px;
+  width: 15px;
 
   -webkit-animation: anim-stretchdelay 1.2s infinite ease-in-out;
   animation: anim-stretchdelay 1.2s infinite ease-in-out;
@@ -992,21 +1002,29 @@ span{
   background-color: white;
   display: none;
   font-size: 18px;
-  padding: 20px 0px 30px 0px;
   text-align: center;
   width: 100%;
   z-index: 20;
-
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.app_panel > a{
+.app_panel_contents{
+  margin: 20px 10px 30px 10px;
+}
+
+.app_panel_contents > .title {
+  color: black;
+  font-size: 20px;
+  margin: 0px auto 20px auto;
+}
+
+.app_panel_contents > a{
   border-radius: 10px;
   display: block;
   padding: 5px; 
 }
 
-.app_panel > a:hover{
+.app_panel_contents > a:hover{
   color: white;
   background-color: var(--link-color);
 }
@@ -1019,7 +1037,7 @@ span{
 
 .user_profile_img_placeholder{
   background: url(/static/icons/svg/user.svg) no-repeat;
-  background-color: white;
+  background-color: var(--neutral-color);
   background-position: center center;
   background-size: auto 22px;
   background-repeat: no-repeat;
@@ -1035,4 +1053,40 @@ span{
   float: left;
   margin: 2px 3px 2px 3px;
   width: 36px;
+}
+
+@media(max-width: 720px){
+  .event.event_page{
+    border-radius: 0px;
+    margin: 0px;
+    position: relative;
+    text-align: center;
+  }
+
+  .event_page > .event_img_wrapper{
+    background-color: white;
+    float: none;
+    text-align: center;
+  }
+
+  .event_page > .event_title{
+    text-align: center;
+  }
+
+  .event_page > .event_description{
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .event_page > .event_img_wrapper{
+    display: block;
+    float: none;
+  }
+
+  .event_page > .event_img_wrapper > .event_img{
+    border-radius: 10px;
+    height: auto;
+    margin-top: 20px;
+  }
 }

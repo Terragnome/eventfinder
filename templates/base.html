@@ -1,5 +1,5 @@
 {% set app_name="Ventful" %}
-{% set cachebreaker = 2 %}
+{% set cachebreaker = 3 %}
 
 <!doctype html>
 <head>
@@ -32,10 +32,10 @@
   </div>
   <div id='app_panel_overlay'>
     <a class='nav_link_get button_close' onclick="Application.overlayClose()">X</a>
-    <div id='app_panel_overlay_main' class='box_outine'></div>
+    <div id='app_panel_overlay_main' class='box_outline'></div>
     <div id='app_panel_blocker'></div>
   </div>
-  <header class='app_header'>
+  <header class='app_header box_outline'>
     <a class="left app_menu toggle_app_panel"></a>
     <a class='app_title nav_link_get' href="{{ url_for('events') }}">
       {% block header %}{{ app_name }}{% endblock %}
@@ -49,7 +49,6 @@
             <img class="user_profile_img_placeholder"></img>
           {% endif %}
         </a>
-        <a class="app_nav_link nav_link_get right" href="{{ url_for('saved') }}">{{ session.user.username }}</a>
       {% else %}
         <a class="right user_profile_img_placeholder" href="{{ url_for('login') }}"></a>
         <a class="app_nav_link right" href="{{ url_for('login') }}">Sign In</a>

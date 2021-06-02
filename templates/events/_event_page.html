@@ -20,7 +20,7 @@
 
 <div id="event_{{ event.event_id }}" class='{{ event_class }} box_outline event {{ event_selected_class }}'>
   {% if is_me or not (card and is_selected) %}
-    <div class='left event_img_wrapper'>
+    <div class='event_img_wrapper'>
       {% if event.img_url %}
         <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
       {% endif %}

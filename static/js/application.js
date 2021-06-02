@@ -261,13 +261,19 @@ Application.removeElem = function(target) {
 
 Application.setBackground = function(selector, url) {
   if(url == null){
-    $(selector).css('background-image', 'none');
+    $(selector).css('background-image', '');
   }else{
     $(selector).css('background-image', 'url('+url+')');
   }
 }
 
 Application.setAppBackground = function(url) {
+  if(url == null){
+    $('.app_header').css('background-color', '');  
+  }else{
+    $('.app_header').css('background-color', 'white');
+  }
+  
   Application.setBackground('.app_background', url);
 }
 

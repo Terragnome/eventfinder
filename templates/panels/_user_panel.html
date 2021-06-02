@@ -1,9 +1,11 @@
 <div id='user_panel' class="app_panel">
-  <a class="col nav_link_get" href="{{ url_for('events') }}">Explore</a>
-  <a class="col nav_link_get" href="{{ url_for('saved') }}">Saved</a>
-  <a class="col nav_link_get" href="{{ url_for('history') }}">History</a>
-  <a class='col nav_link_get' href="{{ url_for('following') }}">Following</a>
-  <a class='col nav_link_get' href="{{ url_for('followers') }}">Followers</a>
-  <a class='col nav_link_get' href="{{ url_for('blocking') }}">Blocking</a>
-  <a href="{{ url_for('logout') }}">Sign out</a>
+    <div class='app_panel_contents'>
+        <a class="col nav_link_get" href="{{ url_for('events') }}">Explore</a>
+        <a class="col nav_link_get" href="{{ url_for('saved') }}">Saved</a>
+        <a class="col nav_link_get" href="{{ url_for('history') }}">History</a>
+        <a class='col nav_link_get' href="{{ url_for('following') }}">Following</a>
+        <a class='col nav_link_get' href="{{ url_for('followers') }}">Followers</a>
+        <a class='col nav_link_get' href="{{ url_for('blocking') }}">Blocking</a>
+        <a href="{{ url_for('logout') }}">Sign out</a>
+    </div>
 </div>
