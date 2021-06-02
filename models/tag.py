@@ -19,4 +19,3 @@ class Tag(Base):
   @property
   def count(self):
     return len(self.events)
-  

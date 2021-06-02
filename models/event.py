@@ -33,7 +33,7 @@ class Event(Base):
 
   link = Column(String)
 
-  connector_events = relationship('ConnectorEvent')
+  connector_events = relationship('ConnectorEvent', cascade="all,delete-orphan")
   tags = relationship('Tag', single_parent=True, secondary='event_tags', lazy='dynamic', cascade= "all,delete-orphan")
   user_events = relationship('UserEvent', cascade= "all,delete-orphan")
   users = relationship('User', secondary='user_events', lazy='dynamic')
@@ -41,6 +41,9 @@ class Event(Base):
   @orm.reconstructor
   def init_on_load(self):
     pass
+
+  def tag_names(self):
+    return [t.tag_name for t in self.tags]
 
   def add_tag(self, tag_name):
     row_tag = Tag.query.filter(Tag.tag_name == tag_name).first()
@@ -72,8 +75,7 @@ class Event(Base):
         db_session.commit()
 
   def remove_all_tags(self):
-    for row_event_tag in self.tags:
-      db_session.delete(row_event_tag)
+    EventTag.query.filter(EventTag.event_id == self.event_id).delete()
     db_session.commit()
 
   @property

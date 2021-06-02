@@ -259,12 +259,16 @@ Application.removeElem = function(target) {
   $(target).remove();
 }
 
-Application.setAppBackground = function(url) {
+Application.setBackground = function(selector, url) {
   if(url == null){
-    $('.app_background').css('background-image', 'none');
+    $(selector).css('background-image', 'none');
   }else{
-    $('.app_background').css('background-image', 'url('+url+')');
+    $(selector).css('background-image', 'url('+url+')');
   }
+}
+
+Application.setAppBackground = function(url) {
+  Application.setBackground('.app_background', url);
 }
 
 Application.toggleVisibility = function(target){

@@ -10,6 +10,7 @@ import tmdbsimple as tmdb
 from models.base import db_session 
 from models.connector_event import ConnectorEvent
 from models.event import Event
+from models.event_tag import EventTag
 from models.tag import Tag
 
 from utils.get_from import get_from
@@ -33,7 +34,7 @@ class ConnectorTMDB:
     9648: "Mystery",
     10749: "Romance",
     878: "Science Fiction",
-    10770: "TV Movie",
+    # 10770: "TV Movie",
     53: "Thriller",
     10752: "War",
     37: "Western"
@@ -80,7 +81,9 @@ class ConnectorTMDB:
     for genre_id in genre_ids:
       # if klass.genre_is_movie(genre_id):  genre_set.add("Movie")
       # if klass.genre_is_tv(genre_id):     genre_set.add("TV")
-      genre_set.add(klass.genre_by_id(genre_id))
+      genre_name = klass.genre_by_id(genre_id)
+      if genre_name is not None: 
+        genre_set.add(genre_name)
     return list(genre_set)
 
   @classmethod
@@ -180,6 +183,8 @@ class ConnectorTMDB:
           row_event.end_time = event_end_time
           db_session.merge(row_event)
           db_session.commit()
+
+          row_event.remove_all_tags()
         else:
           row_event = Event(
             name = event_name,
@@ -191,7 +196,7 @@ class ConnectorTMDB:
             end_time = event_end_time
           )
           db_session.add(row_event)
-          db_session.commit()        
+          db_session.commit()
 
           row_connector_event.event_id = row_event.event_id
           db_session.merge(row_connector_event)
@@ -201,7 +206,9 @@ class ConnectorTMDB:
         for genre in genres:
           row_event.add_tag(genre)
 
+        db_session.merge(row_event)
         db_session.commit()
+
         yield (row_event, genres)
 
       del raw_events['results']

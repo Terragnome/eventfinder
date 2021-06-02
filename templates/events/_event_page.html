@@ -1,0 +1,55 @@
+{% set is_me=is_me or (vargs.is_me if vargs else None) %}
+{% set event=event or (vargs.event if vargs else None) %}
+{% set card=card or (vargs.card if vargs else None) %}
+{% set event_class='card' if card else 'event_page' %}
+
+{% set is_done = event.current_user_event and event.current_user_event.is_done %}
+{% set is_go = event.current_user_event and event.current_user_event.is_go %}
+{% set is_maybe = event.current_user_event and event.current_user_event.is_maybe %}
+{% set is_skip = event.current_user_event and event.current_user_event.is_skip %}
+{% set is_selected = is_done or is_go or is_maybe or is_skip %}
+{% set event_selected_class = "" if is_me else "event_skip" if is_skip else "event_selected" if (is_selected) else "" %}
+
+<script>
+  {% if event.backdrop_url %}
+    Application.setAppBackground('{{ event.backdrop_url }}');
+  {% else %}
+    Application.setAppBackground(null);
+  {% endif %}
+</script>
+
+<div id="event_{{ event.event_id }}" class='{{ event_class }} box_outline event {{ event_selected_class }}'>
+  {% if is_me or not (card and is_selected) %}
+    <div class='left event_img_wrapper'>
+      {% if event.img_url %}
+        <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
+      {% endif %}
+    </div>
+  {% endif %}
+  <div>
+    <div class='{{ event_class }} event_header {{ "event_skip" if is_skip else ""}}'>  
+      <div class='event_title'>{{ event.display_name }}</div>
+      {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
+    </div>
+    <div class='{{ event_class }} event_body {{ "event_skip" if is_skip else ""}}'>
+      {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
+      <p class='event_description'>{{ event.description }}</p>
+      {% with event=event, card=card %}{% include "events/_event_choices.html" %}{% endwith %}
+      {% if event.interested_user_count %}
+        <div class='event_users'>
+          <a class='link_img'>
+            <span class='event_users_count {{ event_class }} {{ event_selected_class }}'>
+              <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
+            </span>
+          </a>
+          {% set interested_users = event.interested_users %}
+          {% for user in interested_users %}
+            <a class='link_img nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
+              <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
