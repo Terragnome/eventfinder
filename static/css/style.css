@@ -452,8 +452,16 @@ span{
 }
 
 .event_chips{
-  color: white;
+  cursor: grab;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  width: 100%;
+  height: 50px;
   text-align: center;
+  margin: 0px;
+  padding: 0px;
 }
 
 .event_chips > .cap_button{
