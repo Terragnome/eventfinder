@@ -18,23 +18,22 @@
 </script>
 
 <div id="event_{{ event.event_id }}" class='event_page box_outline event {{ event_selected_class }}'>
+  <div class='clearfix event_header {{ "event_skip" if is_skip else ""}}'>  
+    <div class='event_title'>{{ event.display_name }}</div>
+    {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
+    {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
+  </div>
   {% if is_me or not (card and is_selected) %}
-    <div class='event_img_wrapper'>
+    <div class='left event_img_wrapper'>
       {% if event.img_url %}
         <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
       {% endif %}
     </div>
   {% endif %}
-  <div>
-    <div class='event_header {{ "event_skip" if is_skip else ""}}'>  
-      <div class='event_title'>{{ event.display_name }}</div>
-      {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
-    </div>
-    <div class='event_body {{ "event_skip" if is_skip else ""}}'>
-      {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
-      <p class='event_description'>{{ event.description }}</p>
-      {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
-      {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
-    </div>
+  <div class='event_body {{ "event_skip" if is_skip else ""}}'>
+    
+    <p class='event_description'>{{ event.description }}</p>
+    {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
+    {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
   </div>
 </div>

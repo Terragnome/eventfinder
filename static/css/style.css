@@ -434,10 +434,6 @@ span{
   width: auto;
 }
 
-.event_page > .event_title{
-  font-size: 26px;
-}
-
 .event_page > .event_description{
   font-size: 16px;
   margin: 20px 10px 20px 10px;
@@ -576,7 +572,7 @@ span{
 
 .event_header{
   color: black;
-  margin: 0 15px 8px 15px;
+  margin: 0 10px 8px 0px;
 }
 
 .event_img{
@@ -699,9 +695,13 @@ span{
   color: black;
   display: inline-block;
   font-size: 18px;
-  margin: 8px 0 0 0;
+  margin: 10px 0 0 0;
   text-align: center;
   text-decoration: none;
+}
+
+.event_page > .event_header > .event_title{
+  font-size: 26px;
 }
 
 .event_users{
@@ -1079,6 +1079,10 @@ span{
     text-align: center;
   }
 
+  .event_page > .event_header > .event_tags{
+    margin-top: 5px;
+  }
+
   .event_page > .event_description{
     font-size: 14px;
     margin-top: 10px;
@@ -1093,7 +1097,7 @@ span{
   .event_page > .event_img_wrapper > .event_img{
     border-radius: 10px;
     height: auto;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-right: auto;
   }
 }
