@@ -10,12 +10,11 @@ import tmdbsimple as tmdb
 from models.base import db_session 
 from models.connector_event import ConnectorEvent
 from models.event import Event
-from models.event_tag import EventTag
 from models.tag import Tag
 
 from utils.get_from import get_from
 
-class ConnectorTMDB:
+class ConnectorTMDB(ConnectorEvent):
   CONNECTOR_TYPE = "TMDB"
 
   MOVIE_GENRE_MAP = {
@@ -117,16 +116,20 @@ class ConnectorTMDB:
   def get_events(
     self,
     start_date=None,
-    end_date=None
+    end_date=None,
+    purge=False
   ):
+    if purge: self.purge_events()
+
     discover = tmdb.Discover()
 
     event_params = {
       'include_adult': False,
       'include_video': False,
       'sort_by': 'release_date.asc',
+      'with_original_language': 'en',
       'vote_average.gte': 6,
-      'vote_count.gte': 30
+      'vote_count.gte': 2000
     }
 
     event_params.update(
@@ -221,6 +224,7 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--start_date', default=None)
   parser.add_argument('--end_date', default=None)
+  parser.add_argument('--purge', action="store_true")
   group = parser.add_mutually_exclusive_group()
   args = parser.parse_args()
 

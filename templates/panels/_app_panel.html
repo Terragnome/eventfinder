@@ -1,9 +1,7 @@
 <div id='app_panel' class="app_panel">
     <div class='app_panel_contents'>
-        <a class="col nav_link_get" href="{{ url_for('events') }}">Acquire</a>
-        <a class="col nav_link_get" href="">Watch</a>
-        <a class="col nav_link_get" href="">Read</a>
-        <a class="col nav_link_get" href="">Play</a>
-        <a class="col nav_link_get" href="">Eat</a>
+        <a class="col nav_link_get" href="{{ url_for('events', t='TV + MOVIES') }}">Watch</a>
+        <a class="col nav_link_get" href="{{ url_for('events', t='GEAR') }}">Acquire</a>
+        <a class="col nav_link_get" href="{{ url_for('events', t='FOOD + DRINK') }}">Eat</a>
     </div>
 </div>

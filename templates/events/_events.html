@@ -10,9 +10,7 @@
 </script>
 
 <div class='app_page'>
-  {% with url=request.url %}
-    {% include "_search_bar.html" %}
-  {% endwith %}
+  {% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
 
   <div id='event_group_chips' class='event_chips'>
     {% for chip_name in chips %}
@@ -42,9 +40,7 @@
   {% endfor %}
 
   <ul id='event_list' class='effect_in'>
-    {% with vargs=vargs %}
-      {% include "events/_events_list.html" %}
-    {% endwith %}
+    {% with vargs=vargs %}{% include "events/_events_list.html" %}{% endwith %}
   </ul>
   <div id='events_spinner'></div>
 </div>

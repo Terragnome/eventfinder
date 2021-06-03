@@ -44,6 +44,14 @@ class EventController:
       event_matches.c.tag_count>=len(tags)
     )
 
+  @classmethod
+  def order_events(klass, query):
+    return query.order_by(
+      nullslast(desc('ct')),
+      nullslast(Event.end_time.desc()),
+      nullslast(Event.event_id.asc())
+    )
+
   def get_event(self, event_id):
     event = Event.query.filter(Event.event_id == event_id).first()
     if not event: return None
@@ -147,11 +155,7 @@ class EventController:
       for city in event_cities:
         city['selected'] = city['chip_name'] in cities
 
-    events_with_count_query = events_with_count_query.order_by(
-        nullslast(desc('ct')),
-        nullslast(Event.start_time.asc()),
-        nullslast(Event.event_id.asc())
-    )
+    events_with_count_query = self.order_events(events_with_count_query)
 
     events_with_count_query = events_with_count_query.limit(
       self.PAGE_SIZE
@@ -239,14 +243,12 @@ class EventController:
       if selected_tags:
         events_with_counts = self._filter_events_by_tags(events_with_counts, selected_tags)
 
-      events_with_counts = events_with_counts.join(
-        Event.user_events
-      ).group_by(
-        Event.event_id
-      ).order_by(
-        nullslast(desc('ct')),
-        nullslast(Event.start_time.asc()),
-        nullslast(Event.event_id.asc())
+      events_with_counts = self.order_events(
+        events_with_counts.join(
+          Event.user_events
+        ).group_by(
+          Event.event_id
+        )
       )
 
       is_any_tag_selected = False

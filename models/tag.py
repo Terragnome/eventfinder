@@ -4,7 +4,8 @@ from sqlalchemy.orm import relationship
 from .base import Base
 
 class Tag(Base):
-  FOOD_DRINK = "Food + Drink"
+  FOOD_DRINK = "FOOD + DRINK"
+  GEAR = "GEAR"
   TVM = "TV + MOVIES"
 
   __tablename__ = 'tags'
@@ -15,6 +16,14 @@ class Tag(Base):
   updated_at = Column(DateTime)
 
   events = relationship('Event', secondary='event_tags')
+
+  @classmethod
+  def types(klass):
+    return [
+      klass.TVM,
+      klass.FOOD_DRINK,
+      klass.GEAR,
+    ]
 
   @property
   def count(self):

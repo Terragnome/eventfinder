@@ -234,25 +234,24 @@ span{
 }
 
 .app_search{
-  background-color: var(--searchbar-color);
-  border: 0px;
-  border-radius: 20px;
-  height: 40px;
   margin: 20px 30px 10px 30px;
 }
 
 .app_search > .cap_button{
+  position: absolute;
+  right: 65px;
+  top: 0px;
+
+  display: inline-block;
   font-size: 14px;
   margin: 6px;
-  position: absolute;
-  right: 70px;
-  top: 0px;
 }
 .app_search > .cap_button::after {
   content: " ✖";
 }
 
 .app_search > .search_field{
+  position: relative;
   background-color: var(--searchbar-color);
   border-radius: 20px;
   color: black;
@@ -817,10 +816,7 @@ span{
 
 
 #scroll_top{
-  background-color: white;
-  background: url(/static/icons/svg/up.svg) no-repeat;
-  background-position: center;
-  background-size: auto 20px;
+  border: 0px;
   border-radius: 24px;
   bottom: 15px;
   cursor: pointer;
@@ -834,11 +830,6 @@ span{
   text-align: center;
   width: 48px;
   z-index: 10;
-}
-
-#scroll_top:hover{
-  background-color: var(--dark-color);
-  color: white;
 }
 
 .spinner {
@@ -986,25 +977,27 @@ span{
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+#app_panel{
+  text-align: left;
+}
+
+#user_panel{
+  text-align: right;
+}
+
 .app_panel_contents{
   margin: 20px 10px 30px 10px;
 }
 
-.app_panel_contents > .title {
-  color: black;
-  font-size: 20px;
-  margin: 0px auto 20px auto;
-}
-
 .app_panel_contents > a{
-  border-radius: 10px;
   display: block;
-  padding: 5px; 
+  padding: 5px 10px 5px 10px;
 }
 
 .app_panel_contents > a:hover{
   color: white;
   background-color: var(--link-color);
+  border-radius: 10px;
 }
 
 .user_profile_img{
@@ -1034,6 +1027,14 @@ span{
 }
 
 @media(max-width: 720px), (max-height: 320px){
+  #app_panel{
+    text-align: center;
+  }
+  
+  #app_panel{
+    text-align: center;
+  }
+
   .app_background{
     display: none;
   }
