@@ -53,7 +53,8 @@ TEMPLATE_MAIN = "main.html"
 TEMPLATE_BLOCKING     = "users/_blocking.html"
 TEMPLATE_FOLLOWERS    = "users/_followers.html"
 TEMPLATE_FOLLOWING    = "users/_following.html"
-TEMPLATE_EVENT        = "events/_event_page.html"
+TEMPLATE_EVENT_CARD   = "events/_event_card.html"
+TEMPLATE_EVENT_PAGE   = "events/_event_page.html"
 TEMPLATE_EVENTS       = "events/_events.html"
 TEMPLATE_EVENTS_LIST  = "events/_events_list.html"
 TEMPLATE_EXPLORE      = "events/_explore.html"
@@ -162,7 +163,7 @@ def logout():
 def shutdown_session(exception=None):
    db_session.remove()
 
-def _parse_chips(tags, event_cities):
+def _parse_chips(tags=None, event_cities=None):
   def _parse_chip(chips, **kwargs):
     is_selected = False
     for chip in chips:
@@ -178,8 +179,8 @@ def _parse_chips(tags, event_cities):
     return results
 
   return {
-    'tags': _parse_chip(tags, key="t", display_name="Type"),
-    'cities': _parse_chip(event_cities, key="cities", display_name="Cities")
+    'tags': _parse_chip(tags, key="t", display_name="Type") if tags else {'entries': [], 'selected': False},
+    'cities': _parse_chip(event_cities, key="cities", display_name="Cities") if event_cities else {'entries': [], 'selected': False}
   }
 
 def _render_events_list(
@@ -281,7 +282,7 @@ def event(event_id):
   event = EventController().get_event(event_id=event_id)
 
   if event:
-    template = TEMPLATE_EVENT
+    template = TEMPLATE_EVENT_PAGE
 
     vargs = {
       'event': event
@@ -312,10 +313,11 @@ def event_update(event_id):
   )
 
   if event:
-    template = TEMPLATE_EVENT
+    template = TEMPLATE_EVENT_CARD if is_card else TEMPALTE_EVENT_PAGE
 
     vargs = {
       'event': event,
+      'chips': _parse_chips(tags=[t.tag_name for t in event.tags]),
       'card': is_card
     }
 

@@ -17,7 +17,7 @@
   {% endif %}
 </script>
 
-<div id="event_{{ event.event_id }}" class='event_page box_outline event {{ event_selected_class }}'>
+<div id="event_{{ event.event_id }}" class='event event_page box_outline {{ event_selected_class }}'>
   <div class='clearfix event_header {{ "event_skip" if is_skip else ""}}'>  
     <div class='event_title'>{{ event.display_name }}</div>
     {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
