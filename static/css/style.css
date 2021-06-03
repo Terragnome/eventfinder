@@ -781,7 +781,7 @@ span{
   pointer-events: none;
   position: fixed;
   left: 50%;
-  margin-left: -15px;
+  margin-left: -35px;
   top: 50%;
   z-index: 100;
 }
@@ -1061,6 +1061,7 @@ span{
   }
 
   .event.event_page{
+    background: none;
     border-radius: 0px;
     box-shadow: none;
     margin: 5px auto 5px auto;
@@ -1069,7 +1070,7 @@ span{
   }
 
   .event_page > .event_img_wrapper{
-    background-color: white;
+    background: none;
     float: none;
     text-align: center;
   }

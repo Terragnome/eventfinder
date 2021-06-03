@@ -1,5 +1,5 @@
 {% set app_name="Ventful" %}
-{% set cachebreaker = 4 %}
+{% set cachebreaker = 5 %}
 
 <!doctype html>
 <head>
@@ -54,9 +54,7 @@
   </header>
   <section class="content">
     {% include "panels/_app_panel.html" %}
-    {% if session.user %}
-      {% include "panels/_user_panel.html" %}
-    {% endif %}
+    {% if session.user %}{% include "panels/_user_panel.html" %}{% endif %}
     <div id='main_spinner'></div>
     <div id='main'>
     	{% block content %}{% endblock %}
