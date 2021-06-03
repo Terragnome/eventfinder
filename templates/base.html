@@ -1,5 +1,5 @@
 {% set app_name="Ventful" %}
-{% set cachebreaker = 3 %}
+{% set cachebreaker = 4 %}
 
 <!doctype html>
 <head>
@@ -25,10 +25,7 @@
 </head>
 <title>{% block title %}{{ app_name }}{% endblock %}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-  <div>
-    <div class='app_background box_outline'>
-      <!-- <div class='app_background_inset box_outline'></div> -->
-    </div>
+  <div class='app_background'>
   </div>
   <div id='app_panel_overlay'>
     <a class='nav_link_get button_close' onclick="Application.overlayClose()">X</a>

@@ -3,7 +3,7 @@
 
 {% if events%}
   {% for event in events %}
-    <li id="event_card_{{ event.event_id }}" class='box_outline event_card'>
+    <li id="event_card_{{ event.event_id }}">
       {% with vargs=vargs, event=event, card=True %}
         {% include "events/_event_card.html"%}
       {% endwith %}

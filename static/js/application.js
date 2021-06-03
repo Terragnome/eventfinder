@@ -268,13 +268,16 @@ Application.setBackground = function(selector, url) {
 }
 
 Application.setAppBackground = function(url) {
-  if(url == null){
+  var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHi || 0);
+
+  if(url == null || vw < 720 || vh < 320){
     $('.app_header').css('background-color', '');  
+    Application.setBackground('.app_background', '');
   }else{
     $('.app_header').css('background-color', 'white');
+    Application.setBackground('.app_background', url);
   }
-  
-  Application.setBackground('.app_background', url);
 }
 
 Application.toggleVisibility = function(target){
