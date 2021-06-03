@@ -6,7 +6,7 @@
 
     {% for chip in chip_data.entries %}
         {% if chip.chip_name in event_tag_names %}
-            {% set callback=remove_url_params(remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}), clear="scroll")%}
+            {% set callback=remove_url_params(remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}), clear="scroll") %}
             <a
                 class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
                 href='{{callback}}'

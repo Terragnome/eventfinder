@@ -313,7 +313,7 @@ def event_update(event_id):
   )
 
   if event:
-    template = TEMPLATE_EVENT_CARD if is_card else TEMPALTE_EVENT_PAGE
+    template = TEMPLATE_EVENT_CARD if is_card else TEMPLATE_EVENT_PAGE
 
     vargs = {
       'event': event,

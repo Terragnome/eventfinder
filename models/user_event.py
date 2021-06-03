@@ -27,3 +27,7 @@ class UserEvent(Base):
   @property
   def is_skip(self):
     return self.interest == 0
+
+  @property
+  def is_selected(self):
+    return self.is_done or self.is_go or self.is_maybe or self.is_skip
