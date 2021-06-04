@@ -213,7 +213,7 @@ def _parse_chips(tags=None, cities=None, categories=None, selected_category=None
   interested_chips = []
   if show_interested:
     interested_chips = _parse_chip(
-      [{'chip_name': k, 'selected': k == interested} for k in UserEvent.interest_chip_names()],
+      [{'chip_name': k, 'selected': k in interested if interested else False} for k in UserEvent.interest_chip_names()],
       key='interested',
       display_name='Interest'
     )

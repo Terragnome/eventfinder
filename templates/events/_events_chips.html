@@ -29,7 +29,7 @@
       {% if chip.selected %}
         {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) %}
       {% else %}
-        {% if chip_data.key == 'interested' or chip_data.key == 'cities' %}
+        {% if chip_data.key == 'cities' %}
           {% set callback=add_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}) %}
         {% else %}
           {% set callback=add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}) %}
