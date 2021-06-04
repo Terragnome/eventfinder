@@ -63,7 +63,6 @@ class UserController:
       'last_name': primary_name['familyName'],
       'image_url': primary_photo['url'],
     }
-    #current_app.logger.info(user)
 
     row_user_auth = UserAuth.query.filter(
       and_(

@@ -56,7 +56,8 @@ param_to_kwarg = {
   'q': 'query',
   't': 'tag',
   'c': 'category',
-  'selected': 'selected'
+  'selected': 'selected',
+  'interested': 'interested'
 }
 
 TEMPLATE_MAIN = "main.html"
@@ -95,6 +96,13 @@ def get_oauth2_config(**keys):
       **keys
     )
   return flow
+
+def redirect_url(default='/'):
+  return (
+    request.args.get('next')
+    or request.referrer
+    or url_for(default)
+  )
 
 @app.route("/debug/", methods=['GET'])
 def debug():
@@ -483,8 +491,6 @@ def user(
   current_user_id = UserController().current_user_id
 
   user = UserController().get_user(identifier)
-
-  interested=None
 
   if user:
     events = []
