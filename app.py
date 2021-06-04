@@ -37,11 +37,11 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url(redis_url)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-app.config.update(
-  SESSION_COOKIE_SECURE=True,
-  SESSION_COOKIE_HTTPONLY=True,
-  SESSION_COOKIE_SAMESITE='Lax',
-)
+# app.config.update(
+#   SESSION_COOKIE_SECURE=True,
+#   SESSION_COOKIE_HTTPONLY=True,
+#   SESSION_COOKIE_SAMESITE='Lax',
+# )
 #TODO:
 # response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
 
@@ -102,7 +102,10 @@ def debug():
 
 @app.route("/oauth2callback/", methods=['GET'])
 def oauth2callback():
-  state = session['state']
+  if 'state' not in session:
+    return redirect('/')
+
+  state =  session['state']
 
   flow = get_oauth2_config(state=state)
   flow.redirect_uri = get_oauth2_callback()
