@@ -1,4 +1,4 @@
-{% set app_name="MichaelLin Guide" %}
+{% set app_name="[TBD]" %}
 {% set cachebreaker = 8 %}
 
 <!doctype html>
@@ -48,17 +48,14 @@
         </a>
       {% else %}
         <a class="right user_profile_img profile_img_placeholder" href="{{ url_for('login') }}"></a>
-        <a class="app_nav_link right" href="{{ url_for('login') }}">Sign In</a>
       {% endif %}
     </div>
   </header>
   <section class="content">
     {% include "panels/_app_panel.html" %}
     {% if session.user %}{% include "panels/_user_panel.html" %}{% endif %}
-    <div id='main_spinner'></div>
-    <div id='main'>
-    	{% block content %}{% endblock %}
-    </div>
+    <div id='main'>{% block content %}{% endblock %}</div>
+    <div id='main_spinner'>{% include "_spinner.html" %}</div>
     <div id='scroll_top' class='round_button box_outline'>{% include "icon/_up.html" %}</div>
   </section>
 </meta>

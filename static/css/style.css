@@ -146,8 +146,13 @@ span{
 }
 
 .app_header{
-  overflow: auto;
+  height: 50px;
   text-align: center;
+}
+
+.app_header > .app_title{
+  position: relative;
+  top: 15px;
 }
 
 .app_login{
@@ -312,14 +317,26 @@ span{
 
 .app_title{
   color: var(--link-color);
-  float: left;
   font-family: Rubik,sans-serif;
-  margin: 15px auto;
   text-decoration: none;
+}
+
+.shadow{
+  -webkit-filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.9));
+  filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.9));
+}
+
+.shadow_light{
+  -webkit-filter: drop-shadow( 2px 2px 3px rgba(255, 255, 255, 0.9));
+  filter: drop-shadow( 2px 2px 3px rgba(255, 255, 255, 0.9));
 }
 
 .box_outline{
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.box_outline_light{
+  border: 1px solid white;
 }
 
 .button_close{
@@ -331,6 +348,17 @@ span{
   right: 0px;
   top: 0px;
   z-index: 10;
+}
+
+.button_back{
+  color: white;
+  fill: white;
+}
+
+.button_back > svg{
+  width: 40px;
+  height: 40px;
+  margin: 5px;
 }
 
 .cap_button{
@@ -1022,6 +1050,16 @@ span{
   
   #app_panel{
     text-align: center;
+  }
+
+  #event_back_button.shadow{
+    -webkit-filter: none;
+    filter: none;
+  }
+
+  #event_back_button > svg{
+    color: black;
+    fill: black;
   }
 
   .app_background{

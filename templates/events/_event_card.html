@@ -6,23 +6,25 @@
 {% set is_selected = event.current_user_event and event.current_user_event.is_selected %}
 {% set event_selected_class = "" if is_me else "event_skip" if is_skip else "event_selected" if (is_selected) else "" %}
 
-<div id="event_{{ event.event_id }}" class='event event_card box_outline {{ event_selected_class }}'>
-  <a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">
-    {% if not is_skip %}
-      <div class='event_img_wrapper'>
-        {% if event.img_url %}
-          <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
-        {% endif %}
+<div id="event_{{ event.event_id }}" class='event_container'>
+  <div class='event event_card box_outline {{ event_selected_class }}'>
+    <a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">
+      {% if not is_skip or is_me %}
+        <div class='event_img_wrapper'>
+          {% if event.img_url %}
+            <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
+          {% endif %}
+        </div>
+      {% endif %}
+      <div class='event_header'>
+        {% if is_skip %}<div class='event_title'>{{ event.display_name }}</div>{% endif %}
+        {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
       </div>
-    {% endif %}
-    <div class='event_header'>
-      {% if is_skip %}<div class='event_title'>{{ event.display_name }}</div>{% endif %}
-      {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
+    </a>
+    <div class='event_body'>
+      {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
+      {% with event=event, card=card, vargs=vargs %}{% include "events/_event_choices.html" %}{% endwith %}
+      {% with event=event, card=card, vargs=vargs %}{% include "events/_event_users.html" %}{% endwith %}
     </div>
-  </a>
-  <div class='event_body'>
-    {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
-    {% with event=event, card=card, vargs=vargs %}{% include "events/_event_choices.html" %}{% endwith %}
-    {% with event=event, card=card, vargs=vargs %}{% include "events/_event_users.html" %}{% endwith %}
   </div>
 </div>

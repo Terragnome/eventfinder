@@ -188,7 +188,7 @@ class EventController:
   def get_events_for_user_by_interested(self, interested, query=None, user=None, categories=None, tags=None, cities=None, page=1, future_only=False):
     current_user = UserController().current_user
     if not user: user = current_user
-    selected_categories = set(categories.split(',') if tags else [])
+    selected_categories = set(categories.split(',') if categories else [])
     selected_tags = set(tags.split(',') if tags else [])
 
     results = []
@@ -196,12 +196,12 @@ class EventController:
     event_cities = []
     if user:
       user_events = UserEvent.query.filter(UserEvent.user_id == user.user_id)
-      if interested == 'done':
-        user_events = user_events.filter(UserEvent.interest >= 3)
+      if interested == UserEvent.DONE:
+        user_events = user_events.filter(UserEvent.interest >= UserEvent.interest_level(UserEvent.DONE))
       elif interested == 'interested':
-        user_events = user_events.filter(UserEvent.interest.in_([1,2]))
+        user_events = user_events.filter(UserEvent.interest.in_([UserEvent.interest_level(UserEvent.GO), UserEvent.interest_level(UserEvent.MAYBE)]))
       else:
-        user_events = user_events.filter(UserEvent.interest == 0)
+        user_events = user_events.filter(UserEvent.interest == UserEvent.interest_level(UserEvent.SKIP))
 
       user_events = user_events.all()
       user_events_by_event_id = { x.event_id: x for x in user_events }
@@ -240,7 +240,7 @@ class EventController:
       events_with_counts = self._filter_events(
         events_with_counts,
         query=query,
-        categories=categories,
+        categories=selected_categories,
         tags=selected_tags
       )
 

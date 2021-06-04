@@ -5,6 +5,11 @@ Application.init = function(params) {
   Application.url_auth = urls['auth'];
   Application.url_explore = urls['explore'];
 
+  
+  let main_spinner = $("#main_spinner");
+  Application.spinnerHtml = main_spinner.html();
+  main_spinner.html("");
+
   $(window).on('popstate', Application.backButton);
 
   $(document).ajaxStart(Application.onAjaxStart);
@@ -179,7 +184,7 @@ Application.getElem = function(target, url, pushState=true, replace=false, skipS
 
   if(spinner != false){
     let spinnerTarget = spinner == true ? target : spinner;
-    $(spinnerTarget).html("<div class='spinner'><div class='rect1'></div> <div class='rect2'></div> <div class='rect3'></div> <div class='rect4'></div></div>");
+    $(spinnerTarget).html(Application.spinnerHtml);
   }
 
   $.get(url, {

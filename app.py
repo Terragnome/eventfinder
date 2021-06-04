@@ -484,6 +484,8 @@ def user(
 
   user = UserController().get_user(identifier)
 
+  interested=None
+
   if user:
     events = []
     tags = []
