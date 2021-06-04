@@ -21,7 +21,24 @@ class EventController:
   PAGE_SIZE = 48
 
   @classmethod
-  def _filter_events_by_tags(klass, events, tags):
+  def _filter_events(klass, events, query=None, categories=None, tags=None):
+    if query: events = klass._filter_events_by_query(events, query)
+    if tags:  events = klass._filter_events_by_tags(events, categories, tags)
+    return events
+
+  @classmethod
+  def _filter_events_by_query(klass, events, query):
+    return events.filter(
+      or_(
+        Event.name.ilike("%{}%".format(query)),
+        Event.description.ilike("%{}%".format(query)),
+        Event.venue_name.ilike("%{}%".format(query)),
+        Event.city.ilike("%{}%".format(query))
+      )
+    )
+
+  @classmethod
+  def _filter_events_by_tags(klass, events, categories, tags):
     event_matches = alias(
       db_session.query(
         EventTag.event_id.label('event_id'),
@@ -30,7 +47,10 @@ class EventController:
         Tag,
         Tag.tag_id == EventTag.tag_id
       ).filter(
-        Tag.tag_name.in_(tags)
+        or_(
+          Tag.tag_name.in_(tags),
+          Tag.tag_type.in_(categories)
+        )
       ).group_by(
         EventTag.event_id
       ),
@@ -45,7 +65,7 @@ class EventController:
     )
 
   @classmethod
-  def order_events(klass, query):
+  def _order_events(klass, query):
     return query.order_by(
       nullslast(desc('ct')),
       nullslast(Event.end_time.desc()),
@@ -80,9 +100,10 @@ class EventController:
 
     return event
 
-  def get_events(self, user=None, query=None, tag=None, cities=None, page=1, future_only=False):
+  def get_events(self, user=None, query=None, categories=None, tags=None, cities=None, page=1, future_only=False):
     user = UserController().current_user
-    selected_tags = tag.split(',') if tag else []
+    selected_categories = set(categories.split(',') if categories else [])
+    selected_tags = set(tags.split(',') if tags else [])
 
     event_scores = alias(
       db_session.query(
@@ -106,18 +127,12 @@ class EventController:
       Event.event_id == event_scores.c.event_id
     )
 
-    if query:
-      events_with_count_query = events_with_count_query.filter(
-        or_(
-          Event.name.ilike("%{}%".format(query)),
-          Event.description.ilike("%{}%".format(query)),
-          Event.venue_name.ilike("%{}%".format(query)),
-          Event.city.ilike("%{}%".format(query))
-        )
-      )
-
-    if selected_tags:
-      events_with_count_query = self._filter_events_by_tags(events_with_count_query, selected_tags)
+    events_with_count_query = self._filter_events(
+      events_with_count_query,
+      query=query,
+      categories=selected_categories,
+      tags=selected_tags
+    )
 
     if user:
       user_events = user.user_events
@@ -155,7 +170,7 @@ class EventController:
       for city in event_cities:
         city['selected'] = city['chip_name'] in cities
 
-    events_with_count_query = self.order_events(events_with_count_query)
+    events_with_count_query = self._order_events(events_with_count_query)
 
     events_with_count_query = events_with_count_query.limit(
       self.PAGE_SIZE
@@ -179,10 +194,11 @@ class EventController:
 
     return (results, sections, tags, event_cities)
 
-  def get_events_for_user_by_interested(self, interested, query=None, user=None, tag=None, cities=None, page=1, future_only=False):
+  def get_events_for_user_by_interested(self, interested, query=None, user=None, categories=None, tags=None, cities=None, page=1, future_only=False):
     current_user = UserController().current_user
     if not user: user = current_user
-    selected_tags = tag.split(',') if tag else []
+    selected_categories = set(categories.split(',') if tags else [])
+    selected_tags = set(tags.split(',') if tags else [])
 
     results = []
     tags = []
@@ -230,20 +246,14 @@ class EventController:
             Event.event_id.in_(user_events_by_event_id.keys())
         )        
 
-      if query:
-        events_with_counts = events_with_counts.filter(
-          or_(
-            Event.name.ilike("%{}%".format(query)),
-            Event.description.ilike("%{}%".format(query)),
-            Event.venue_name.ilike("%{}%".format(query)),
-            Event.city.ilike("%{}%".format(query))
-          )
-        )
+      events_with_counts = self._filter_events(
+        events_with_counts,
+        query=query,
+        categories=categories,
+        tags=selected_tags
+      )
 
-      if selected_tags:
-        events_with_counts = self._filter_events_by_tags(events_with_counts, selected_tags)
-
-      events_with_counts = self.order_events(
+      events_with_counts = self._order_events(
         events_with_counts.join(
           Event.user_events
         ).group_by(
@@ -375,7 +385,7 @@ class EventController:
       } for tag in tag_query if tag[1]>0
     ]
 
-  def update_event(self, event_id, interest):
+  def update_event(self, event_id, interest_key):
     user_id = UserController().current_user_id
     if user_id:
       user_event = UserEvent.query.filter(
@@ -386,13 +396,21 @@ class EventController:
       ).first()
 
       if user_event:
-        user_event.interest=interest
+        if interest_key == UserEvent.DONE:
+          if user_event.interest_key == interest_key:
+            user_event.interest = user_event.interest-2
+          else:
+            user_event.interest = user_event.interest+2
+        elif user_event.interest_key == interest_key:
+          user_event.interest = None
+        else:
+          user_event.interest = UserEvent.interest_level(interest_key)
         db_session.merge(user_event)
       else:
         user_event = UserEvent(
           user_id=user_id,
           event_id=event_id,
-          interest=interest
+          interest=UserEvent.interest_level(interest_key)
         )
         db_session.add(user_event)
       db_session.commit()

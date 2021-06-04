@@ -74,14 +74,15 @@ def remove_url_params(url, remove=None, clear=None):
   if remove:
     for k,v in remove.items():
       v_set = set(v.split(','))
-      url_params_dict_v = url_params_dict[k]
-      if url_params_dict_v.__class__ is not set:
-        url_params_dict_v = set(url_params_dict_v.split(','))
-      new_url_params = url_params_dict_v.difference(v_set)
-      if not new_url_params:
-        del url_params_dict[k]
-      else:
-        url_params_dict[k] = new_url_params
+      if k in url_params_dict:
+        url_params_dict_v = url_params_dict[k]
+        if url_params_dict_v.__class__ is not set:
+          url_params_dict_v = set(url_params_dict_v.split(','))
+        new_url_params = url_params_dict_v.difference(v_set)
+        if not new_url_params:
+          del url_params_dict[k]
+        else:
+          url_params_dict[k] = new_url_params
 
   url_params = []
   for k,v in url_params_dict.items():

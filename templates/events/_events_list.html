@@ -1,17 +1,12 @@
-{% set is_me=is_me or (vargs.is_me if vargs else None) %}
 {% set events=events or (vargs.events if vargs else None) %}
 
 {% if events%}
   {% for event in events %}
     <li id="event_card_{{ event.event_id }}">
-      {% with vargs=vargs, event=event, card=True %}
-        {% include "events/_event_card.html"%}
-      {% endwith %}
+      {% with vargs=vargs, event=event, card=True %}{% include "events/_event_card.html"%}{% endwith %}
     </li>
   {% endfor %}
-  {% with vargs=vargs %}
-    {% include "events/_events_pagination.html" %}
-  {% endwith %}
+  {% with vargs=vargs %}{% include "events/_events_pagination.html" %}{% endwith %}
 {% else %}
   {% include "_empty.html" %}
 {% endif %}

@@ -42,15 +42,24 @@ class Event(Base):
   def init_on_load(self):
     pass
 
-  def tag_names(self):
-    return [t.tag_name for t in self.tags]
+  @property
+  def tag_types(self):
+    return set(t.tag_type for t in self.tags)
 
-  def add_tag(self, tag_name):
-    row_tag = Tag.query.filter(Tag.tag_name == tag_name).first()
+  @property
+  def tag_names(self):
+    return set(t.tag_name for t in self.tags)
+
+  def add_tag(self, tag_name, tag_type):
+    row_tag = Tag.query.filter(
+      Tag.tag_name == tag_name,
+      Tag.tag_type == tag_type
+    ).first()
 
     if not row_tag:
       row_tag = Tag(
-        tag_name = tag_name
+        tag_name = tag_name,
+        tag_type = tag_type
       )
       db_session.add(row_tag)
       db_session.commit()

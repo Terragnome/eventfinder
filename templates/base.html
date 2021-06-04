@@ -1,4 +1,4 @@
-{% set app_name="Ventful" %}
+{% set app_name="MichaelLin Guide" %}
 {% set cachebreaker = 7 %}
 
 <!doctype html>
@@ -47,7 +47,7 @@
           {% endif %}
         </a>
       {% else %}
-        <a class="right user_profile_img_placeholder" href="{{ url_for('login') }}"></a>
+        <a class="right user_profile_img profile_img_placeholder" href="{{ url_for('login') }}"></a>
         <a class="app_nav_link right" href="{{ url_for('login') }}">Sign In</a>
       {% endif %}
     </div>

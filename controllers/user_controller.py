@@ -32,14 +32,12 @@ class UserController:
 
   def _request_user_info(self):
     credentials = google.oauth2.credentials.Credentials(**session['credentials'])
-    #current_app.logger.info(session['credentials'])
 
     people_service = build('people', 'v1', credentials=credentials)
     profile = people_service.people().get(
       resourceName='people/me',
       personFields='names,emailAddresses,photos'
     ).execute()
-    #current_app.logger.info(profile)
 
     primary_email = profile['emailAddresses'][0]
     for cur_email in profile['emailAddresses']:

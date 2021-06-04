@@ -1,24 +1,33 @@
+{% set card=card or (vargs.card if vargs else None) %}
+
 <div class='event_tags'>
 {% if card %}
-    {% set event_tag_names = event.tag_names() %}
-    {% set chips=chips or (vargs.chips if vargs else None) %}
-    {% set chip_data=chips['tags'] %}
+  {% set chips=chips or (vargs.chips if vargs else None) %}
+  {% set chip_types=[chips['categories'], chips['tags']] %}
 
+  {% for chip_data in chip_types %}
     {% for chip in chip_data.entries %}
-        {% if chip.chip_name in event_tag_names %}
-            {% set callback=remove_url_params(remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}), clear=["scroll","p"]) %}
-            <a
-                class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
-                href='{{callback}}'
-            >
-                {{ chip.chip_name }}
-            </a>
-        {% endif %}
+      {% if chip.chip_name in event.tag_names or chip.chip_name in event.tag_types %}
+        {% set callback=remove_url_params(
+          remove_url_params(
+            request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}), clear=["scroll","p"]) %}
+        <a
+          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
+          href='{{callback}}'
+        >
+          {{ chip.chip_name }}
+        </a>
+      {% endif %}
     {% endfor %}
+  {% endfor %}
 {% else %}
-    {% for tag in event.tags %}
-        {% set callback=url_for('events', selected=t, t=tag.tag_name) %}
-        <a class='cap_button nav_link_get' href='{{callback}}' >{{ tag.tag_name }}</a>
-    {% endfor %}
+  {% for tag_name in event.tag_types %}
+    {% set callback=url_for('events', selected='c', c=tag_name) %}
+    <a class='cap_button nav_link_get' href='{{callback}}' >{{ tag_name }}</a>
+  {% endfor %}
+  {% for tag_name in event.tag_names %}
+    {% set callback=url_for('events', selected='t', t=tag_name) %}
+    <a class='cap_button nav_link_get' href='{{callback}}' >{{ tag_name }}</a>
+  {% endfor %}
 {% endif %}
 </div>

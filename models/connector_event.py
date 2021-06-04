@@ -20,6 +20,10 @@ class ConnectorEvent(Base):
 
   event = relationship('Event', uselist=False)
 
+  @property
+  def type(self):
+    return self.CONNECTOR_TYPE
+
   @classmethod
   def all(klass):
     return ConnectorEvent.query.filter(ConnectorEvent.connector_type == klass.CONNECTOR_TYPE)
@@ -27,7 +31,7 @@ class ConnectorEvent(Base):
   @classmethod
   def purge_events(klass):
     if klass.CONNECTOR_TYPE is None:
-      current_app.logger.error("Must define CONNECTOR_TYPE")
+      current_app.logger.error("CONNECTOR_TYPE has not been set")
       return
 
     event_ids = [int(e.event_id) for e in klass.all()]

@@ -158,7 +158,7 @@ span{
 }
 
 .app_login > .app_nav_link{
-  margin: 6px 5px 0 5px;
+  margin: 9px 5px 0 5px;
 }
 
 .app_menu{
@@ -167,7 +167,7 @@ span{
   background-size: auto 48px;
   background-repeat: no-repeat;
 
-  margin: 2px 0 0 5px;
+  margin: 0 0 0 5px;
 
   height: 48px;
   width: 48px;
@@ -189,7 +189,7 @@ span{
   color: var(--link-color);
   float: left;
   font-family: Rubik,sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   margin: 18px 10px 0 0;
 }
 
@@ -314,8 +314,7 @@ span{
   color: var(--link-color);
   float: left;
   font-family: Rubik,sans-serif;
-  font-size: 18px;
-  margin: 12px auto;
+  margin: 15px auto;
   text-decoration: none;
 }
 
@@ -350,7 +349,8 @@ span{
   color: white;
 }
 
-.cap_button.highlighted, .cap_button.selected.highlighted{
+.cap_button.highlighted,
+.cap_button.selected.highlighted{
   background-color: var(--dark-color);
   border-color: var(--dark-color);
   color: white;
@@ -465,7 +465,7 @@ span{
   margin: 20px 0 0 0;
 }
 
-.event_card.event.event_selected{
+/*.event_card.event.event_selected{
   background-color: var(--darkest-color);
   color: white;
 }
@@ -492,7 +492,7 @@ span{
 
 .event_card.event_selected > .nav_link_get > .event_header > .event_title{
   color: white;
-}
+}*/
 
 .event_choice{
   margin: 0 4px 0 4px;
@@ -545,6 +545,12 @@ span{
 }
 .event_chips > .cap_button.cap_group.selected::after { 
   content: " ▼";
+}
+
+.event_chips > .cap_button.cap_group.highlighted::after
+.event_chips > .cap_button.cap_group.selected.highlighted::after,
+{
+  content: " ▲";
 }
 
 .event_collapse{
@@ -802,19 +808,6 @@ span{
   width: 18px;
 }
 
-/*.round_button > svg.icon_ex{
-}
-
-.round_button > svg.icon_heart{
-}
-
-.round_button > svg.icon_star{
-}
-
-.round_button > svg.icon_plus{
-}*/
-
-
 #scroll_top{
   border: 0px;
   border-radius: 24px;
@@ -1002,20 +995,16 @@ span{
 
 .user_profile_img{
   border-radius: 20px;
-  height: 40px;
-  width: 40px;
+  height: 38px;
+  width: 38px;
 }
 
-.user_profile_img_placeholder{
+.profile_img_placeholder{
   background: url(/static/icons/svg/user.svg) no-repeat;
   background-color: var(--neutral-color);
   background-position: center center;
-  background-size: auto 22px;
+  background-size: auto 20px;
   background-repeat: no-repeat;
-  
-  border-radius: 20px;
-  height: 40px;
-  width: 40px;
 }
 
 .user_profile_mini_img{

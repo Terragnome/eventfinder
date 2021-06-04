@@ -22,6 +22,7 @@ from models.base import db_session
 from models.block import Block
 from models.follow import Follow
 from models.tag import Tag
+from models.user_event import UserEvent
 from utils.config_utils import load_config
 from utils.get_from import get_from
 
@@ -36,6 +37,14 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url(redis_url)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
+app.config.update(
+  SESSION_COOKIE_SECURE=True,
+  SESSION_COOKIE_HTTPONLY=True,
+  SESSION_COOKIE_SAMESITE='Lax',
+)
+#TODO:
+# response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
+
 app.jinja_env.globals.update(add_url_params=add_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
 app.jinja_env.globals.update(remove_url_params=remove_url_params)
@@ -46,6 +55,7 @@ param_to_kwarg = {
   'p': 'page',
   'q': 'query',
   't': 'tag',
+  'c': 'category',
   'selected': 'selected'
 }
 
@@ -163,7 +173,7 @@ def logout():
 def shutdown_session(exception=None):
    db_session.remove()
 
-def _parse_chips(tags=None, event_cities=None):
+def _parse_chips(tags=None, cities=None, categories=None, selected_category=None):
   def _parse_chip(chips, **kwargs):
     is_selected = False
     for chip in chips:
@@ -178,9 +188,21 @@ def _parse_chips(tags=None, event_cities=None):
     results.update(**kwargs)
     return results
 
+  default = {'entries': [], 'selected': False}
+  
+  if not categories:
+    categories = Tag.types_with_counts()
+
+  if selected_category:
+    for c in categories:
+      if c['chip_name'] == selected_category:
+        c['selected'] = True
+        break;
+
   return {
-    'tags': _parse_chip(tags, key="t", display_name="Type") if tags else {'entries': [], 'selected': False},
-    'cities': _parse_chip(event_cities, key="cities", display_name="Cities") if event_cities else {'entries': [], 'selected': False}
+    'categories': _parse_chip(categories, key="c", display_name="Categories"),
+    'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
+    'cities': _parse_chip(cities, key="cities", display_name="Cities") if cities else default
   }
 
 def _render_events_list(
@@ -297,27 +319,39 @@ def event(event_id):
 @oauth2_required
 def event_update(event_id):
   is_card = request.form.get('card') == 'true'
-  go_value = request.form.get('go')
+  choice = request.form.get('choice')
 
-  if go_value in ('4', '3','2','1','0'):
-    interest = str(go_value)
+  if choice in UserEvent.interest_keys():
+    interest_key = choice
   else:
-    interest = None
+    interest_key = None
 
   callback = request.form.get('cb')
   if callback == "/": callback = 'events'
 
   event = EventController().update_event(
     event_id=event_id,
-    interest=interest
+    interest_key=interest_key
   )
 
   if event:
     template = TEMPLATE_EVENT_CARD if is_card else TEMPLATE_EVENT_PAGE
 
+    categories_set = set()
+    tag_chips = []
+    for t in event.tags:
+      categories_set.add(t.tag_type)
+      tag_chips.append({'chip_name': t.tag_name})
+    category_chips = [{'chip_name': c} for c in categories_set]
+
+    chips = _parse_chips(
+      categories=category_chips,
+      tags=tag_chips
+    )
+
     vargs = {
       'event': event,
-      'chips': _parse_chips(tags=[t.tag_name for t in event.tags]),
+      'chips': chips,
       'card': is_card
     }
 
@@ -333,7 +367,7 @@ def event_update(event_id):
 @parse_url_params
 @paginated
 def events(
-  query=None, tag=None, cities=None,
+  query=None, category=None, tag=None, cities=None,
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected=None
 ):
@@ -342,7 +376,8 @@ def events(
 
   events, sections, tags, event_cities = EventController().get_events(
     query=query,
-    tag=tag,
+    categories=category,
+    tags=tag,
     cities=cities,
     page=page
   )
@@ -355,11 +390,17 @@ def events(
     }
     section['section_url'] = parse_url_for('events', **kwargs)
 
+  chips = _parse_chips(
+    selected_category = category,
+    tags=tags,
+    cities=event_cities
+  )
+
   vargs = {
     'events': events,
     'sections': sections,
     'selected': selected,
-    'chips': _parse_chips(tags, event_cities),
+    'chips': chips,
     'page': page,
     'next_page_url': next_page_url,
     'prev_page_url': prev_page_url,
@@ -440,7 +481,7 @@ def history(**kwargs):
 def user(
   identifier,
   interested='interested',
-  query=None, tag=None, cities=None,
+  query=None, category=None, tag=None, cities=None,
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected = None
 ):
@@ -458,7 +499,8 @@ def user(
       events, sections, tags, event_cities = EventController().get_events_for_user_by_interested(
         user=user,
         query=query,
-        tag=tag,
+        categories=category,
+        tags=tag,
         cities=cities,
         interested=interested,
         page=page
@@ -474,12 +516,18 @@ def user(
         if section['section_name'] == Tag.TVM: del kwargs['cities']
         section['section_url'] = parse_url_for('user', **kwargs)
 
+    chips = _parse_chips(
+      selected_category=category,
+      tags=tags,
+      cities=event_cities
+    )
+
     vargs = {
       'is_me': user == current_user,
       'current_user': current_user,
       'events': events,
       'sections': sections,
-      'chips': _parse_chips(tags, event_cities),
+      'chips': chips,
       'page': page,
       'next_page_url': next_page_url,
       'prev_page_url': prev_page_url

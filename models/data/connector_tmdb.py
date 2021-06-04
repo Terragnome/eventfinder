@@ -206,9 +206,8 @@ class ConnectorTMDB(ConnectorEvent):
           db_session.merge(row_connector_event)
           db_session.commit()
 
-        row_event.add_tag(Tag.TVM)
         for genre in genres:
-          row_event.add_tag(genre)
+          row_event.add_tag(genre, Tag.TVM)
 
         db_session.merge(row_event)
         db_session.commit()
