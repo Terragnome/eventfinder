@@ -19,7 +19,9 @@ depends_on = None
 def upgrade():
     op.drop_index('tags_by_name')
     op.create_index('tags_by_name', 'tags', ['tag_name', 'tag_type'])
+    op.create_index('tags_by_all', 'tags', ['tag_id', 'tag_name', 'tag_type'])
 
 def downgrade():
+    op.drop_index('tags_by_all')
     op.drop_index('tags_by_name')
     op.create_index('tags_by_name', 'tags', ['tag_name'])

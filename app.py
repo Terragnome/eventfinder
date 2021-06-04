@@ -374,21 +374,13 @@ def events(
   if tag == Tag.TVM:
     cities = None
 
-  events, sections, tags, event_cities = EventController().get_events(
+  events, tags, event_cities = EventController().get_events(
     query=query,
     categories=category,
     tags=tag,
     cities=cities,
     page=page
   )
-
-  for section in sections:
-    kwargs = {
-      'query': query,
-      'cities': cities,
-      'tag': section['section_name']
-    }
-    section['section_url'] = parse_url_for('events', **kwargs)
 
   chips = _parse_chips(
     selected_category = category,
@@ -398,7 +390,6 @@ def events(
 
   vargs = {
     'events': events,
-    'sections': sections,
     'selected': selected,
     'chips': chips,
     'page': page,
@@ -492,11 +483,10 @@ def user(
 
   if user:
     events = []
-    sections = []
     tags = []
     event_cities = []
     if not Block.blocks(user.user_id, current_user_id):
-      events, sections, tags, event_cities = EventController().get_events_for_user_by_interested(
+      events, tags, event_cities = EventController().get_events_for_user_by_interested(
         user=user,
         query=query,
         categories=category,
@@ -505,16 +495,6 @@ def user(
         interested=interested,
         page=page
       )
-      for section in sections:
-        kwargs = {
-          'identifier': identifier,
-          'query': query,
-          'cities': cities,
-          'tag': section['section_name']
-        }
-
-        if section['section_name'] == Tag.TVM: del kwargs['cities']
-        section['section_url'] = parse_url_for('user', **kwargs)
 
     chips = _parse_chips(
       selected_category=category,
@@ -526,7 +506,6 @@ def user(
       'is_me': user == current_user,
       'current_user': current_user,
       'events': events,
-      'sections': sections,
       'chips': chips,
       'page': page,
       'next_page_url': next_page_url,

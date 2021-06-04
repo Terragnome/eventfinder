@@ -4,10 +4,11 @@
 {% if card %}
   {% set chips=chips or (vargs.chips if vargs else None) %}
   {% set chip_types=[chips['categories'], chips['tags']] %}
+  {% set event_chip_names=event.chip_names() %}
 
   {% for chip_data in chip_types %}
     {% for chip in chip_data.entries %}
-      {% if chip.chip_name in event.tag_names or chip.chip_name in event.tag_types %}
+      {% if chip.chip_name in event_chip_names %}
         {% set callback=remove_url_params(
           remove_url_params(
             request.url, remove={chip_data.key: chip.chip_name}) if chip.selected else add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}), clear=["scroll","p"]) %}
@@ -21,11 +22,11 @@
     {% endfor %}
   {% endfor %}
 {% else %}
-  {% for tag_name in event.tag_types %}
+  {% for tag_name in event.category_names() %}
     {% set callback=url_for('events', selected='c', c=tag_name) %}
     <a class='cap_button nav_link_get' href='{{callback}}' >{{ tag_name }}</a>
   {% endfor %}
-  {% for tag_name in event.tag_names %}
+  {% for tag_name in event.tag_names() %}
     {% set callback=url_for('events', selected='t', t=tag_name) %}
     <a class='cap_button nav_link_get' href='{{callback}}' >{{ tag_name }}</a>
   {% endfor %}

@@ -42,11 +42,12 @@ class Event(Base):
   def init_on_load(self):
     pass
 
-  @property
-  def tag_types(self):
+  def chip_names(self):
+    return self.category_names() | self.tag_names()
+
+  def category_names(self):
     return set(t.tag_type for t in self.tags)
 
-  @property
   def tag_names(self):
     return set(t.tag_name for t in self.tags)
 

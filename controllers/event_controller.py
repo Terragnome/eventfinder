@@ -42,7 +42,7 @@ class EventController:
     event_matches = alias(
       db_session.query(
         EventTag.event_id.label('event_id'),
-        func.count(distinct(Tag.tag_id)).label('tag_count')
+        func.count(distinct(Tag.tag_id)).label('ct')
       ).join(
         Tag,
         Tag.tag_id == EventTag.tag_id
@@ -61,7 +61,7 @@ class EventController:
       event_matches,
       Event.event_id == event_matches.c.event_id
     ).filter(
-      event_matches.c.tag_count>=len(tags)
+      event_matches.c.ct>=len(tags)
     )
 
   @classmethod
@@ -183,16 +183,7 @@ class EventController:
       event.interested_user_count = user_count
       results.append(event)
 
-    sections = []
-    if not is_any_tag_selected:
-      for event_tag in tags:
-        chip_name = event_tag['chip_name']
-        # sections.append({
-        #   'section_name': chip_name,
-        #   'section_key': chip_name.lower().replace(" ", "_"),
-        # })
-
-    return (results, sections, tags, event_cities)
+    return (results, tags, event_cities)
 
   def get_events_for_user_by_interested(self, interested, query=None, user=None, categories=None, tags=None, cities=None, page=1, future_only=False):
     current_user = UserController().current_user
@@ -292,15 +283,7 @@ class EventController:
         event.interested_user_count = user_event_count
         results.append(event)
 
-    sections = []
-    if not is_any_tag_selected:
-      for event_tag in tags:
-        chip_name = event_tag['chip_name']
-        # sections.append({
-        #   'section_name': chip_name,
-        #   'section_key': chip_name.lower().replace(" ", "_"),
-        # })
-    return (results, sections, tags, event_cities)
+    return (results, tags, event_cities)
 
   # TODO: Make this operate off the query for performance
   def get_cities_for_events(self, events=None, limit=10, future_only=False):
