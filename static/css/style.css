@@ -384,6 +384,17 @@ span{
   color: white;
 }
 
+.cap_button.cap_group.selected{
+  background-color: var(--dark-color);
+  border-color: var(--dark-color);  
+  color: white;
+}
+.cap_button.cap_group.highlighted{
+  background-color: var(--link-color);
+  border-color: var(--link-color);
+  color: white; 
+}
+
 .cap_button:hover{
   background-color: var(--link-color);
   border-color: var(--link-color);

@@ -1,8 +1,8 @@
-<script>
-  Application.setAppBackground(null);
-</script>
-
 <div class='app_page'>
+  <script>
+    Application.setAppBackground(null);
+  </script>
+
   {% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
   {% with vargs=vargs %}{% include "events/_events_chips.html" %}{% endwith %}
 

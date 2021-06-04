@@ -184,7 +184,7 @@ def logout():
 def shutdown_session(exception=None):
    db_session.remove()
 
-def _parse_chips(tags=None, cities=None, categories=None, selected_category=None):
+def _parse_chips(tags=None, cities=None, categories=None, selected_category=None, interested=None, show_interested=False):
   def _parse_chip(chips, **kwargs):
     is_selected = False
     for chip in chips:
@@ -210,10 +210,19 @@ def _parse_chips(tags=None, cities=None, categories=None, selected_category=None
         c['selected'] = True
         break;
 
+  interested_chips = []
+  if show_interested:
+    interested_chips = _parse_chip(
+      [{'chip_name': k, 'selected': k == interested} for k in UserEvent.interest_chip_names()],
+      key='interested',
+      display_name='Interest'
+    )
+
   return {
     'categories': _parse_chip(categories, key="c", display_name="Categories"),
     'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
-    'cities': _parse_chip(cities, key="cities", display_name="Cities") if cities else default
+    'cities': _parse_chip(cities, key="cities", display_name="Cities") if cities else default,
+    'interested': interested_chips
   }
 
 def _render_events_list(
@@ -465,24 +474,24 @@ def saved(**kwargs):
   })
   return user(**kwargs)
 
-@app.route("/history/", methods=['GET'])
-@oauth2_required
-@parse_url_params
-@paginated
-def history(**kwargs):
-  current_user = UserController().current_user
-  kwargs.update({
-    'identifier': current_user.username,
-    'interested': 'done'
-  })
-  return user(**kwargs)
+# @app.route("/history/", methods=['GET'])
+# @oauth2_required
+# @parse_url_params
+# @paginated
+# def history(**kwargs):
+#   current_user = UserController().current_user
+#   kwargs.update({
+#     'identifier': current_user.username,
+#     'interested': 'done'
+#   })
+#   return user(**kwargs)
 
 @app.route("/user/<identifier>/", methods=['GET'])
 @parse_url_params
 @paginated
 def user(
   identifier,
-  interested='interested',
+  interested=None,
   query=None, category=None, tag=None, cities=None,
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected = None
@@ -510,13 +519,16 @@ def user(
     chips = _parse_chips(
       selected_category=category,
       tags=tags,
-      cities=event_cities
+      cities=event_cities,
+      interested=interested,
+      show_interested=True
     )
 
     vargs = {
       'is_me': user == current_user,
       'current_user': current_user,
       'events': events,
+      'selected': selected,
       'chips': chips,
       'page': page,
       'next_page_url': next_page_url,

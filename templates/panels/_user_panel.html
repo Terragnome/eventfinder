@@ -1,7 +1,6 @@
 <div id='user_panel' class="app_panel">
     <div class='app_panel_contents'>
-        <a class="col nav_link_get" href="{{ url_for('saved') }}">Saved</a>
-        <a class="col nav_link_get" href="{{ url_for('history') }}">History</a>
+        <a class="col nav_link_get" href="{{ url_for('saved', selected='t', interested='interested') }}">Saved</a>
         <a class='col nav_link_get' href="{{ url_for('following') }}">Following</a>
         <a class='col nav_link_get' href="{{ url_for('followers') }}">Followers</a>
         <a class='col nav_link_get' href="{{ url_for('blocking') }}">Blocking</a>

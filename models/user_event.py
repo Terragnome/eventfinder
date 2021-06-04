@@ -5,10 +5,11 @@ from .base import Base
 
 class UserEvent(Base):
   DONE = "done"
-
   GO = "go"
   MAYBE = "maybe"
   SKIP = "skip"
+
+  INTERESTED = "interested" # Go and Maybe
 
   INTEREST_KEYS = {
     DONE: 3,
@@ -31,6 +32,14 @@ class UserEvent(Base):
       klass.DONE,
       klass.GO,
       klass.MAYBE,
+      klass.SKIP
+    ]
+
+  @classmethod
+  def interest_chip_names(klass):
+    return [
+      klass.DONE,
+      klass.INTERESTED,
       klass.SKIP
     ]
 

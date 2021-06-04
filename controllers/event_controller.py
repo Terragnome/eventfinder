@@ -198,10 +198,12 @@ class EventController:
       user_events = UserEvent.query.filter(UserEvent.user_id == user.user_id)
       if interested == UserEvent.DONE:
         user_events = user_events.filter(UserEvent.interest >= UserEvent.interest_level(UserEvent.DONE))
-      elif interested == 'interested':
+      elif interested == UserEvent.INTERESTED:
         user_events = user_events.filter(UserEvent.interest.in_([UserEvent.interest_level(UserEvent.GO), UserEvent.interest_level(UserEvent.MAYBE)]))
-      else:
+      elif interested == UserEvent.SKIP:
         user_events = user_events.filter(UserEvent.interest == UserEvent.interest_level(UserEvent.SKIP))
+      else:
+        user_events = user_events
 
       user_events = user_events.all()
       user_events_by_event_id = { x.event_id: x for x in user_events }
