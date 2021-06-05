@@ -474,18 +474,6 @@ def saved(**kwargs):
   })
   return user(**kwargs)
 
-# @app.route("/history/", methods=['GET'])
-# @oauth2_required
-# @parse_url_params
-# @paginated
-# def history(**kwargs):
-#   current_user = UserController().current_user
-#   kwargs.update({
-#     'identifier': current_user.username,
-#     'interested': 'done'
-#   })
-#   return user(**kwargs)
-
 @app.route("/user/<identifier>/", methods=['GET'])
 @parse_url_params
 @paginated

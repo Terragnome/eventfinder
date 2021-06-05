@@ -5,11 +5,6 @@ Application.init = function(params) {
   Application.url_auth = urls['auth'];
   Application.url_explore = urls['explore'];
 
-  
-  let main_spinner = $("#main_spinner");
-  Application.spinnerHtml = main_spinner.html();
-  main_spinner.html("");
-
   $(window).on('popstate', Application.backButton);
 
   $(document).ajaxStart(Application.onAjaxStart);
@@ -21,7 +16,10 @@ Application.onReady = function(){
   AppPanel.init();
   UserPanel.init();
   Scroll.init();
+  Spinner.init();
   Application.onAjaxComplete();
+
+  $('a.back_button').click(Application.backButton);
 }
 
 Application.onAjaxStart = function(){

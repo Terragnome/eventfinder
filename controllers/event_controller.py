@@ -91,8 +91,8 @@ class EventController:
     user_event_count = UserEvent.query.filter(
       and_(
         UserEvent.event_id==event_id,
-        UserEvent.interest>0,
-        UserEvent.interest<=4
+        UserEvent.interest>UserEvent.interest_level(UserEvent.SKIP),
+        UserEvent.interest<=(UserEvent.interest_level(UserEvent.DONE)+1) #TODO
       )
     ).count()
 
@@ -201,7 +201,7 @@ class EventController:
         filter_conditions = []
         if UserEvent.DONE in interested:
           #TODO: Handle multiple values for DONE better
-          filter_conditions.extend([UserEvent.interest_level(UserEvent.DONE), UserEvent.interest_level(UserEvent.DONE)+1])
+          filter_conditions.extend([UserEvent.interest_level(UserEvent.DONE), UserEvent.interest_level(UserEvent.DONE)+1]) #TODO
         if UserEvent.INTERESTED in interested:
           filter_conditions.extend([UserEvent.interest_level(UserEvent.GO), UserEvent.interest_level(UserEvent.MAYBE)])
         if UserEvent.SKIP in interested:

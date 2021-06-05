@@ -14,10 +14,7 @@
     {% endif %}
   </script>
 
-  {% set back_url = request.referrer if request.referrer != request.url else "/" %}
-  {% if back_url %}
-    <a id="event_back_button" class='button_back nav_link_get shadow' href="{{back_url}}">{% include "icon/_back.html"%}</a>
-  {% endif %}
+  <a id="event_back_button" class='button_back nav_link_get shadow'>{% include "icon/_back.html"%}</a>
 
   <div class='event event_page box_outline {{ event_selected_class }}'>
     <div class='clearfix event_header'>  
