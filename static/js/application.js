@@ -19,6 +19,7 @@ Application.onReady = function(){
   Spinner.init();
   Application.onAjaxComplete();
 
+  $('a.back_button').unbind(Application.backButton);
   $('a.back_button').click(Application.backButton);
 }
 
