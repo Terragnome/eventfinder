@@ -38,8 +38,8 @@ class UserEvent(Base):
   @classmethod
   def interest_chip_names(klass):
     return [
-      klass.DONE,
       klass.INTERESTED,
+      klass.DONE,
       klass.SKIP
     ]
 

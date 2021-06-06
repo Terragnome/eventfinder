@@ -195,7 +195,10 @@ class EventController:
     tags = []
     event_cities = []
     if user:
-      user_events = UserEvent.query.filter(UserEvent.user_id == user.user_id)
+      user_events = UserEvent.query.filter(
+        UserEvent.user_id == user.user_id,
+        UserEvent.interest != None
+      )
 
       if interested:
         filter_conditions = []
@@ -205,7 +208,8 @@ class EventController:
         if UserEvent.INTERESTED in interested:
           filter_conditions.extend([UserEvent.interest_level(UserEvent.GO), UserEvent.interest_level(UserEvent.MAYBE)])
         if UserEvent.SKIP in interested:
-          filter_conditions.append(UserEvent.interest_level(UserEvent.SKIP))  
+          filter_conditions.append(UserEvent.interest_level(UserEvent.SKIP))
+
         if filter_conditions:
           user_events = user_events.filter(UserEvent.interest.in_(filter_conditions))
 
