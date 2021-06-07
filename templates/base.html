@@ -63,6 +63,10 @@
 
 <script>
   Application.init({
+    'main': {
+      'container': '#main',
+      'spinner': '#main_spinner'
+    },
     'urls': {
       'auth': "{{ url_for('login') }}",
       'explore': "{{ url_for('events') }}"

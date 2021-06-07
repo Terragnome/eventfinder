@@ -22,6 +22,7 @@ from models.base import db_session
 from models.block import Block
 from models.follow import Follow
 from models.tag import Tag
+from models.user import User
 from models.user_event import UserEvent
 from utils.config_utils import load_config
 from utils.get_from import get_from
@@ -405,28 +406,21 @@ def users(query=None, tag=None, selected=None):
   template = TEMPLATE_USERS
 
   #TODO: Implement query
+  relationship_types = User.relationship_types()
 
   users = []
   if tag:
-    if "followers" in tag:
+    for relationship_type in relationship_types:
+      if relationship_type in tag:
         users.append({
-          'relationship_type': 'followers',
-          'users': UserController().get_followers()
+          'relationship_type': relationship_type,
+          'users': UserController().get(relationship_type=relationship_type)
         })
-    if "blocked" in tag:
-        users.append({
-          'relationship_type': 'blocked',
-          'users': UserController().get_blocked()
-        })
-    if 'following' in tag:
-      users.append({
-        'relationship_type': 'following',
-        'users': UserController().get_followers()
-      })
-      users.append({
-        'relationship_type': 'recommended',
-        'users': UserController().get_following()
-      })
+        if relationship_type == User.FOLLOWING:
+          users.append({
+            'relationship_type': User.SUGGESTED,
+            'users': UserController().get(relationship_type=User.SUGGESTED)
+          })
 
   for user_data in users:
     for user in user_data['users']:
@@ -439,7 +433,7 @@ def users(query=None, tag=None, selected=None):
         {
           'chip_name': k,
           'selected': k in tag if tag else False
-        } for k in ['following', 'followers', 'blocked']
+        } for k in relationship_types
       ],
       key='t',
       display_name='Type'

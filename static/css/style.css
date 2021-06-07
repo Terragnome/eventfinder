@@ -501,7 +501,7 @@ span{
   width: 320px;
 }
 
-.event_card > .nav_link_get > .event_header > .event_title{
+.event_card > .event_header > .event_title > .event_name{
   font-size: 16px;
   margin: 20px 0 0 0;
 }

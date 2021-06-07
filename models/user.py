@@ -11,6 +11,19 @@ from .follow import Follow
 from .user_event import UserEvent
 
 class User(Base):
+  FOLLOWER = "follower"
+  FOLLOWING = "following"
+  SUGGESTED = "suggested"
+  BLOCKED = "blocked"
+
+  @classmethod
+  def relationship_types(klass):
+    return [
+      klass.FOLLOWER,
+      klass.FOLLOWING,
+      klass.BLOCKED
+    ]
+
   __tablename__ = 'users'
   user_id = Column(Integer, primary_key=True, autoincrement=True)
   username = Column(String, nullable=False)

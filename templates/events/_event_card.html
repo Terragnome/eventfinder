@@ -8,7 +8,7 @@
 
 <div id="event_{{ event.event_id }}" class='event_container'>
   <div class='event event_card box_outline {{ event_selected_class }}'>
-    <a class='nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">
+    <a class='event_header nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">
       {% if not is_skip or is_me %}
         <div class='event_img_wrapper'>
           {% if event.img_url %}
@@ -16,8 +16,8 @@
           {% endif %}
         </div>
       {% endif %}
-      <div class='event_header'>
-        {% if is_skip %}<div class='event_title'>{{ event.display_name }}</div>{% endif %}
+      <div class='event_title'>
+        {% if is_skip %}<div class='event_name'>{{ event.display_name }}</div>{% endif %}
         {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
       </div>
     </a>

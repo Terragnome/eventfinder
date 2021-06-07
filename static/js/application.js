@@ -5,6 +5,10 @@ Application.init = function(params) {
   Application.url_auth = urls['auth'];
   Application.url_explore = urls['explore'];
 
+  let main = params['main'];
+  Application.main = main['container'];
+  Application.main_spinner['spinner'];
+
   $(window).on('popstate', Application.backButton);
 
   $(document).ajaxStart(Application.onAjaxStart);
@@ -24,7 +28,7 @@ Application.onReady = function(){
 }
 
 Application.onAjaxStart = function(){
-  $('#main').removeClass('anim_fade_in');
+  $(Application.main).removeClass('anim_fade_in');
   Scroll.disable();
 }
 
@@ -39,7 +43,7 @@ Application.ajaxData = function(e){
   let data = {};
 
   if(targetData){ data = JSON.parse(targetData); }
-  if(!data.target){ data.target = '#main'; }
+  if(!data.target){ data.target = Application.main; }
 
   return data;
 }
@@ -170,15 +174,15 @@ Application.backButton = function(e){
   let state = e.originalEvent.state;
   if (state != null) {
     if(state.title){ document.title = state.title; }
-    Application.getElem('#main', state.url, false, false, true, false, true);
+    Application.getElem(Application.main, state.url, false, false, true, false, true);
   }else{
     window.location.replace('/');
   }
 }
 
 Application.getElem = function(target, url, pushState=true, replace=false, skipScroll=false, skipTransition=false, spinner=false){
-  if(target == "#main" && spinner == false){
-    spinner = "#main_spinner";
+  if(target == Application.main && spinner == false){
+    spinner = Application.main_spinner;
   }
 
   if(spinner != false){
@@ -188,7 +192,7 @@ Application.getElem = function(target, url, pushState=true, replace=false, skipS
 
   $.get(url, {
   }).done(function(response) {
-    if(target == '#main'){
+    if(target == Application.main){
       Application.setAppBackground(null);
     }
 
