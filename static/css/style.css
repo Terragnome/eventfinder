@@ -506,35 +506,6 @@ span{
   margin: 20px 0 0 0;
 }
 
-/*.event_card.event.event_selected{
-  background-color: var(--darkest-color);
-  color: white;
-}
-
-
-.event_card.event_selected.event_users_count{
-  border-color: white;
-  color: white;
-}
-
-.event_card.event_selected > .nav_link_get > .event_header{
-  color: white;
-}
-
-.event_card.event_selected > .nav_link_get > .event_header > .event_dates > .event_date{
-  border-color: white;
-  color: white;
-}
-
-.event_card.event_selected > .nav_link_get > .event_header > .event_dates > .event_date.event_date_weekend{
-  border-color: var(--weekend-color);
-  color: white;
-}
-
-.event_card.event_selected > .nav_link_get > .event_header > .event_title{
-  color: white;
-}*/
-
 .event_choice{
   margin: 0 4px 0 4px;
   text-align: center;

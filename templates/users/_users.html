@@ -1,10 +1,14 @@
 {% set users=users or (vargs.users if vargs else None) %}
 
-{% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
-{% with vargs=vargs, chips_key='users' %}{% include "_chips.html" %}{% endwith %}
+<div class='app_page'>
+  {% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
+  {% with vargs=vargs, chips_key='users' %}{% include "_chips.html" %}{% endwith %}
 
-{% for relationship, user_list in users.items() %}
-  {% with vargs=vargs, relationship=relationship, user_list=user_list %}
-    {% include "users/_users_list.html" %}
-  {% endwith %}
-{% endfor %}
+  {% for user_data in users %}
+    {% set relationship = user_data['relationship_type'] %}
+    {% set user_list = user_data['users'] %}
+    {% with vargs=vargs, relationship=relationship, user_list=user_list %}
+      {% include "users/_users_list.html" %}
+    {% endwith %}
+  {% endfor %}
+</div>

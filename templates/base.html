@@ -53,9 +53,9 @@
     </div>
   </header>
   <section class="content">
+    <div id='main'>{% block content %}{% endblock %}</div>
     {% include "panels/_app_panel.html" %}
     {% if session.user %}{% include "panels/_user_panel.html" %}{% endif %}
-    <div id='main'>{% block content %}{% endblock %}</div>
     <div id='main_spinner'>{% include "_spinner.html" %}</div>
     <div id='scroll_top' class='round_button box_outline'>{% include "icon/_up.html" %}</div>
   </section>

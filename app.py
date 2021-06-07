@@ -399,23 +399,37 @@ def events(
 @app.route("/users/", methods=['GET'])
 @parse_url_params
 @oauth2_required
-def users(tag=None, selected=None):
+def users(query=None, tag=None, selected=None):
   current_user = UserController().current_user
 
   template = TEMPLATE_USERS
 
-  users = {}
+  #TODO: Implement query
+
+  users = []
   if tag:
     if "followers" in tag:
-        users['followers'] = UserController().get_followers()
+        users.append({
+          'relationship_type': 'followers',
+          'users': UserController().get_followers()
+        })
     if "blocked" in tag:
-        users['blocked'] = UserController().get_blocked()
+        users.append({
+          'relationship_type': 'blocked',
+          'users': UserController().get_blocked()
+        })
     if 'following' in tag:
-      users['recommended'] = UserController().get_recommended()
-      users['following'] = UserController().get_following()
+      users.append({
+        'relationship_type': 'following',
+        'users': UserController().get_followers()
+      })
+      users.append({
+        'relationship_type': 'recommended',
+        'users': UserController().get_following()
+      })
 
-  for relationship, user_list in users.items():
-    for user in user_list:
+  for user_data in users:
+    for user in user_data['users']:
       user.is_followed = current_user.is_follows_user(user)
       user.is_blocked = current_user.is_blocks_user(user)
 
