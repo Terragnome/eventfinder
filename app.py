@@ -405,13 +405,14 @@ def users(tag=None, selected=None):
   template = TEMPLATE_USERS
 
   users = {}
-  if tag == "followers":
-    users[tag] = UserController().get_followers()
-  elif tag == "blocked":
-    users[tag] = UserController().get_blocked()
-  else:
-    users['recommended'] = UserController().get_recommended()
-    users[tag] = UserController().get_following()
+  if tag:
+    if "followers" in tag:
+        users['followers'] = UserController().get_followers()
+    if "blocked" in tag:
+        users['blocked'] = UserController().get_blocked()
+    if 'following' in tag:
+      users['recommended'] = UserController().get_recommended()
+      users['following'] = UserController().get_following()
 
   for relationship, user_list in users.items():
     for user in user_list:
