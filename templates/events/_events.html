@@ -1,10 +1,10 @@
-<div class='app_page'>
-  <script>
-    Application.setAppBackground(null);
-  </script>
+{% set events=events or (vargs.events if vargs else None) %}
 
-  {% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
-  {% with vargs=vargs %}{% include "events/_events_chips.html" %}{% endwith %}
+<div class='app_page'>
+  {% if events %}
+    {% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
+    {% with vargs=vargs, chips_key='event' %}{% include "_chips.html" %}{% endwith %}
+  {% endif %}
 
   <ul id='event_list' class='effect_in'>
     {% with vargs=vargs %}{% include "events/_events_list.html" %}{% endwith %}

@@ -1,8 +1,9 @@
+{% set chips_key=chips_key or (vargs.chips_key if vargs else None) %}
 {% set chips=chips or (vargs.chips if vargs else None) %}
 {% set selected=selected or (vargs.selected if vargs else None) %}
 {% set selected_list=selected.split(',') if selected else [] %}
 
-<div id='event_group_chips' class='event_chips'>
+<div id='{{chips_key}}_group_chips' class='event_chips'>
   {% for chip_name in chips %}
     {% set chip_data=chips[chip_name] %}
     {% set is_chip_group_selected = chip_data.key in selected_list %}
@@ -16,7 +17,7 @@
     {% if chip_data.entries|length>0 %}
       <span
         class='cap_button cap_group {{"selected" if chip_data.selected else ""}} {{"highlighted" if is_chip_group_selected else ""}}'
-        target='#event_{{chip_name}}_chips'
+        target='#{{chips_key}}_{{chip_name}}_chips'
       >{{chip_data.display_name}}</span>
     {% endif %}
   {% endfor %}
@@ -24,7 +25,7 @@
 
 {% for chip_name in chips %}
   {% set chip_data=chips[chip_name] %}
-  <div id='event_{{chip_name}}_chips' class='event_chips {{"" if chip_data.key in selected_list else "hide"}}'>
+  <div id='{{chips_key}}_{{chip_name}}_chips' class='event_chips {{"" if chip_data.key in selected_list else "hide"}}'>
     {% for chip in chip_data.entries %}
       {% if chip.selected %}
         {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) %}

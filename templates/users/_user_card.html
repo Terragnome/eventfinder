@@ -1,9 +1,9 @@
-{% set callback=callback or (vargs.callback if vargs else request.path) %}
 {% set current_user=user or (vargs.current_user if vargs else None) %}
 {% set user=user or (vargs.user if vargs else None) %}
-{% set user_elem_id_modifier=user_elem_id_modifier or (vargs.user_elem_id_modifier if vargs else None) %}
+{% set relationship=relationship or (vargs.relationship if vargs else None) %}
+{% set callback='users' %}
 
-<div id="{{ user_elem_id_modifier }}_user_{{ user.user_id }}" class='box_outline float_container user_feed_profile'>
+<div id="{{ relationship }}_user_{{ user.user_id }}" class='box_outline float_container user_feed_profile'>
   <a class='nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
     <img class="left user_feed_profile_img user_profile_img" src="{{ user.image_url }}"></img>
   </a>

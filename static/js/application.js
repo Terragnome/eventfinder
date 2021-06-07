@@ -188,6 +188,10 @@ Application.getElem = function(target, url, pushState=true, replace=false, skipS
 
   $.get(url, {
   }).done(function(response) {
+    if(target == '#main'){
+      Application.setAppBackground(null);
+    }
+
     if(!skipTransition){
       $(target).addClass('anim_fade_in');      
     }
@@ -223,7 +227,7 @@ Application.getElem = function(target, url, pushState=true, replace=false, skipS
 Application.clickGroupChip = function(e){
   let clickedBtn = $(e.currentTarget);
 
-  let groupBtns = $('#event_group_chips > .cap_group');
+  let groupBtns = $('.cap_group');
   groupBtns.each(function(i){
     let curBtn = $(groupBtns[i]);
     let curGroup = $(curBtn.attr('target'));
@@ -242,8 +246,8 @@ Application.clickGroupChip = function(e){
 }
 
 Application.initGroupChips = function() {
-  $('#event_group_chips > .cap_group').unbind('click', Application.clickGroupChip);
-  $('#event_group_chips > .cap_group').click(Application.clickGroupChip);
+  $('.cap_group').unbind('click', Application.clickGroupChip);
+  $('.cap_group').click(Application.clickGroupChip);
 }
 
 Application.postElem = function(target, url, params, replace=false) {

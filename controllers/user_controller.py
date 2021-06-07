@@ -140,7 +140,7 @@ class UserController:
 
     return self._get_user(identifier)
 
-  def get_blocking(self, user=None):
+  def get_blocked(self, user=None):
     if user is None: user = self.current_user
     if user is None: return []
     return user.blocked_users.filter(Block.active).all()
@@ -157,7 +157,7 @@ class UserController:
     return user.following_users.filter(Follow.active).all()
 
   # TODO: Add ranking algorithm
-  def get_following_recommended(self, user=None):
+  def get_recommended(self, user=None):
     if user is None: user = self.current_user
     if user is None: return []
 

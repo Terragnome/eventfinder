@@ -57,13 +57,11 @@ param_to_kwarg = {
   't': 'tag',
   'c': 'category',
   'selected': 'selected',
+  'r': 'relationship',
   'interested': 'interested'
 }
 
 TEMPLATE_MAIN = "main.html"
-TEMPLATE_BLOCKING     = "users/_blocking.html"
-TEMPLATE_FOLLOWERS    = "users/_followers.html"
-TEMPLATE_FOLLOWING    = "users/_following.html"
 TEMPLATE_EVENT_CARD   = "events/_event_card.html"
 TEMPLATE_EVENT_PAGE   = "events/_event_page.html"
 TEMPLATE_EVENTS       = "events/_events.html"
@@ -184,21 +182,21 @@ def logout():
 def shutdown_session(exception=None):
    db_session.remove()
 
+def _parse_chip(chips, **kwargs):
+  is_selected = False
+  for chip in chips:
+    if 'selected' in chip and chip['selected']:
+      is_selected = True
+      break
+
+  results = {
+    'entries': chips,
+    'selected': is_selected
+  }
+  results.update(**kwargs)
+  return results
+
 def _parse_chips(tags=None, cities=None, categories=None, selected_category=None, interested=None, show_interested=False):
-  def _parse_chip(chips, **kwargs):
-    is_selected = False
-    for chip in chips:
-      if 'selected' in chip and chip['selected']:
-        is_selected = True
-        break
-
-    results = {
-      'entries': chips,
-      'selected': is_selected
-    }
-    results.update(**kwargs)
-    return results
-
   default = {'entries': [], 'selected': False}
   
   if not categories:
@@ -297,27 +295,6 @@ def paginated(fn):
 
     return fn(*args, **kwargs)
   return decorated_fn
-
-@app.route("/blocking/", methods=['GET'])
-@oauth2_required
-def blocking():
-  current_user = UserController().current_user
-  blocking = UserController().get_blocking()
-
-  template = TEMPLATE_BLOCKING
-
-  vargs = {
-    'users': blocking,
-    'callback': 'blocking'
-  }
-
-  for user in blocking:
-    user.is_followed = current_user.is_follows_user(user)
-    user.is_blocked = current_user.is_blocks_user(user)
-
-  if request.is_xhr:
-    return render_template(template, vargs=vargs, **vargs)
-  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
 
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):
@@ -419,45 +396,46 @@ def events(
 
   return _render_events_list(request, events, vargs, scroll=scroll, template=TEMPLATE_EXPLORE)
 
-@app.route("/followers/", methods=['GET'])
+@app.route("/users/", methods=['GET'])
+@parse_url_params
 @oauth2_required
-def followers():
+def users(tag=None, selected=None):
   current_user = UserController().current_user
-  follower_users = UserController().get_followers()
 
-  template = TEMPLATE_FOLLOWERS
+  template = TEMPLATE_USERS
 
-  vargs = {
-    'users': follower_users,
-    'callback': 'followers'
+  users = {}
+  if tag == "followers":
+    users[tag] = UserController().get_followers()
+  elif tag == "blocked":
+    users[tag] = UserController().get_blocked()
+  else:
+    users['recommended'] = UserController().get_recommended()
+    users[tag] = UserController().get_following()
+
+  for relationship, user_list in users.items():
+    for user in user_list:
+      user.is_followed = current_user.is_follows_user(user)
+      user.is_blocked = current_user.is_blocks_user(user)
+
+  chips = {
+    'tags': _parse_chip(
+      [
+        {
+          'chip_name': k,
+          'selected': k in tag if tag else False
+        } for k in ['following', 'followers', 'blocked']
+      ],
+      key='t',
+      display_name='Type'
+    )
   }
 
-  for user in follower_users:
-    user.is_followed = current_user.is_follows_user(user)
-    user.is_blocked = current_user.is_blocks_user(user)
-
-  if request.is_xhr:
-    return render_template(template, vargs=vargs, **vargs)
-  return render_template(TEMPLATE_MAIN, template=template, vargs=vargs, **vargs)
-
-@app.route("/following/", methods=['GET'])
-@oauth2_required
-def following():
-  current_user = UserController().current_user
-  recommended_users = UserController().get_following_recommended()
-  following_users = UserController().get_following()
-
-  template = TEMPLATE_FOLLOWING
-
   vargs = {
-    'recommended_users': recommended_users,
-    'users': following_users,
-    'callback': 'following'
+    'users': users,
+    'selected': selected,
+    'chips': chips
   }
-
-  for user in following_users:
-    user.is_followed = current_user.is_follows_user(user)
-    user.is_blocked = current_user.is_blocks_user(user)
 
   if request.is_xhr:
     return render_template(template, vargs=vargs, **vargs)
@@ -473,6 +451,7 @@ def saved(**kwargs):
     'identifier': current_user.username
   })
   return user(**kwargs)
+
 
 @app.route("/user/<identifier>/", methods=['GET'])
 @parse_url_params
@@ -559,12 +538,8 @@ def user_action(identifier):
       )
 
     # TODO: Replace this with something generic but safe
-    if 'blocking' in callback:
-      return blocking()
-    elif 'followers' in callback:
-      return followers()
-    elif 'following' in callback:
-      return following()
+    if 'users' in callback:
+      return users()
     elif 'events' in callback:
       return events()
     elif 'user':
