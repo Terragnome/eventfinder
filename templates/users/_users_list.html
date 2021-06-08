@@ -1,7 +1,7 @@
 {% set relationship=relationship or (vargs.relationship if vargs else None) %}
 {% set user_list=user_list or (vargs.user_list if vargs else None) %}
 
-<div class='app_section user_list_section'>
+<div class='app_section user_list'>
   <div class='title'>{{relationship}}</div>
   <div class='body'>
     {% if user_list%}
@@ -9,9 +9,11 @@
         <div class='float_center'>
           {% for user in user_list %}
             <div class='float_child left'>
-              {% with vargs=vargs, user=user, relationship=relationship %}
-                {% include "users/_user_card.html" %}
-              {% endwith %}
+              <div class='user_card'>
+                {% with vargs=vargs, user=user, relationship=relationship, callback='users' %}
+                  {% include "users/_user_card.html" %}
+                {% endwith %}
+              </div>
             </div>
           {% endfor %}
         </div>

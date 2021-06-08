@@ -7,7 +7,7 @@ Application.init = function(params) {
 
   let main = params['main'];
   Application.main = main['container'];
-  Application.main_spinner['spinner'];
+  Application.main_spinner = main['spinner'];
 
   $(window).on('popstate', Application.backButton);
 

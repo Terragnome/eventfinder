@@ -2,12 +2,10 @@
 {% set user=user or (vargs.user if vargs else None) %}
 
 <div class='app_page'>
-  <div id="user_feed" class='user_feed'>
-    {% if user %}
-      {% with vargs=vargs %}
-        {% include "users/_user_card.html" %}
-      {% endwith %}
-    {% endif %}
+  <div id="user_page" class='user_page'>
+    {% with vargs=vargs, callback='user' %}
+      {% include "users/_user_card.html" %}
+    {% endwith %}
   </div>
 
   {% with vargs=vargs %}

@@ -166,6 +166,13 @@ span{
   margin: 9px 5px 0 5px;
 }
 
+.app_login > .user_profile_img,
+.app_login > .toggle_user_panel > .user_profile_img{
+  border-radius: 19px;
+  height: 38px;
+  width: 38px;
+}
+
 .app_menu{
   background: url(/static/icons/svg/hamburger.svg) no-repeat;
   background-position: center center;
@@ -880,12 +887,35 @@ span{
   font-size: 18px;
 }
 
-.user_feed{
+/********************************/
+
+.user_page{
   margin: 20px 0px 10px 0;
 }
 
+.user_list{
+  margin: 20px 0 0 0;
+}
+
+.user_card{
+  margin: 5px 10px 10px 10px;
+}
+
+.user_card > .user_profile > .nav_link_get {
+  float: left;
+  margin: 0 15px 0 0;
+}
+
+.user_card > .user_profile > .user_profile_data {
+  float: left;
+}
+
+.user_card > .user_profile > .user_profile_data > .user_page_name {
+  float: left;
+}
+
 /********************************/
-.user_feed > .user_feed_profile{
+.user_page > .user_profile{
   background: none;
   box-shadow: none;
   width: 100%;
@@ -893,87 +923,72 @@ span{
   text-align: center;
 }
 
-.user_feed > .user_feed_profile > .nav_link_get > .left{
-  float: none;
-}
-
-.user_feed > .user_feed_profile > .left{
-  float: none;
-}
-
-.user_feed > .user_feed_profile > .nav_link_get > .user_feed_profile_img.user_profile_img{
+.user_page > .user_profile > .nav_link_get > .user_profile_img{
   border-radius: 150px;
   width: 150px;
   height: 150px;
 }
 
-.user_feed > .user_feed_profile > .user_feed_profile_data{
+.user_page > .user_profile > .user_profile_data{
   font-size: 14px;
   margin: 10px 0 0 0;
 }
 
-.user_feed > .user_feed_profile > .user_feed_profile_data > .left{
-  float: none;
-}
-
-.user_feed > .user_feed_profile > .user_feed_profile_data > .user_feed_choices{
+.user_page > .user_profile > .user_profile_data > .user_page_choices{
   float: none;
   text-align: center;
 }
 
-.user_feed > .user_feed_profile > .user_feed_profile_data > .user_feed_choices > .cap_button{
+.user_page > .user_profile > .user_profile_data > .user_page_choices > .cap_button{
   font-size: 14px;
 }
 
-.user_feed > .user_feed_profile > .user_feed_profile_data > .user_feed_counts{
+.user_page > .user_profile > .user_profile_data > .user_page_counts{
   margin: 5px 0 0 0;
 }
 
-.user_feed > .user_feed_profile > .user_feed_profile_data > .user_feed_counts > .user_feed_count{
+.user_page > .user_profile > .user_profile_data > .user_page_counts > .user_page_count{
   float: none;
   display: inline-block;
 }
 
 /********************************/
 
-.user_feed_choice{
+.user_page_choice{
   margin: 0 10px 0 0;
 }
 
-.user_feed_choices{
+.user_page_choices{
   float: left;
   margin: 12px 0 0 0;
 }
 
-.user_feed_counts{
-  margin: 15px 0 0 0;
+.user_page_name{
+  font-weight: bold;
 }
 
-.user_feed_counts > .user_feed_count{
+.user_page_counts{
+  margin: 17px 0 0 0;
+}
+
+.user_page_counts > .user_page_count{
   float: left;
-  margin: 0 10px 0 0;
+  margin: 0 8px 0 0;
 }
 
-.user_feed_profile{
+.user_profile{
   background-color: white;
-  border-radius: 20px;
-  margin: 0 10px 30px 10px;
-  padding: 15px 15px 20px 15px;
-  width: 300px;
+  border-radius: 15px;
+  padding: 15px 15px 15px 15px;
+  width: 320px;
 }
 
-.user_feed_profile_data{
+.user_profile_data{
   font-size: 11px;
   margin: 0 0 0 0;
 }
 
-.user_feed_profile_img{
-  margin: 0 15px 0 0;
-}
-
-.user_list_section{
-  margin: 30px 0 0 0;
-}
+/********************************/
 
 .app_panel{
   position: absolute;
@@ -1010,9 +1025,9 @@ span{
 }
 
 .user_profile_img{
-  border-radius: 20px;
-  height: 38px;
-  width: 38px;
+  border-radius: 34px;
+  height: 68px;
+  width: 68px;
 }
 
 .profile_img_placeholder{

@@ -68,7 +68,7 @@ TEMPLATE_EVENT_PAGE   = "events/_event_page.html"
 TEMPLATE_EVENTS       = "events/_events.html"
 TEMPLATE_EVENTS_LIST  = "events/_events_list.html"
 TEMPLATE_EXPLORE      = "events/_explore.html"
-TEMPLATE_USER         = "users/_user.html"
+TEMPLATE_USER_PAGE    = "users/_user_page.html"
 TEMPLATE_USERS        = "users/_users.html"
 
 def get_oauth2_callback():
@@ -520,7 +520,7 @@ def user(
         user.is_followed = current_user.is_follows_user(user)
         user.is_blocked = current_user.is_blocks_user(user)
 
-      return _render_events_list(request, events, vargs, template=TEMPLATE_USER, scroll=scroll)
+      return _render_events_list(request, events, vargs, template=TEMPLATE_USER_PAGE, scroll=scroll)
   return redirect(request.referrer or '/')    
 
 @app.route("/user/<identifier>/", methods=['POST'])
@@ -532,6 +532,10 @@ def user_action(identifier):
   action = request.form.get('action')
   active = request.form.get('active') == 'true'
   callback = request.form.get('cb')
+
+  current_app.logger.debug(action) # Follow
+  current_app.logger.debug(active) # True
+  current_app.logger.debug(callback) # Users
 
   if action == 'block':
     u = UserController().block_user(identifier, active)
