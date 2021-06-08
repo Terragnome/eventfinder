@@ -2,29 +2,32 @@ var Application = Application || {};
 
 Application.init = function(params) {
   let urls = params['urls'];
-  Application.url_auth = urls['auth'];
-  Application.url_explore = urls['explore'];
+  Application.urlAuth = urls['auth'];
+  Application.urlExplore = urls['explore'];
 
   let main = params['main'];
   Application.main = main['container'];
-  Application.main_spinner = main['spinner'];
+  Application.mainSpinner = main['spinner'];
 
-  $(window).on('popstate', Application.backButton);
-
-  $(document).ajaxStart(Application.onAjaxStart);
-  $(document).ajaxComplete(Application.onAjaxComplete);
   $(document).ready(Application.onReady);
 }
 
 Application.onReady = function(){
+  $(document).ajaxStart(Application.onAjaxStart);
+  $(document).ajaxComplete(Application.onAjaxComplete);
+  $(window).on('popstate', Application.backButton);
+
   AppPanel.init();
   UserPanel.init();
   Scroll.init();
   Spinner.init();
   Application.onAjaxComplete();
 
-  $('a.back_button').unbind(Application.backButton);
-  $('a.back_button').click(Application.backButton);
+  let backButtons = $('a.button_back');
+  if(backButtons){
+    try{ backButtons.unbind(Application.backButton); }catch(e){}
+    backButtons.click(Application.backButton);
+  }
 }
 
 Application.onAjaxStart = function(){
@@ -182,7 +185,7 @@ Application.backButton = function(e){
 
 Application.getElem = function(target, url, pushState=true, replace=false, skipScroll=false, skipTransition=false, spinner=false){
   if(target == Application.main && spinner == false){
-    spinner = Application.main_spinner;
+    spinner = Application.mainSpinner;
   }
 
   if(spinner != false){
@@ -223,7 +226,7 @@ Application.getElem = function(target, url, pushState=true, replace=false, skipS
     }
     if(spinner != false){ $(spinner).html(""); }
   }).fail(function(xhr, status, error) {
-    window.location.replace(Application.url_explore);
+    window.location.replace(Application.urlExplore);
     if(spinner != false){ $(spinner).html(""); }
   });
 }
@@ -263,7 +266,7 @@ Application.postElem = function(target, url, params, replace=false) {
       $(target).html(response);  
     }
   }).fail(function(xhr, status, error) {
-    window.location.replace(Application.url_auth);
+    window.location.replace(Application.urlAuth);
   });
 }
 

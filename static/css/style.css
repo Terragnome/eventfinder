@@ -362,6 +362,12 @@ span{
 .button_back{
   color: white;
   fill: white;
+  margin-top: -10px;
+}
+
+/*TODO Why doesis this margin off*/
+#user_back_button.button_back{
+  margin-top: -20px;
 }
 
 .button_back > svg{
@@ -628,7 +634,6 @@ span{
   background-color: var(--neutral-color);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  /*min-height: 40px;*/
   position: relative;
   top: 0px;
   width: 100%;
@@ -1046,23 +1051,13 @@ span{
   width: 36px;
 }
 
-@media(max-width: 720px), (max-height: 320px){
+@media(max-width: 500px), (max-height: 320px){
   #app_panel{
     text-align: center;
   }
   
   #app_panel{
     text-align: center;
-  }
-
-  #event_back_button.shadow{
-    -webkit-filter: none;
-    filter: none;
-  }
-
-  #event_back_button > svg{
-    color: black;
-    fill: black;
   }
 
   .app_background{

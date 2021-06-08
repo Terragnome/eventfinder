@@ -2,6 +2,7 @@
 {% set user=user or (vargs.user if vargs else None) %}
 
 <div class='app_page'>
+  <a id='user_back_button' class='left button_back nav_link_get shadow'>{% include "icon/_back.html"%}</a>
   <div id="user_page" class='user_page'>
     {% with vargs=vargs, callback='user' %}
       {% include "users/_user_card.html" %}

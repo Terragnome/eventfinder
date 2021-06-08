@@ -5,32 +5,31 @@
 {% set is_selected = event.current_user_event and event.current_user_event.is_selected %}
 {% set event_selected_class = "" if is_me else "event_selected" if (is_selected) else "" %}
 
-<div id="event_{{ event.event_id }}" class='event_container'>
-  <script>
+<div class='app_page'>
+  <a class='left button_back nav_link_get shadow'>{% include "icon/_back.html"%}</a>
+  <div id="event_{{ event.event_id }}" class='event_container'>
     {% if event.backdrop_url %}
-      Application.setAppBackground('{{ event.backdrop_url }}');
-    {% else %}
-      Application.setAppBackground(null);
+      <script>
+        Application.setAppBackground('{{ event.backdrop_url }}');
+      </script>
     {% endif %}
-  </script>
 
-  <a id="event_back_button" class='button_back nav_link_get shadow'>{% include "icon/_back.html"%}</a>
-
-  <div class='event event_page box_outline {{ event_selected_class }}'>
-    <div class='clearfix event_header'>  
-      <div class='event_title'>{{ event.display_name }}</div>
-      {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
-      {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
-    </div>
-    <div class='left event_img_wrapper'>
-      {% if event.img_url %}
-        <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
-      {% endif %}
-    </div>
-    <div class='event_body'>
-      <p class='event_description'>{{ event.description }}</p>
-      {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
-      {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
+    <div class='event event_page box_outline {{ event_selected_class }}'>
+      <div class='clearfix event_header'>  
+        <div class='event_title'>{{ event.display_name }}</div>
+        {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
+        {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
+      </div>
+      <div class='left event_img_wrapper'>
+        {% if event.img_url %}
+          <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
+        {% endif %}
+      </div>
+      <div class='event_body'>
+        <p class='event_description'>{{ event.description }}</p>
+        {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
+        {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
+      </div>
     </div>
   </div>
 </div>
