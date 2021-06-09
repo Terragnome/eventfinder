@@ -21,7 +21,6 @@
   <script type='application/javascript' src="{{ url_for('static', filename='js/_user_panel.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_url_params.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=cachebreaker) }}"></script>
-  
   {% block scripts %}{% endblock %}
 </head>
 <title>{% block title %}{{ app_name }}{% endblock %}</title>

@@ -204,7 +204,7 @@ def _parse_chips(tags=None, cities=None, categories=None, selected_category=None
     categories = Tag.types_with_counts()
 
   if selected_category:
-    selected_categories = selected_category.split(',')
+    selected_categories = set(selected_category.split(','))
     for c in categories:
       if c['chip_name'] in selected_categories:
         c['selected'] = True

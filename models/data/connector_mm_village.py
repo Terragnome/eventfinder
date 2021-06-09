@@ -90,7 +90,11 @@ class ConnectorMMVillage:
         location_name = obj['name']
         location_short_name = location_name
         location_description = obj['notes']
-        location_categories = obj['categories'].split(' / ')
+        location_categories = set(obj['categories'].split(' / '))
+        location_rating = obj['tier']
+
+        if location_rating not in ['♡', '☆']:
+          continue
 
         row_connector_event = ConnectorEvent.query.filter(
           and_(
