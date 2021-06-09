@@ -11,7 +11,7 @@ from .follow import Follow
 from .user_event import UserEvent
 
 class User(Base):
-  FOLLOWER = "follower"
+  FOLLOWER = "followers"
   FOLLOWING = "following"
   SUGGESTED = "suggested"
   BLOCKED = "blocked"

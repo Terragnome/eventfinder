@@ -220,7 +220,7 @@ def _parse_chips(tags=None, cities=None, categories=None, selected_category=None
   return {
     'categories': _parse_chip(categories, key="c", display_name="Categories"),
     'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
-    'cities': _parse_chip(cities, key="cities", display_name="Cities") if cities else default,
+    'cities': _parse_chip(cities, key="cities", mode=Tag.EXCLUSIVE, display_name="Cities") if cities else default,
     'interested': interested_chips
   }
 
@@ -436,6 +436,7 @@ def users(query=None, tag=None, selected=None):
         } for k in relationship_types
       ],
       key='t',
+      mode=Tag.EXCLUSIVE,
       display_name='Type'
     )
   }

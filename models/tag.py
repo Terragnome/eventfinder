@@ -10,6 +10,9 @@ from .base import Base
 from .event_tag import EventTag
 
 class Tag(Base):
+  # Chip modes
+  EXCLUSIVE = "exclusive"
+
   FOOD_DRINK = "FOOD + DRINK"
   GEAR = "GEAR"
   TVM = "TV + MOVIES"
