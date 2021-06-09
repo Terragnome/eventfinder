@@ -467,6 +467,7 @@ span{
   background-color: white;
   border-radius: 10px;
   margin: 10px 10px 20px 10px;
+  min-width: 500px;
   max-width: 1024px;
   text-align: left;
 }
@@ -482,7 +483,7 @@ span{
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 0px;
   height: 200px;
-  margin: auto 15px 5px auto;
+  margin: auto 5px 5px auto;
   object-fit: contain;
   width: auto;
 }
@@ -515,8 +516,8 @@ span{
 }
 
 .event_card > .event_header > .event_title > .event_name{
-  font-size: 16px;
-  margin: 20px 0 0 0;
+  font-size: 20px;
+  margin: 5px 5px 10px 5px;
 }
 
 .event_choice{
@@ -627,7 +628,7 @@ span{
 
 .event_header{
   color: black;
-  margin: 0 10px 8px 0px;
+  /*margin: 0 10px 5px 5px;*/
 }
 
 .event_img{
@@ -686,6 +687,7 @@ span{
 }
 
 .event_tags{
+  margin: 0 5px 0 5px;
 }
 
 .event_tags > .cap_button{
@@ -702,13 +704,18 @@ span{
   color: black;
   display: inline-block;
   font-size: 18px;
-  margin: 10px 0 0 0;
+  margin: 5px auto 0 auto;
   text-align: center;
   text-decoration: none;
 }
 
 .event_page > .event_header > .event_title{
-  font-size: 26px;
+  font-size: 28px;
+  margin: 10px 0 0 0;
+}
+
+.event_page > .event_header > .event_title > .event_name{
+  margin: 0px 5px 5px 5px;
 }
 
 .event_users{
@@ -1051,7 +1058,7 @@ span{
   width: 36px;
 }
 
-@media(max-width: 500px), (max-height: 320px){
+@media(max-width: 700px), (max-height: 320px){
   #app_panel{
     text-align: center;
   }
@@ -1068,7 +1075,7 @@ span{
     background: none;
     border-radius: 0px;
     box-shadow: none;
-    margin: 5px auto 5px auto;
+    margin: 5px;
     position: relative;
     text-align: center;
   }
@@ -1079,17 +1086,12 @@ span{
     text-align: center;
   }
 
-  .event_page > .event_title{
-    text-align: center;
-  }
-
   .event_page > .event_header > .event_tags{
     margin-top: 5px;
   }
 
   .event_page > .event_description{
     font-size: 14px;
-    margin-top: 10px;
     margin-bottom: 10px;
   }
 

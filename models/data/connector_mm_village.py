@@ -83,12 +83,14 @@ class ConnectorMMVillage:
         slug = re.sub(r'-+', '-', re.sub(r'[^a-z0-9]', "-", obj['address'].lower()))
         obj['slug'] = slug
 
-        print(json.dumps(obj, indent=2))
-
         if not slug:
           continue
 
         connector_event_id = slug
+        location_name = obj['name']
+        location_short_name = location_name
+        location_description = obj['notes']
+        location_categories = obj['categories'].split(' / ')
 
         row_connector_event = ConnectorEvent.query.filter(
           and_(
@@ -106,6 +108,8 @@ class ConnectorMMVillage:
           db_session.merge(row_connector_event)
           db_session.commit()
 
+        print(json.dumps(row_connector_event.data, indent=2))
+
         # {
         #   "location": "Zushi Puzzle",
         #   "link": "https://maps.google.com/?cid=13797947637975436515",
@@ -121,11 +125,6 @@ class ConnectorMMVillage:
         #   "notes": "DJ",
         #   "slug": "1910-lombard-st-san-francisco-ca-94123-usa"
         # }
-
-        location_name = row_connector_event.data['name']
-        location_short_name = location_name
-        location_description = row_connector_event.data['notes']
-        location_categories = row_connector_event.data['categories'].split(' / ')
 
         if row_connector_event.event_id:
           row_event = Event.query.filter(Event.event_id == row_connector_event.event_id).first()
@@ -149,11 +148,20 @@ class ConnectorMMVillage:
           db_session.merge(row_connector_event)
           db_session.commit()
 
-        row_event.link = row_connector_event.link
-        row_event.address = row_connector_event.address
+        row_event.link = row_connector_event.data['link']
+        row_event.address = row_connector_event.data['address']
+
+        tag_type = Tag.FOOD_DRINK
+        if (
+          'Culture' in location_categories
+          or 'Fitness' in location_categories
+          or 'Nature' in location_categories
+          or 'Utilities' in location_categories
+        ):
+          tag_type = Tag.TODO
 
         for category in location_categories:
-          row_event.add_tag(category, Tag.FOOD_DRINK)
+          row_event.add_tag(category, tag_type)
 
         db_session.merge(row_event)
         db_session.commit()

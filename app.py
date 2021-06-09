@@ -204,10 +204,10 @@ def _parse_chips(tags=None, cities=None, categories=None, selected_category=None
     categories = Tag.types_with_counts()
 
   if selected_category:
+    selected_categories = selected_category.split(',')
     for c in categories:
-      if c['chip_name'] == selected_category:
+      if c['chip_name'] in selected_categories:
         c['selected'] = True
-        break;
 
   interested_chips = []
   if show_interested:
@@ -533,10 +533,6 @@ def user_action(identifier):
   action = request.form.get('action')
   active = request.form.get('active') == 'true'
   callback = request.form.get('cb')
-
-  current_app.logger.debug(action) # Follow
-  current_app.logger.debug(active) # True
-  current_app.logger.debug(callback) # Users
 
   if action == 'block':
     u = UserController().block_user(identifier, active)

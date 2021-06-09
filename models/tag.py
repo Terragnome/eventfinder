@@ -16,6 +16,7 @@ class Tag(Base):
   FOOD_DRINK = "FOOD + DRINK"
   GEAR = "GEAR"
   TVM = "TV + MOVIES"
+  TODO = "TODO"
 
   __tablename__ = 'tags'
   tag_id = Column(Integer, primary_key=True, autoincrement=True)

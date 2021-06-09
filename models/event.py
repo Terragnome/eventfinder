@@ -1,5 +1,6 @@
-from sqlalchemy import and_
+from flask import current_app
 
+from sqlalchemy import and_
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, JSON
 from sqlalchemy import orm
 from sqlalchemy import String
@@ -50,6 +51,20 @@ class Event(Base):
 
   def tag_names(self):
     return set(t.tag_name for t in self.tags)
+
+  def is_tvm(self):
+    return self.has_tag(tag_type=Tag.TVM)
+
+  def has_tag(self, tag_name=None, tag_type=None):
+    if tag_name is None and tag_type is None:
+      return False
+
+    tag_matches = Tag.query
+    if tag_name is not None:
+      tag_matches = tag_matches.filter(Tag.tag_name == tag_name)
+    if tag_type is not None:
+      tag_matches = tag_matches.filter(Tag.tag_type == tag_type)
+    return tag_matches.first() is not None
 
   def add_tag(self, tag_name, tag_type):
     row_tag = Tag.query.filter(

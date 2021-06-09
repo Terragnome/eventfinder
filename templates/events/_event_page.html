@@ -16,8 +16,10 @@
 
     <div class='event event_page box_outline {{ event_selected_class }}'>
       <div class='clearfix event_header'>  
-        <div class='event_title'>{{ event.display_name }}</div>
-        {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
+        <div class='event_title'>
+          <div class='event_name'>{{ event.display_name }}</div>
+          {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
+        </div>
         {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
       </div>
       <div class='left event_img_wrapper'>
@@ -26,7 +28,7 @@
         {% endif %}
       </div>
       <div class='event_body'>
-        <p class='event_description'>{{ event.description }}</p>
+        {% if event.description %}<p class='event_description'>{{ event.description }}</p>{% endif %}
         {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
         {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
       </div>

@@ -10,13 +10,14 @@
   <div class='event event_card box_outline {{ event_selected_class }}'>
     <a class='event_header nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">
       {% if not is_skip or is_me %}
-        <div class='event_img_wrapper'>
-          {% if event.img_url %}
+        {% if event.img_url %}
+          <div class='event_img_wrapper'>
             <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
-          {% endif %}
-        </div>
+          </div>
+        {% endif %}
       {% endif %}
       <div class='event_title'>
+        {% if event.is_tvm() %}<div class='event_name'>{{event.display_name}}</div>{% endif %}
         {% if is_skip %}<div class='event_name'>{{ event.display_name }}</div>{% endif %}
         {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
       </div>

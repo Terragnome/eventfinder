@@ -22,8 +22,8 @@ class EventController:
 
   @classmethod
   def _filter_events(klass, events, query=None, categories=None, tags=None):
-    if query: events = klass._filter_events_by_query(events, query)
-    if tags:  events = klass._filter_events_by_tags(events, categories, tags)
+    if query:              events = klass._filter_events_by_query(events, query)
+    if tags or categories: events = klass._filter_events_by_tags(events, categories, tags)
     return events
 
   @classmethod
