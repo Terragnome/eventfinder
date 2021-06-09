@@ -54,8 +54,14 @@ class User(Base):
       Event
     ).filter(
       and_(
-        Event.end_time >= datetime.datetime.now(),
-        UserEvent.interest > 0
+        # or_(
+        #   Event.end_time is None,
+        #   Event.end_time >= datetime.datetime.now()
+        # ),
+        UserEvent.interest.in_([
+          UserEvent.interest_level(UserEvent.GO),
+          UserEvent.interest_level(UserEvent.MAYBE)
+        ]), #TODO Consolidate the interest level checks
       )
     )
   @property

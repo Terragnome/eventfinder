@@ -22,8 +22,26 @@ class EventController:
 
   @classmethod
   def _filter_events(klass, events, query=None, categories=None, tags=None):
-    if query:              events = klass._filter_events_by_query(events, query)
-    if tags or categories: events = klass._filter_events_by_tags(events, categories, tags)
+    if query:
+      tags_matching_query = Tag.query.filter(
+        or_(
+          Tag.tag_name.ilike("{}%".format(query)),
+          Tag.tag_type.ilike("{}%".format(query))
+        )
+      )
+      matching_tags = [t.tag_name for t in tags_matching_query]
+
+      if matching_tags:
+        query = None
+        if tags is None:
+          tags = matching_tags[0]
+        else:
+          tags.add(matching_tags[0])
+      else:
+        events = klass._filter_events_by_query(events, query)
+
+    if tags or categories:
+      events = klass._filter_events_by_tags(events, categories, tags)
     return events
 
   @classmethod
@@ -39,23 +57,35 @@ class EventController:
 
   @classmethod
   def _filter_events_by_tags(klass, events, categories, tags):
-    event_matches = alias(
-      db_session.query(
-        EventTag.event_id.label('event_id'),
-        func.count(distinct(Tag.tag_id)).label('ct')
-      ).join(
-        Tag,
-        Tag.tag_id == EventTag.tag_id
-      ).filter(
-        or_(
+    event_matches = db_session.query(
+      EventTag.event_id.label('event_id'),
+      func.count(distinct(Tag.tag_id)).label('ct')
+    ).join(
+      Tag,
+      Tag.tag_id == EventTag.tag_id
+    )
+
+    if tags and categories:
+      event_matches = event_matches.filter(
+        and_(
           Tag.tag_name.in_(tags),
           Tag.tag_type.in_(categories)
         )
-      ).group_by(
-        EventTag.event_id
-      ),
-      'event_matches'
+      )
+    elif tags:
+      event_matches = event_matches.filter(
+        Tag.tag_name.in_(tags)
+      )
+    elif categories:
+      event_matches = event_matches.filter(
+        Tag.tag_type.in_(categories)
+      )
+
+    event_matches = event_matches.group_by(
+      EventTag.event_id
     )
+
+    event_matches = alias(event_matches, 'event_matches')
 
     return events.join(
       event_matches,
@@ -151,13 +181,24 @@ class EventController:
         )
       )
 
+    #TODO: Consolidate logic for categories and tags
+    tags, categories = self.get_tags_for_events(events_with_count_query)
+
+    is_any_category_selected = False
+    if categories:
+      for event_category in categories:
+        is_category_selected = event_category['chip_name'] in selected_categories
+        event_category['selected'] = is_category_selected
+        if not is_any_category_selected and is_category_selected:
+          is_any_category_selected = is_category_selected
+    categories = sorted([c for c in categories if c['selected']], key=lambda c: c['chip_name'])+sorted([c for c in categories if not c['selected']], key=lambda c: c['ct']*-1)
+
     is_any_tag_selected = False
-    tags = self.get_tags_for_events(events_with_count_query)
     if tags:
       for event_tag in tags:
         is_tag_selected = event_tag['chip_name'] in selected_tags
         event_tag['selected'] = is_tag_selected
-        if is_tag_selected:
+        if not is_any_tag_selected and is_tag_selected:
           is_any_tag_selected = is_tag_selected
     tags = sorted([t for t in tags if t['selected']], key=lambda t: t['chip_name'])+sorted([t for t in tags if not t['selected']], key=lambda t: t['ct']*-1)
 
@@ -183,7 +224,7 @@ class EventController:
       event.interested_user_count = user_count
       results.append(event)
 
-    return (results, tags, event_cities)
+    return (results, categories, tags, event_cities)
 
   def get_events_for_user_by_interested(self, interested, query=None, user=None, categories=None, tags=None, cities=None, page=1, future_only=False):
     current_user = UserController().current_user
@@ -262,13 +303,22 @@ class EventController:
         )
       )
 
+      # TODO: Consolidate logic
+      tags, categories = self.get_tags_for_events(events_with_counts)
+      is_any_category_selected = False
+      if categories:
+        for event_category in categories:
+          is_category_selected = event_category['chip_name'] in selected_categories
+          event_category['selected'] = is_category_selected
+          if not is_any_category_selected and is_category_selected:
+            is_any_category_selected = is_category_selected
+
       is_any_tag_selected = False
-      tags = self.get_tags_for_events(events_with_counts)
       if tags:
         for event_tag in tags:
           is_tag_selected = event_tag['chip_name'] in selected_tags
           event_tag['selected'] = is_tag_selected
-          if is_tag_selected:
+          if not is_any_tag_selected and is_tag_selected:
             is_any_tag_selected = is_tag_selected
 
       event_cities = self.get_cities_for_events(events_with_counts)
@@ -293,7 +343,7 @@ class EventController:
         event.interested_user_count = user_event_count
         results.append(event)
 
-    return (results, tags, event_cities)
+    return (results, categories, tags, event_cities)
 
   # TODO: Make this operate off the query for performance
   def get_cities_for_events(self, events=None, limit=10, future_only=False):
@@ -347,36 +397,56 @@ class EventController:
       EventTag.event_id == Event.event_id
     )
 
+    category_query = db_session.query(
+      Tag.tag_type,
+      func.count(distinct(EventTag.event_id)).label('ct')
+    ).join(
+      EventTag,
+      Tag.tag_id == EventTag.tag_id
+    )
+
     if events:
       events_table = alias(
         events,
         'events_table'
       )
 
-      tag_query = tag_query.join(
-        events_table
-      )
+      tag_query = tag_query.join(events_table)
+      category_query = category_query.join(events_table)
 
     if future_only:
-      tag_query = tag_query.filter(
-        Event.end_time >= datetime.datetime.now()
-      )
+      tag_query = tag_query.filter(Event.end_time >= datetime.datetime.now())
+      category_query = category_query.filter(Event.end_time >= datetime.datetime.now())
 
     if limit:
       tag_query = tag_query.limit(limit)
+      category_query = category_query.limit(limit)
 
     tag_query = tag_query.group_by(
       Tag.tag_name
     ).order_by(
       desc('ct')
     )
-
-    return [
+    tags = [
       {
-        'chip_name': tag[0],
-        'ct': tag[1],
-      } for tag in tag_query if tag[1]>0
+        'chip_name': t[0],
+        'ct': t[1],
+      } for t in tag_query if t[1]>0
     ]
+
+    category_query=category_query.group_by(
+      Tag.tag_type
+    ).order_by(
+      desc('ct')
+    )
+    categories = [
+      {
+        'chip_name': c[0],
+        'ct': c[1],
+      } for c in category_query if c[1]>0
+    ]
+
+    return tags, categories
 
   def update_event(self, event_id, interest_key):
     user_id = UserController().current_user_id

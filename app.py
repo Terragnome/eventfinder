@@ -372,7 +372,7 @@ def events(
   if tag == Tag.TVM:
     cities = None
 
-  events, tags, event_cities = EventController().get_events(
+  events, categories, tags, event_cities = EventController().get_events(
     query=query,
     categories=category,
     tags=tag,
@@ -382,6 +382,7 @@ def events(
 
   chips = _parse_chips(
     selected_category = category,
+    categories=categories,
     tags=tags,
     cities=event_cities
   )
@@ -483,7 +484,7 @@ def user(
     tags = []
     event_cities = []
     if not Block.blocks(user.user_id, current_user_id):
-      events, tags, event_cities = EventController().get_events_for_user_by_interested(
+      events, categories, tags, event_cities = EventController().get_events_for_user_by_interested(
         user=user,
         query=query,
         categories=category,
@@ -494,6 +495,7 @@ def user(
       )
 
     chips = _parse_chips(
+      categories=categories,
       selected_category=category,
       tags=tags,
       cities=event_cities,

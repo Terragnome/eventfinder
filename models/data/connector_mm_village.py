@@ -90,11 +90,11 @@ class ConnectorMMVillage:
         location_name = obj['name']
         location_short_name = location_name
         location_description = obj['notes']
-        location_categories = set(obj['categories'].split(' / '))
+        location_categories = set([x.strip() for x in re.split(r'[/;]', obj['categories'])])
         location_rating = obj['tier']
 
-        if location_rating not in ['♡', '☆']:
-          continue
+        # if location_rating not in ['♡', '☆']:
+        #   continue
 
         row_connector_event = ConnectorEvent.query.filter(
           and_(
@@ -158,6 +158,7 @@ class ConnectorMMVillage:
         tag_type = Tag.FOOD_DRINK
         if (
           'Culture' in location_categories
+          or 'Entertainment' in location_categories
           or 'Fitness' in location_categories
           or 'Nature' in location_categories
           or 'Utilities' in location_categories
@@ -165,7 +166,8 @@ class ConnectorMMVillage:
           tag_type = Tag.TODO
 
         for category in location_categories:
-          row_event.add_tag(category, tag_type)
+          if category and category not in {'Western', 'Entertainment'}:
+            row_event.add_tag(category, tag_type)
 
         db_session.merge(row_event)
         db_session.commit()

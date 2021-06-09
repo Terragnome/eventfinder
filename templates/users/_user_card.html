@@ -4,7 +4,7 @@
 {% set callback=callback or (vargs.callback if vargs else None) %}
 
 <div id="{{ relationship }}_user_{{ user.user_id }}" class='user_profile clearfix box_outline'>
-  <a class='nav_link_get' href="{{ url_for('user', identifier=user.username) }}">
+  <a class='nav_link_get' href="{{ url_for('user', identifier=user.username, selected='c', interested='interested') }}">
     <img class="user_profile_img" src="{{ user.image_url }}"></img>
   </a>
   <div class='user_profile_data'>
