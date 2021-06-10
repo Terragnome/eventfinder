@@ -9,9 +9,9 @@
     {% set is_chip_group_selected = chip_data.key in selected_list %}
 
     {% if is_chip_group_selected %}
-      {% set callback=remove_url_params(request.url, remove={"selected": chip_data.key}) %}
+      {% set callback=update_url_params(request.url, remove={"selected": chip_data.key}) %}
     {% else %}
-      {% set callback=add_url_params(request.url, replace={"selected": chip_data.key}) %}
+      {% set callback=update_url_params(request.url, replace={"selected": chip_data.key}) %}
     {% endif %}
 
     {% if chip_data.entries|length>0 %}
@@ -28,12 +28,12 @@
   <div id='{{chips_key}}_{{chip_name}}_chips' class='event_chips {{"" if chip_data.key in selected_list else "hide"}}'>
     {% for chip in chip_data.entries %}
       {% if chip.selected %}
-        {% set callback=remove_url_params(request.url, remove={chip_data.key: chip.chip_name}) %}
+        {% set callback=update_url_params(request.url, toggle={chip_data.key: chip.chip_name}, remove={'q': chip.chip_name}, clear=['p']) %}
       {% else %}
         {% if chip_data.mode == 'exclusive' %}
-          {% set callback=add_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}) %}
+          {% set callback=update_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}, clear=['p']) %}
         {% else %}
-          {% set callback=add_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}) %}
+          {% set callback=update_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, clear=['p']) %}
         {% endif %}
       {% endif %}
       <a

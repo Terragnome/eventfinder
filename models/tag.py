@@ -13,10 +13,11 @@ class Tag(Base):
   # Chip modes
   EXCLUSIVE = "exclusive"
 
-  FOOD_DRINK = "FOOD + DRINK"
-  GEAR = "GEAR"
-  TVM = "TV + MOVIES"
-  TODO = "TODO"
+  TVM = "watch"
+  FOOD_DRINK = "eat"
+  GEAR = "acquire"
+  TODO = "todo"
+  SERVICES = "services"
 
   __tablename__ = 'tags'
   tag_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -49,3 +50,32 @@ class Tag(Base):
   @property
   def count(self):
     return len(self.events)
+
+  @classmethod
+  def get_tag(klass, tag_name, tag_type=None):
+    tag_name = tag_name.lower()
+    tag_type = tag_type.lower()
+    
+    tag_query = Tag.query.filter(Tag.tag_name == tag_name)
+    if tag_type is not None:
+      tag_query = row_tag.filter(Tag.tag_type == tag_type)
+    return tag_query.first()
+
+  @classmethod
+  def create_tag(klass, tag_name, tag_type):
+    tag_name = tag_name.lower()
+    tag_type = tag_type.lower()
+
+    row_tag = Tag.query.filter(
+      Tag.tag_name == tag_name,
+      Tag.tag_type == tag_type
+    ).first()
+
+    if not row_tag:
+      row_tag = Tag(
+        tag_name = tag_name,
+        tag_type = tag_type
+      )
+      db_session.add(row_tag)
+      db_session.commit()
+    return row_tag

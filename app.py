@@ -17,7 +17,7 @@ from config.app_config import app_config
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
 from helpers.env_helper import is_prod
-from helpers.jinja_helper import add_url_params, filter_url_params, remove_url_params
+from helpers.jinja_helper import filter_url_params, update_url_params
 from models.base import db_session
 from models.block import Block
 from models.follow import Follow
@@ -46,9 +46,8 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 #TODO:
 # response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
 
-app.jinja_env.globals.update(add_url_params=add_url_params)
+app.jinja_env.globals.update(update_url_params=update_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
-app.jinja_env.globals.update(remove_url_params=remove_url_params)
 
 Session(app)
 
@@ -197,18 +196,22 @@ def _parse_chip(chips, **kwargs):
   results.update(**kwargs)
   return results
 
-def _parse_chips(tags=None, cities=None, categories=None, selected_category=None, interested=None, show_interested=False):
+def _parse_chips(
+  tags=None,
+  cities=None,
+  categories=None, selected_categories=None,
+  interested=None, show_interested=False
+):
   default = {'entries': [], 'selected': False}
   
   if not categories:
     categories = Tag.types_with_counts()
 
-  if selected_category:
-    selected_categories = set(selected_category.split(','))
+  if selected_categories:
+    selected_categories = set(selected_categories.split(','))
     for c in categories:
       if c['chip_name'] in selected_categories:
         c['selected'] = True
-
   interested_chips = []
   if show_interested:
     interested_chips = _parse_chip(
@@ -369,6 +372,8 @@ def events(
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected=None
 ):
+  selected_categories = category
+
   if tag == Tag.TVM:
     cities = None
 
@@ -381,7 +386,7 @@ def events(
   )
 
   chips = _parse_chips(
-    selected_category = category,
+    selected_categories = selected_categories,
     categories=categories,
     tags=tags,
     cities=event_cities
@@ -474,6 +479,8 @@ def user(
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected = None
 ):
+  selected_categories = category
+
   current_user = UserController().current_user
   current_user_id = UserController().current_user_id
 
@@ -496,7 +503,7 @@ def user(
 
     chips = _parse_chips(
       categories=categories,
-      selected_category=category,
+      selected_categories=selected_categories,
       tags=tags,
       cities=event_cities,
       interested=interested,

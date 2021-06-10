@@ -15,17 +15,21 @@ Application.init = function(params) {
 Application.onReady = function(){
   $(document).ajaxStart(Application.onAjaxStart);
   $(document).ajaxComplete(Application.onAjaxComplete);
-  $(window).on('popstate', Application.backButton);
+  $(window).on('popstate', Application.onBack);
 
   AppPanel.init();
   UserPanel.init();
   Scroll.init();
   Spinner.init();
   Application.onAjaxComplete();
+}
 
+Application.initBackButtons = function(){
   let backButtons = $('a.button_back');
   if(backButtons){
-    try{ backButtons.unbind(Application.backButton); }catch(e){}
+    try{
+      backButtons.unbind('click', Application.backButton);
+    }catch(e){}
     backButtons.click(Application.backButton);
   }
 }
@@ -38,6 +42,7 @@ Application.onAjaxStart = function(){
 Application.onAjaxComplete = function(){
   Application.ajaxifyLinks();
   Application.initGroupChips();
+  Application.initBackButtons();
   Scroll.enable();
 }
 
@@ -172,6 +177,10 @@ Application.animateElems = function() {
 }
 
 Application.backButton = function(e){
+  window.history.back();
+}
+
+Application.onBack = function(e){
   Scroll.disable();
 
   let state = e.originalEvent.state;
@@ -179,7 +188,10 @@ Application.backButton = function(e){
     if(state.title){ document.title = state.title; }
     Application.getElem(Application.main, state.url, false, false, true, false, true);
   }else{
-    window.location.replace('/');
+    Spinner.show(Application.mainSpinner);
+    let backUrl = document.referrer;
+    if(backUrl == null){ backUrl = '/'; }
+    window.location.replace(backUrl);
   }
 }
 
@@ -190,7 +202,7 @@ Application.getElem = function(target, url, pushState=true, replace=false, skipS
 
   if(spinner != false){
     let spinnerTarget = spinner == true ? target : spinner;
-    $(spinnerTarget).html(Application.spinnerHtml);
+    Spinner.show(spinnerTarget);
   }
 
   $.get(url, {
@@ -224,10 +236,10 @@ Application.getElem = function(target, url, pushState=true, replace=false, skipS
         Scroll.top();
       }
     }
-    if(spinner != false){ $(spinner).html(""); }
+    if(spinner != false){ Spinner.hide(spinner); }
   }).fail(function(xhr, status, error) {
     window.location.replace(Application.urlExplore);
-    if(spinner != false){ $(spinner).html(""); }
+    if(spinner != false){ Spinner.hide(spinner); }
   });
 }
 

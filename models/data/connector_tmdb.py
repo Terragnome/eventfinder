@@ -10,6 +10,7 @@ import tmdbsimple as tmdb
 from models.base import db_session 
 from models.connector_event import ConnectorEvent
 from models.event import Event
+from models.event_tag import EventTag
 from models.tag import Tag
 
 from utils.get_from import get_from

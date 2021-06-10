@@ -17,7 +17,7 @@
         {% endif %}
       {% endif %}
       <div class='event_title'>
-        {% if event.is_tvm() %}<div class='event_name'>{{event.display_name}}</div>{% endif %}
+        <div class='event_name'>{{event.display_name}}</div>
         {% if is_skip %}<div class='event_name'>{{ event.display_name }}</div>{% endif %}
         {% if event.display_venue_name %}<div class='event_venue_name'>{{ event.display_venue_name }}</div>{% endif %}
       </div>

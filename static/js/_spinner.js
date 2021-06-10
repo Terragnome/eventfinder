@@ -1,7 +1,15 @@
 var Spinner = Spinner || {};
 
 Spinner.init = function(){
-  let main_spinner = $("#main_spinner");
-  Application.spinnerHtml = main_spinner.html();
-  main_spinner.html("");
+  let mainSpinner = $("#main_spinner");
+  Spinner.spinnerHtml = mainSpinner.html();
+  mainSpinner.html("");
+}
+
+Spinner.show = function(target){
+  $(target).html(Spinner.spinnerHtml);
+}
+
+Spinner.hide = function(target){
+  $(target).html("");
 }

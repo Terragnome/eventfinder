@@ -22,26 +22,31 @@ class EventController:
 
   @classmethod
   def _filter_events(klass, events, query=None, categories=None, tags=None):
+    query_tags = None
     if query:
       tags_matching_query = Tag.query.filter(
-        or_(
-          Tag.tag_name.ilike("{}%".format(query)),
-          Tag.tag_type.ilike("{}%".format(query))
-        )
+        Tag.tag_name.ilike("{}%".format(query))
       )
-      matching_tags = [t.tag_name for t in tags_matching_query]
-
-      if matching_tags:
-        query = None
+      query_tags = {t.tag_name for t in tags_matching_query}
+    
+      if query_tags:
         if tags is None:
-          tags = matching_tags[0]
+          tags = query_tags
         else:
-          tags.add(matching_tags[0])
+          tags |= query_tags
       else:
-        events = klass._filter_events_by_query(events, query)
+        events = klass._filter_events_by_query(
+          events=events,
+          query=query
+        )
 
     if tags or categories:
-      events = klass._filter_events_by_tags(events, categories, tags)
+      events = klass._filter_events_by_tags(
+        events,
+        tags=tags,
+        categories=categories
+      )
+
     return events
 
   @classmethod
@@ -56,7 +61,9 @@ class EventController:
     )
 
   @classmethod
-  def _filter_events_by_tags(klass, events, categories, tags):
+  def _filter_events_by_tags(klass, events, tags, categories=None):
+    current_app.logger.debug(tags)
+
     event_matches = db_session.query(
       EventTag.event_id.label('event_id'),
       func.count(distinct(Tag.tag_id)).label('ct')

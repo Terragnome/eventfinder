@@ -6,7 +6,7 @@
 {% set event_selected_class = "" if is_me else "event_selected" if (is_selected) else "" %}
 
 <div class='app_page'>
-  <a class='left button_back nav_link_get shadow'>{% include "icon/_back.html"%}</a>
+  <a class='left button_back shadow'>{% include "icon/_back.html"%}</a>
   <div id="event_{{ event.event_id }}" class='event_container'>
     {% if event.backdrop_url %}
       <script>

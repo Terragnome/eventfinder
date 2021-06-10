@@ -161,13 +161,32 @@ class ConnectorMMVillage:
           or 'Entertainment' in location_categories
           or 'Fitness' in location_categories
           or 'Nature' in location_categories
-          or 'Utilities' in location_categories
         ):
           tag_type = Tag.TODO
 
-        for category in location_categories:
-          if category and category not in {'Western', 'Entertainment'}:
-            row_event.add_tag(category, tag_type)
+        if (
+          'Utilities' in location_categories
+        ):
+          tag_type = Tag.SERVICES
+
+        category_remappings = {
+          'Entertainment': None,
+          'Western': ['European'],
+          'SEA': ['Southeast Asian'],
+          'PMT': ['Asian', 'Boba'],
+          'Fine Dining': ['Dinner', 'Fine Dining'],
+          'Mochi': ['Asian', 'Mochi']
+        }
+
+        for cats in location_categories:
+          try:
+            cats = category_remappings[category]
+          except Exception as e:
+            cats = [cats]
+
+          if cats:
+            for cat in cats:
+              row_event.add_tag(cat.lower(), tag_type)
 
         db_session.merge(row_event)
         db_session.commit()
@@ -177,8 +196,13 @@ if __name__ == '__main__':
   group = parser.add_mutually_exclusive_group()
   args = parser.parse_args()
 
-  e = ConnectorMMVillage()
-  places = e.get_places(**vars(args))
-  if places:
-    for i, place in enumerate(place):
-      print(i, place.name)
+  for x in Event.query.all():
+    print(x.name)
+    print([(t.tag_name, t.tag_type) for t in x.tags])
+    print("----------")
+
+  # e = ConnectorMMVillage()
+  # places = e.get_places(**vars(args))
+  # if places:
+  #   for i, place in enumerate(place):
+  #     print(i, place.name)
