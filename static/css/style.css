@@ -711,11 +711,20 @@ span{
 
 .event_page > .event_header > .event_title{
   font-size: 28px;
-  margin: 10px 0 0 0;
+  margin: 10px 0 0 10px;
+  text-align: left;
+}
+
+.event_page > .event_header > .event_tags{
+  margin-left: 10px;
 }
 
 .event_page > .event_header > .event_title > .event_name{
-  margin: 0px 5px 5px 5px;
+  margin: 0px 5px 5px 0;
+}
+
+.event_page > .event_header > .event_title > .event_venue_name{
+  margin-left: 3px;
 }
 
 .event_users{
@@ -743,7 +752,7 @@ span{
 
 .event_venue_name{
   font-size: 13px;
-  margin: 5px 0 0 0;
+  margin: -5px 0 5px 0;
 }
 
 .events_page{

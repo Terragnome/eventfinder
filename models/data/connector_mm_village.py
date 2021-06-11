@@ -4,6 +4,8 @@ import datetime
 import json
 import re
 
+import usaddress
+
 from sqlalchemy import and_
 
 from models.base import db_session
@@ -117,7 +119,6 @@ class ConnectorMMVillage:
         # {
         #   "location": "Zushi Puzzle",
         #   "link": "https://maps.google.com/?cid=13797947637975436515",
-        #   "name": "Zushi Puzzle",
         #   "address": "1910 Lombard St, San Francisco, CA 94123, USA",
         #   "tags": "restaurant, food, point_of_interest, establishment",
         #   "status": "",
@@ -153,7 +154,25 @@ class ConnectorMMVillage:
           db_session.commit()
 
         row_event.link = row_connector_event.data['link']
-        row_event.address = row_connector_event.data['address']
+
+        try:
+          raw_addr = row_connector_event.data['address']
+          parsed_addr = usaddress.tag(raw_addr)[0]
+          
+          addr_city = parsed_addr['PlaceName']
+          addr_state = parsed_addr['StateName']
+          addr_street = []
+          for i, addr_c in enumerate(parsed_addr):
+            if addr_c == 'PlaceName':
+              break
+            addr_street.append(parsed_addr[addr_c])
+          addr_street = " ".join(addr_street)
+
+          row_event.address = addr_street
+          row_event.city = addr_city.strip()
+          row_event.state = addr_state.split(",")[0].strip()
+        except Exception as e:
+          print(e)
 
         tag_type = Tag.FOOD_DRINK
         if (
@@ -196,13 +215,8 @@ if __name__ == '__main__':
   group = parser.add_mutually_exclusive_group()
   args = parser.parse_args()
 
-  for x in Event.query.all():
-    print(x.name)
-    print([(t.tag_name, t.tag_type) for t in x.tags])
-    print("----------")
-
-  # e = ConnectorMMVillage()
-  # places = e.get_places(**vars(args))
-  # if places:
-  #   for i, place in enumerate(place):
-  #     print(i, place.name)
+  e = ConnectorMMVillage()
+  places = e.get_places(**vars(args))
+  if places:
+    for i, place in enumerate(place):
+      print(i, place.name)

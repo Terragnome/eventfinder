@@ -102,14 +102,13 @@ class Event(Base):
 
   @property
   def display_city(self):
-    response = ""
     if self.city and self.state:
       return ", ".join([self.city, self.state])
     elif self.city:
       return self.city
     elif self.state:
       return self.state
-    return response
+    return ""
 
   @property
   def display_end_date_day(self):
