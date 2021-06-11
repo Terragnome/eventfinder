@@ -360,9 +360,12 @@ span{
 }
 
 .button_back{
+  cursor: pointer;
   color: white;
   fill: white;
   margin-top: -10px;
+  width: 54px;
+  z-index: 10;
 }
 
 /*TODO Why is this margin off*/
@@ -373,7 +376,7 @@ span{
 .button_back > svg{
   width: 40px;
   height: 40px;
-  margin: 5px;
+  margin: 5px 5px 5px 0;
 }
 
 .cap_button{
@@ -454,6 +457,10 @@ span{
   font-size: 40px;
 }
 
+.event_container{
+  pointer-events: none;
+}
+
 .event{
   position: relative;
   border-radius: 10px;
@@ -472,6 +479,10 @@ span{
   text-align: left;
 }
 
+.event.event_page > .event_body > .event_description {
+  margin-left: 10px;
+}
+
 .event_page > .event_img_wrapper {
   float: left;
 }
@@ -483,14 +494,9 @@ span{
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 0px;
   height: 200px;
-  margin: auto 5px 5px auto;
+  margin: auto 0 5px auto;
   object-fit: contain;
   width: auto;
-}
-
-.event_page > .event_description{
-  font-size: 16px;
-  margin: 20px 10px 20px 10px;
 }
 
 .event_page > .event_img{
@@ -504,6 +510,7 @@ span{
 }
 
 .event_body{
+  pointer-events: auto;
   padding: 0 10px 5px 10px;
 }
 
@@ -526,7 +533,7 @@ span{
 }
 
 .event_choices{
-  margin: 10px 0 20px 0;
+  margin: 20px 0 20px 0;
   text-align: center;
 }
 
@@ -628,7 +635,7 @@ span{
 
 .event_header{
   color: black;
-  /*margin: 0 10px 5px 5px;*/
+  pointer-events: auto;
 }
 
 .event_img{
@@ -709,14 +716,18 @@ span{
   text-decoration: none;
 }
 
+.event_page > .event_header{
+  margin: auto 15px auto 15px;
+}
+
 .event_page > .event_header > .event_title{
   font-size: 28px;
-  margin: 10px 0 0 10px;
+  margin-top: 10px;
   text-align: left;
 }
 
 .event_page > .event_header > .event_tags{
-  margin-left: 10px;
+  margin-left: 0px;
 }
 
 .event_page > .event_header > .event_title > .event_name{
@@ -725,6 +736,7 @@ span{
 
 .event_page > .event_header > .event_title > .event_venue_name{
   margin-left: 3px;
+  margin-bottom: 5px;
 }
 
 .event_users{
@@ -1089,6 +1101,10 @@ span{
     text-align: center;
   }
 
+  .event.event_page > .event_header > .event_title > .event_venue_name{
+    text-align: center;
+  }
+
   .event_page > .event_img_wrapper{
     background: none;
     float: none;
@@ -1097,11 +1113,6 @@ span{
 
   .event_page > .event_header > .event_tags{
     margin-top: 5px;
-  }
-
-  .event_page > .event_description{
-    font-size: 14px;
-    margin-bottom: 10px;
   }
 
   .event_page > .event_img_wrapper{

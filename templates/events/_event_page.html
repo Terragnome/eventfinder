@@ -6,14 +6,13 @@
 {% set event_selected_class = "" if is_me else "event_selected" if (is_selected) else "" %}
 
 <div class='app_page'>
-  <a class='left button_back shadow'>{% include "icon/_back.html"%}</a>
+  <a id='event_back_button' class='left button_back shadow'>{% include "icon/_back.html"%}</a>
   <div id="event_{{ event.event_id }}" class='event_container'>
     {% if event.backdrop_url %}
       <script>
         Application.setAppBackground('{{ event.backdrop_url }}');
       </script>
     {% endif %}
-
     <div class='event event_page box_outline {{ event_selected_class }}'>
       <div class='clearfix event_header'>  
         <div class='event_title'>
