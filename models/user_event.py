@@ -11,6 +11,9 @@ class UserEvent(Base):
 
   INTERESTED = "interested" # Go and Maybe
 
+  INTERESTED_LEVELS = {1, 2}
+  DONE_LEVELS = {3, 4}
+
   INTEREST_KEYS = {
     DONE: 3,
     GO: 2,

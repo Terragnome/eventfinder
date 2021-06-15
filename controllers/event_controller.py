@@ -371,7 +371,7 @@ class EventController:
       and_(
         UserEvent.event_id==event_id,
         UserEvent.interest>UserEvent.interest_level(UserEvent.SKIP),
-        UserEvent.interest<=(UserEvent.interest_level(UserEvent.DONE)+1) #TODO
+        UserEvent.interest<=(max(UserEvent.DONE_LEVELS))
       )
     ).count()
 
@@ -397,7 +397,7 @@ class EventController:
     )
 
     if current_user:
-      current_user_events_table = alias(current_user.user_events, 'current_user_events_table')
+      current_user_events_table = alias(current_user.user_events(), 'current_user_events_table')
       events_with_counts = events_with_counts.filter(
         ~Event.event_id.in_(
           db_session.query(current_user_events_table.c.user_events_event_id)
@@ -447,8 +447,7 @@ class EventController:
       if interested:
         filter_conditions = []
         if UserEvent.DONE in interested:
-          #TODO: Handle multiple values for DONE better
-          filter_conditions.extend([UserEvent.interest_level(UserEvent.DONE), UserEvent.interest_level(UserEvent.DONE)+1]) #TODO
+          filter_conditions.extend(UserEvent.DONE_LEVELS)
         if UserEvent.INTERESTED in interested:
           filter_conditions.extend([UserEvent.interest_level(UserEvent.GO), UserEvent.interest_level(UserEvent.MAYBE)])
         if UserEvent.SKIP in interested:

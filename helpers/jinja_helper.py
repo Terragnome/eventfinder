@@ -1,5 +1,12 @@
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+def pluralize(ct, singular_str, plural_str=None):
+  if plural_str is None: plural_str = "{}s".format(singular_str)
+  
+  if ct == 1: counter_str = singular_str
+  else: counter_str = plural_str
+  return "{} {}".format(ct, counter_str)
+
 def filter_url_params(url, include=None, exclude=None):
   url_parts = urlsplit(url)
   url_query = url_parts.query

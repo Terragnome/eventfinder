@@ -17,7 +17,7 @@ from config.app_config import app_config
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
 from helpers.env_helper import is_prod
-from helpers.jinja_helper import filter_url_params, update_url_params
+from helpers.jinja_helper import pluralize, filter_url_params, update_url_params
 from models.base import db_session
 from models.block import Block
 from models.follow import Follow
@@ -46,6 +46,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 #TODO:
 # response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
 
+app.jinja_env.globals.update(pluralize=pluralize)
 app.jinja_env.globals.update(update_url_params=update_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
 
@@ -405,15 +406,23 @@ def events(
 
 @app.route("/users/", methods=['GET'])
 @parse_url_params
+@paginated
 @oauth2_required
-def users(query=None, tag=None, selected=None):
+def users(
+  query=None, tag=None,
+  page=1, next_page_url=None, prev_page_url=None,
+  scroll=False, selected=None
+):
   current_user = UserController().current_user
 
   template = TEMPLATE_USERS
 
-  #TODO: Implement query
   relationship_types = User.relationship_types()
 
+  #TODO: Move querying into UserController
+  #TODO: Refactor to export the table and paginate
+  from sqlalchemy import and_, or_
+  from sqlalchemy.sql import func
   users = []
   if tag:
     for relationship_type in relationship_types:
@@ -428,10 +437,68 @@ def users(query=None, tag=None, selected=None):
             'users': UserController().get(relationship_type=User.SUGGESTED)
           })
 
+  all_user_ids = set()
+  for user_data in users:
+    all_user_ids |= set([x.user_id for x in user_data['users']])
+
+  event_counts_by_user_id = db_session.query(
+    UserEvent.user_id,
+    func.count(UserEvent.event_id).label('ct')
+  ).filter(
+    and_(
+      UserEvent.user_id.in_(all_user_ids),
+      UserEvent.interest.in_(UserEvent.INTERESTED_LEVELS)
+    )
+  ).group_by(
+    UserEvent.user_id
+  )
+  event_counts_by_user_id = {str(x[0]): x[1] for x in event_counts_by_user_id}
+
+  follower_counts_by_user_id = db_session.query(
+    Follow.follow_id,
+    func.count(Follow.user_id).label('ct')
+  ).filter(
+    and_(
+      Follow.follow_id.in_(all_user_ids),
+      Follow.active == True
+    )
+  ).group_by(
+    Follow.follow_id
+  )
+  follower_counts_by_user_id = {str(x[0]): x[1] for x in follower_counts_by_user_id}
+  
+  is_followed_by_user_id = db_session.query(
+    Follow.follow_id
+  ).filter(
+    and_(
+      Follow.user_id == current_user.user_id,
+      Follow.follow_id.in_(all_user_ids),
+      Follow.active == True
+    )
+  )
+  is_followed_by_user_id = set(str(x[0]) for x in is_followed_by_user_id)
+
+  is_blocked_by_user_id = db_session.query(
+    Block.block_id
+  ).filter(
+    and_(
+      or_(
+        Block.block_id == current_user.user_id,
+        Block.block_id.in_(all_user_ids)
+      ),
+      Block.active == True
+    )
+  )
+  is_blocked_by_user_id = set(str(x[0]) for x in is_blocked_by_user_id)
+
   for user_data in users:
     for user in user_data['users']:
-      user.is_followed = current_user.is_follows_user(user)
-      user.is_blocked = current_user.is_blocks_user(user)
+      uid = str(user.user_id)
+      user.card_event_count     = get_from(event_counts_by_user_id, [uid], 0)
+      user.card_follower_count  = get_from(follower_counts_by_user_id, [uid], 0)
+      user.card_is_followed     = uid in is_followed_by_user_id
+      user.card_is_blocked      = uid in is_blocked_by_user_id
+  #END TODO
 
   chips = {
     'tags': _parse_chip(
@@ -488,6 +555,7 @@ def user(
 
   if user:
     events = []
+    categories = []
     tags = []
     event_cities = []
     if not Block.blocks(user.user_id, current_user_id):
@@ -525,10 +593,10 @@ def user(
       return _render_events_list(request, events, vargs, scroll=scroll)
     else:
       vargs['user'] = user
-
-      if current_user:
-        user.is_followed = current_user.is_follows_user(user)
-        user.is_blocked = current_user.is_blocks_user(user)
+      user.card_follower_count = user.follower_users_count()
+      user.card_event_count = user.active_user_events_count()
+      user.card_is_followed = current_user.is_follows_user(user) if current_user else False
+      user.card_is_blocked = current_user.is_blocks_user(user) if current_user else False
 
       return _render_events_list(request, events, vargs, template=TEMPLATE_USER_PAGE, scroll=scroll)
   return redirect(request.referrer or '/')    

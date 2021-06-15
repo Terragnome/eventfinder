@@ -39,18 +39,15 @@ class User(Base):
   squad_users = relationship('SquadUser', cascade="all,delete-orphan")
 
   _user_events = relationship('UserEvent', cascade="all,delete-orphan", lazy='dynamic')
-  @property
-  def user_events(self):
-    return self._user_events.filter(
-      UserEvent.interest != None
-    )
-  @property
-  def user_events_count(self):
-    return self.user_events.count()
 
-  @property
+  def user_events(self):
+    return self._user_events.filter(UserEvent.interest != None)
+
+  def user_events_count(self):
+    return self.user_events().count()
+
   def active_user_events(self):
-    return self.user_events.join(
+    return self.user_events().join(
       Event
     ).filter(
       and_(
@@ -58,15 +55,12 @@ class User(Base):
         #   Event.end_time is None,
         #   Event.end_time >= datetime.datetime.now()
         # ),
-        UserEvent.interest.in_([
-          UserEvent.interest_level(UserEvent.GO),
-          UserEvent.interest_level(UserEvent.MAYBE)
-        ]), #TODO Consolidate the interest level checks
+        UserEvent.interest.in_(UserEvent.INTERESTED_LEVELS)
       )
     )
-  @property
+
   def active_user_events_count(self):
-    return self.active_user_events.count()
+    return self.active_user_events().count()
 
   _blocked_users = relationship(
     'User',
@@ -75,12 +69,12 @@ class User(Base):
     secondaryjoin='User.user_id==Block.block_id',
     lazy='dynamic'
   )
-  @property
+
   def blocked_users(self):
     return self._blocked_users.filter(Block.active)
-  @property
+
   def blocked_users_count(self):
-    return self.blockeds_users.count() or 0
+    return self.blocked_users().count() or 0
 
   _following_users = relationship(
     'User',
@@ -89,12 +83,12 @@ class User(Base):
     secondaryjoin='User.user_id==Follow.follow_id',
     lazy='dynamic'
   )
-  @property
+
   def following_users(self):
     return self._following_users.filter(Follow.active)
-  @property
+
   def following_users_count(self):
-    return self.following_users.count() or 0
+    return self.following_users().count() or 0
   
   _follower_users = relationship(
     'User',
@@ -103,43 +97,56 @@ class User(Base):
     secondaryjoin='Follow.user_id==User.user_id',
     lazy='dynamic'
   )
-  @property
+
   def follower_users(self):
     return self._follower_users.filter(Follow.active)
-  @property
-  def follower_users_count(self):
-    return self.follower_users.count() or 0
 
-  @property
+  def follower_users_count(self):
+    return self.follower_users().count() or 0
+
   def interested_events(self):
     return self.events.filter(UserEvent.interest>0)
 
-  @property
-  def is_blocked(self):
-    return self._is_blocked
-  @is_blocked.setter
-  def is_blocked(self, value):
-    self._is_blocked = value
-
   def is_blocks_user(self, user):
-    return self.blocked_users.filter(
+    return self.blocked_users().filter(
       and_(
         Block.block_id==user.user_id,
         Block.active
       )
     ).first() != None
 
-  @property
-  def is_followed(self):
-    return self._is_followed
-  @is_followed.setter
-  def is_followed(self, value):
-    self._is_followed = value
-
   def is_follows_user(self, user):
-    return self.following_users.filter(
+    return self.following_users().filter(
       and_(
         Follow.follow_id==user.user_id,
         Follow.active
       )
     ).first() != None
+
+  @property
+  def card_follower_count(self):
+    return self._card_follower_count
+  @card_follower_count.setter
+  def card_follower_count(self, value):
+    self._card_follower_count = value
+
+  @property
+  def card_event_count(self):
+    return self._card_event_count
+  @card_event_count.setter
+  def card_event_count(self, value):
+    self._card_event_count = value
+
+  @property
+  def card_is_followed(self):
+    return self._card_is_followed
+  @card_is_followed.setter
+  def card_is_followed(self, value):
+    self._card_is_followed = value
+
+  @property
+  def card_is_blocked(self):
+    return self._card_is_blocked
+  @card_is_blocked.setter
+  def card_is_blocked(self, value):
+    self._card_is_blocked = value
