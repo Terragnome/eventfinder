@@ -18,7 +18,6 @@
   <script type='application/javascript' src="{{ url_for('static', filename='js/_scroll.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_spinner.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_app_panel.js', v=cachebreaker) }}"></script>
-  <script type='application/javascript' src="{{ url_for('static', filename='js/_user_panel.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_url_params.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=cachebreaker) }}"></script>
   {% block scripts %}{% endblock %}
@@ -33,13 +32,13 @@
     <div id='app_panel_blocker'></div>
   </div>
   <header class='app_header box_outline'>
-    <a class="left app_menu toggle_app_panel"></a>
+    <a id="app_panel_toggle" class="left app_menu"></a>
     <a class='app_title nav_link_get' href="{{ url_for('events') }}">
       {% block header %}{{ app_name }}{% endblock %}
     </a>
     <div class='app_login'>
       {% if session.user %}
-        <a class="right toggle_user_panel">
+        <a id="user_panel_toggle" class="right">
           {% if session.user.image_url %}
             <img class="user_profile_img" src="{{ session.user.image_url }}"></img>
           {% else %}

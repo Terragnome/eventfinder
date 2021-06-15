@@ -167,7 +167,7 @@ span{
 }
 
 .app_login > .user_profile_img,
-.app_login > .toggle_user_panel > .user_profile_img{
+#user_panel_toggle > .user_profile_img{
   border-radius: 19px;
   height: 38px;
   width: 38px;

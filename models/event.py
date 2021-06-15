@@ -178,15 +178,18 @@ class Event(Base):
     self._interested_follows = value
 
   @property
-  def interested_users(self):
-    return self.users.filter(UserEvent.interest>0)
-
-  @property
   def interested_user_count(self):
     return self._interested_user_count
   @interested_user_count.setter
   def interested_user_count(self, value):
     self._interested_user_count = value
+
+  @property
+  def event_users(self):
+    return self._event_users
+  @event_users.setter
+  def event_users(self, value):
+    self._event_users = value
 
   @property
   def is_free(self):

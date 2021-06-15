@@ -2,22 +2,21 @@
 <div class='float_container event_users'>
   <div class='float_center'>
     <div class='float_child'>      
-      {% if event.interested_user_count>5 %}
-        <a class='link_img'>
-          <span class='event_users_count {{ event_selected_class }}'>
-            <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
-          </span>
-        </a>
+      <a class='link_img'>
+        <span class='event_users_count {{ event_selected_class }}'>
+          <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
+        </span>
+      </a>
+      {% if current_user %}
+        {% for user in event.event_users %}
+          <a
+            class='link_img nav_link_get'
+            href="{{ url_for('user', identifier=user.user_id) }}"
+          >
+            <img class="user_profile_mini_img" title="{{ user.username }}" src="{{ user.image_url }}"></img>
+          </a>
+        {% endfor %}
       {% endif %}
-      {% set interested_users = event.interested_users.limit(5) %}
-      {% for user in interested_users %}
-        <a
-          class='link_img nav_link_get'
-          href="{{ url_for('user', identifier=user.username) }}"
-        >
-          <img class="user_profile_mini_img" title="{{ user.username}}" src="{{ user.image_url }}"></img>
-        </a>
-      {% endfor %}
     </div>
   </div>
 </div>

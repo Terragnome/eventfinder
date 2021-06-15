@@ -203,9 +203,6 @@ def _parse_chips(
   interested=None, show_interested=False
 ):
   default = {'entries': [], 'selected': False}
-  
-  if not categories:
-    categories = Tag.types_with_counts()
 
   if selected_categories:
     selected_categories = set(selected_categories.split(','))
@@ -374,6 +371,8 @@ def events(
 ):
   selected_categories = category
 
+  current_user = UserController().current_user
+
   if tag == Tag.TVM:
     cities = None
 
@@ -393,12 +392,13 @@ def events(
   )
 
   vargs = {
+    'current_user': current_user,
     'events': events,
     'selected': selected,
     'chips': chips,
     'page': page,
     'next_page_url': next_page_url,
-    'prev_page_url': prev_page_url,
+    'prev_page_url': prev_page_url
   }
 
   return _render_events_list(request, events, vargs, scroll=scroll, template=TEMPLATE_EXPLORE)
@@ -511,8 +511,8 @@ def user(
     )
 
     vargs = {
-      'is_me': user == current_user,
       'current_user': current_user,
+      'is_me': user == current_user,
       'events': events,
       'selected': selected,
       'chips': chips,

@@ -17,8 +17,8 @@ Application.onReady = function(){
   $(document).ajaxComplete(Application.onAjaxComplete);
   $(window).on('popstate', Application.onBack);
 
-  AppPanel.init();
-  UserPanel.init();
+  AppPanel.init("#app_panel");
+  UserPanel.init("#user_panel");
   Scroll.init();
   Spinner.init();
   Application.onAjaxComplete();
