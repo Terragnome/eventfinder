@@ -178,11 +178,11 @@ class Event(Base):
     self._interested_follows = value
 
   @property
-  def interested_user_count(self):
-    return self._interested_user_count
-  @interested_user_count.setter
-  def interested_user_count(self, value):
-    self._interested_user_count = value
+  def user_count(self):
+    return self._user_count
+  @user_count.setter
+  def user_count(self, value):
+    self._user_count = value
 
   @property
   def event_users(self):

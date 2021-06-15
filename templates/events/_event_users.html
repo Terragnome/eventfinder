@@ -1,10 +1,10 @@
-{% if event.interested_user_count %}
+{% if event.user_count %}
 <div class='float_container event_users'>
   <div class='float_center'>
     <div class='float_child'>      
       <a class='link_img'>
         <span class='event_users_count {{ event_selected_class }}'>
-          <span class='event_users_count_number'>{{ event.interested_user_count }}</span>
+          <span class='event_users_count_number'>{{ event.user_count }}</span>
         </span>
       </a>
       {% if current_user %}

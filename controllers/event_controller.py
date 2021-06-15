@@ -100,265 +100,7 @@ class EventController:
     )
 
   @classmethod
-  def _order_events(klass, query):
-    return query.order_by(
-      nullslast(desc('ct')),
-      nullslast(Event.end_time.desc()),
-      nullslast(Event.event_id.asc())
-    )
-
-  def _process_events(
-    self,
-    events,
-    page,
-    query=None,
-    cities=None,
-    user=None,
-    selected_tags=None,
-    selected_categories=None,
-    future_only=None
-  ):
-    # event_scores = alias(
-    #   db_session.query(
-    #     UserEvent.event_id.label('event_id'),
-    #     func.count(UserEvent.interest).label('ct'),
-    #     func.sum(UserEvent.interest).label('score')
-    #   ).filter(
-    #     UserEvent.interest > 0
-    #   ).group_by(
-    #     UserEvent.event_id
-    #   ),
-    #   'event_scores'
-    # )
-
-    # events_with_counts = db_session.query(
-    #   Event,
-    #   event_scores.c.ct,
-    #   event_scores.c.score
-    # ).outerjoin(
-    #   event_scores,
-    #   Event.event_id == event_scores.c.event_id
-    # )
-
-    if future_only:
-      events_with_counts = events_with_counts.filter(
-        or_(
-          Event.start_time >= datetime.datetime.now(),
-          Event.end_time >= datetime.datetime.now()
-        )
-      )
-
-    events = self._filter_events(
-      events,
-      query=query,
-      categories=selected_categories,
-      tags=selected_tags
-    )
-
-    event_cities = self.get_cities_for_events(events)
-    if cities:
-      events = events.filter(
-        Event.city.in_(cities)
-      )
-      for city in event_cities:
-        city['selected'] = city['chip_name'] in cities
-
-    tags, categories = self.get_tags_for_events(
-      events=events,
-      selected_categories=selected_categories,
-      selected_tags=selected_tags
-    )
-
-    event_user_ids = None
-    if user:
-      event_ids = {e[0].event_id for e in events if e[1]}
-
-      following_user_ids = alias(
-        db_session.query(
-          func.distinct(Follow.follow_id)
-        ).filter(
-          and_(
-            Follow.user_id == user.user_id,
-            UserEvent.user_id == Follow.follow_id,
-            UserEvent.event_id.in_(event_ids),
-            Follow.follow_id != user.user_id
-          )
-        ),
-        "following_user_ids"
-      )
-
-      event_users = {
-        str(u.user_id): {
-          'user_id': u.user_id,
-          'username': u.username,
-          'image_url': u.image_url
-        } for u in User.query.filter(User.user_id.in_(following_user_ids))
-      }
-
-      events_with_following_counts = db_session.query(
-        UserEvent.event_id,
-        func.array_agg(User.user_id).label('user_ids')
-      ).filter(
-        and_(
-          Follow.user_id==user.user_id,
-          UserEvent.user_id==Follow.follow_id,
-          UserEvent.event_id.in_(event_ids),
-          Follow.follow_id != user.user_id
-        )
-      ).group_by(
-        UserEvent.event_id
-      )
-      event_user_ids = { row[0]: [str(follower_id) for follower_id in row[1]] for row in events_with_following_counts }
-
-    events = self._order_events(events)
-    events = events.limit(
-      self.PAGE_SIZE
-    ).offset(
-      (page-1)*self.PAGE_SIZE
-    )
-
-    results = []
-    for event, user_count in events:
-      event.interested_user_count = user_count
-      if event_user_ids and event.event_id in event_user_ids:
-        event.event_users = [ event_users[x] for x in event_user_ids[event.event_id] if x in event_users ]
-      results.append(event)
-
-    return results, categories, tags, event_cities
-
-  def get_event(self, event_id):
-    event = Event.query.filter(Event.event_id == event_id).first()
-    if not event: return None
-
-    user = UserController().current_user
-    if user:
-      user_event = UserEvent.query.filter(
-        and_(
-          UserEvent.event_id==event.event_id,
-          UserEvent.user_id==user.user_id
-        )
-      ).first()
-
-      if user_event:
-        event.current_user_event=user_event
-
-    user_event_count = UserEvent.query.filter(
-      and_(
-        UserEvent.event_id==event_id,
-        UserEvent.interest>UserEvent.interest_level(UserEvent.SKIP),
-        UserEvent.interest<=(UserEvent.interest_level(UserEvent.DONE)+1) #TODO
-      )
-    ).count()
-
-    event.interested_user_count = user_event_count
-
-    return event
-
-  def get_events(self, query=None, categories=None, tags=None, cities=None, page=1, future_only=False):
-    current_user = UserController().current_user
-    selected_categories = set(categories.split(',') if categories else [])
-    selected_tags = set(tags.split(',') if tags else [])
-
-    events_with_counts = db_session.query(
-      Event,
-      func.count(func.distinct(UserEvent.user_id)).label('ct')
-    ).outerjoin(
-      UserEvent,
-      UserEvent.event_id == Event.event_id
-    ).group_by(
-      Event.event_id
-    ).order_by(
-      desc('ct')
-    )
-    #
-
-    if current_user:
-      #TODO Do this in SQL
-      user_events = current_user.user_events
-      user_event_ids = [x.event_id for x in user_events]
-      events_with_counts = events_with_counts.filter(
-        and_(
-          ~Event.event_id.in_(user_event_ids)
-        )
-      )
-
-    results, categories, tags, event_cities = self._process_events(
-      events=events_with_counts,
-      cities=cities,
-      page=page,
-      query=query,
-      user=current_user,
-      selected_categories=selected_categories,
-      selected_tags=selected_tags,
-      future_only=future_only
-    )
-
-    return (results, categories, tags, event_cities)
-
-  def get_events_for_user_by_interested(self, interested, query=None, user=None, categories=None, tags=None, cities=None, page=1, future_only=False):
-    current_user = UserController().current_user
-    if not user: user = current_user
-    selected_categories = set(categories.split(',') if categories else [])
-    selected_tags = set(tags.split(',') if tags else [])
-
-    results = []
-    tags = []
-    event_cities = []
-    if user:
-      events_with_counts = db_session.query(
-        Event,
-        func.count(Event.user_events).label('ct')
-      ).join(
-        UserEvent,
-        UserEvent.user_id == user.user_id,
-      ).filter(
-        and_(
-          UserEvent.interest != None,
-          Event.event_id == UserEvent.event_id
-        )
-      ).group_by(
-        Event.event_id
-      )
-
-      if interested:
-        filter_conditions = []
-        if UserEvent.DONE in interested:
-          #TODO: Handle multiple values for DONE better
-          filter_conditions.extend([UserEvent.interest_level(UserEvent.DONE), UserEvent.interest_level(UserEvent.DONE)+1]) #TODO
-        if UserEvent.INTERESTED in interested:
-          filter_conditions.extend([UserEvent.interest_level(UserEvent.GO), UserEvent.interest_level(UserEvent.MAYBE)])
-        if UserEvent.SKIP in interested:
-          filter_conditions.append(UserEvent.interest_level(UserEvent.SKIP))
-
-        if filter_conditions:
-          events_with_counts = events_with_counts.filter(UserEvent.interest.in_(filter_conditions))
-
-      results, categories, tags, event_cities = self._process_events(
-        events=events_with_counts,
-        cities=cities,
-        page=page,
-        query=query,
-        user=user,
-        selected_categories=selected_categories,
-        selected_tags=selected_tags,
-        future_only=future_only
-      )
-
-      #TODO DO this in SQL, limit it to the events in 
-      if current_user:
-        current_user_events = UserEvent.query.filter(
-          UserEvent.user_id == current_user.user_id
-        ).all()
-        current_user_events_by_event_id = { x.event_id: x for x in current_user_events }
-
-      for event in results:
-        if current_user:
-          event.current_user_event = get_from(current_user_events_by_event_id, [event.event_id])
-
-    return (results, categories, tags, event_cities)
-
-  # TODO: Make this operate off the query for performance
-  def get_cities_for_events(self, events=None, limit=10, future_only=False):
+  def _cities_for_events(klass, events, limit=None):
     cities_query = db_session.query(
       Event.city,
       func.count(distinct(Event.event_id)).label('ct')
@@ -366,29 +108,21 @@ class EventController:
       Event.city != None
     )
 
-    if events:
-      events_table = alias(
-        events,
-        'events_table'
-      )
+    events_table = alias(events, 'events_table')
 
-      cities_query = cities_query.join(
-        events_table,
-        Event.event_id == events_table.c.events_event_id
-      )
+    cities_query = cities_query.join(
+      events_table,
+      Event.event_id == events_table.c.events_event_id
+    )
     
-    if future_only:
-      cities_query = cities_query.filter(
-        Event.end_time >= datetime.datetime.now()
-      )
-
     cities_query = cities_query.group_by(
       Event.city
     ).order_by(
       desc('ct')
     )
 
-    if limit: cities_query = cities_query.limit(limit)
+    if limit:
+      cities_query = cities_query.limit(limit)
 
     return [
       {
@@ -397,8 +131,9 @@ class EventController:
       } for dat in cities_query if dat[1]>0
     ]
 
-  def get_tags_for_events(
-    self,
+  @classmethod
+  def _tags_for_events(
+    klass,
     events=None,
     selected_categories=None,
     selected_tags=None,
@@ -487,6 +222,270 @@ class EventController:
       tags = sorted([t for t in tags if t['selected']], key=lambda t: t['chip_name'])+sorted([t for t in tags if not t['selected']], key=lambda t: t['ct']*-1)
 
     return tags, categories
+
+  @classmethod
+  def _order_events(klass, query):
+    return query.order_by(
+      nullslast(desc('ct')),
+      nullslast(Event.end_time.desc()),
+      nullslast(Event.event_id.asc())
+    )
+
+  @classmethod
+  def _process_events(
+    klass,
+    events,
+    page,
+    query=None,
+    cities=None,
+    user=None,
+    selected_tags=None,
+    selected_categories=None,
+    future_only=None
+  ):
+    # event_scores = alias(
+    #   db_session.query(
+    #     UserEvent.event_id.label('event_id'),
+    #     func.count(UserEvent.interest).label('ct'),
+    #     func.sum(UserEvent.interest).label('score')
+    #   ).filter(
+    #     UserEvent.interest > 0
+    #   ).group_by(
+    #     UserEvent.event_id
+    #   ),
+    #   'event_scores'
+    # )
+
+    # events_with_counts = db_session.query(
+    #   Event,
+    #   event_scores.c.ct,
+    #   event_scores.c.score
+    # ).outerjoin(
+    #   event_scores,
+    #   Event.event_id == event_scores.c.event_id
+    # )
+
+    if future_only:
+      events_with_counts = events_with_counts.filter(
+        or_(
+          Event.start_time >= datetime.datetime.now(),
+          Event.end_time >= datetime.datetime.now()
+        )
+      )
+
+    events = klass._filter_events(
+      events,
+      query=query,
+      categories=selected_categories,
+      tags=selected_tags
+    )
+
+    event_cities = klass._cities_for_events(events)
+    if cities:
+      events = events.filter(
+        Event.city.in_(cities)
+      )
+      for city in event_cities:
+        city['selected'] = city['chip_name'] in cities
+
+    tags, categories = klass._tags_for_events(
+      events=events,
+      selected_categories=selected_categories,
+      selected_tags=selected_tags
+    )
+
+    event_user_ids = None
+    if user:
+      event_ids = {e[0].event_id for e in events if e[1]}
+
+      following_user_ids = alias(
+        db_session.query(
+          func.distinct(Follow.follow_id)
+        ).filter(
+          and_(
+            Follow.user_id == user.user_id,
+            UserEvent.user_id == Follow.follow_id,
+            UserEvent.event_id.in_(event_ids),
+            Follow.follow_id != user.user_id
+          )
+        ),
+        "following_user_ids"
+      )
+
+      event_users = {
+        str(u.user_id): {
+          'user_id': u.user_id,
+          'username': u.username,
+          'image_url': u.image_url
+        } for u in User.query.filter(User.user_id.in_(following_user_ids))
+      }
+
+      events_with_following_counts = db_session.query(
+        UserEvent.event_id,
+        func.array_agg(User.user_id).label('user_ids')
+      ).filter(
+        and_(
+          Follow.user_id==user.user_id,
+          UserEvent.user_id==Follow.follow_id,
+          UserEvent.event_id.in_(event_ids),
+          Follow.follow_id != user.user_id
+        )
+      ).group_by(
+        UserEvent.event_id
+      )
+      event_user_ids = { row[0]: [str(follower_id) for follower_id in row[1]] for row in events_with_following_counts }
+
+    events = klass._order_events(events)
+    events = events.limit(
+      klass.PAGE_SIZE
+    ).offset(
+      (page-1)*klass.PAGE_SIZE
+    )
+
+    results = []
+    for event, user_count in events:
+      event.user_count = user_count
+      if event_user_ids and event.event_id in event_user_ids:
+        event.event_users = [ event_users[x] for x in event_user_ids[event.event_id] if x in event_users ]
+      results.append(event)
+
+    return results, categories, tags, event_cities, events
+
+  def get_event(self, event_id):
+    event = Event.query.filter(Event.event_id == event_id).first()
+    if not event: return None
+
+    user = UserController().current_user
+    if user:
+      user_event = UserEvent.query.filter(
+        and_(
+          UserEvent.event_id==event.event_id,
+          UserEvent.user_id==user.user_id
+        )
+      ).first()
+
+      if user_event:
+        event.current_user_event=user_event
+
+    user_event_count = UserEvent.query.filter(
+      and_(
+        UserEvent.event_id==event_id,
+        UserEvent.interest>UserEvent.interest_level(UserEvent.SKIP),
+        UserEvent.interest<=(UserEvent.interest_level(UserEvent.DONE)+1) #TODO
+      )
+    ).count()
+
+    event.user_count = user_event_count
+
+    return event
+
+  def get_events(self, query=None, categories=None, tags=None, cities=None, page=1, future_only=False):
+    current_user = UserController().current_user
+    selected_categories = set(categories.split(',') if categories else [])
+    selected_tags = set(tags.split(',') if tags else [])
+
+    events_with_counts = db_session.query(
+      Event,
+      func.count(func.distinct(UserEvent.user_id)).label('ct')
+    ).outerjoin(
+      UserEvent,
+      UserEvent.event_id == Event.event_id
+    ).group_by(
+      Event.event_id
+    ).order_by(
+      desc('ct')
+    )
+
+    if current_user:
+      current_user_events_table = alias(current_user.user_events, 'current_user_events_table')
+      events_with_counts = events_with_counts.filter(
+        ~Event.event_id.in_(
+          db_session.query(current_user_events_table.c.user_events_event_id)
+        )
+      )
+
+    results, categories, tags, event_cities, results_table = self._process_events(
+      events=events_with_counts,
+      cities=cities,
+      page=page,
+      query=query,
+      user=current_user,
+      selected_categories=selected_categories,
+      selected_tags=selected_tags,
+      future_only=future_only
+    )
+
+    return results, categories, tags, event_cities
+
+  # TODO Can this be combined with get_events?
+  def get_events_for_user_by_interested(self, interested, user=None, query=None, categories=None, tags=None, cities=None, page=1, future_only=False):
+    current_user = UserController().current_user
+    if not user: user = current_user
+    selected_categories = set(categories.split(',') if categories else [])
+    selected_tags = set(tags.split(',') if tags else [])
+
+    results = []
+    categories = []
+    tags = []
+    event_cities = []
+    if user:
+      events_with_counts = db_session.query(
+        Event,
+        func.count(Event.user_events).label('ct')
+      ).join(
+        UserEvent,
+        UserEvent.user_id == user.user_id,
+      ).filter(
+        and_(
+          UserEvent.interest != None,
+          Event.event_id == UserEvent.event_id
+        )
+      ).group_by(
+        Event.event_id
+      )
+
+      if interested:
+        filter_conditions = []
+        if UserEvent.DONE in interested:
+          #TODO: Handle multiple values for DONE better
+          filter_conditions.extend([UserEvent.interest_level(UserEvent.DONE), UserEvent.interest_level(UserEvent.DONE)+1]) #TODO
+        if UserEvent.INTERESTED in interested:
+          filter_conditions.extend([UserEvent.interest_level(UserEvent.GO), UserEvent.interest_level(UserEvent.MAYBE)])
+        if UserEvent.SKIP in interested:
+          filter_conditions.append(UserEvent.interest_level(UserEvent.SKIP))
+
+        if filter_conditions:
+          events_with_counts = events_with_counts.filter(UserEvent.interest.in_(filter_conditions))
+
+      results, categories, tags, event_cities, results_table = self._process_events(
+        events=events_with_counts,
+        cities=cities,
+        page=page,
+        query=query,
+        user=user,
+        selected_categories=selected_categories,
+        selected_tags=selected_tags,
+        future_only=future_only
+      )
+
+      if current_user and results:
+        result_events_table = alias(results_table, 'events_table')
+
+        current_user_events = db_session.query(
+          UserEvent
+        ).filter(
+          UserEvent.user_id == current_user.user_id
+        ).join(
+          result_events_table,
+          result_events_table.c.events_event_id == UserEvent.event_id
+        ).all()
+        if current_user_events is not None:
+          current_user_events_by_event_id = { x.event_id: x for x in current_user_events }
+
+          for event in results:
+            event.current_user_event = get_from(current_user_events_by_event_id, [event.event_id])
+
+    return results, categories, tags, event_cities
 
   def update_event(self, event_id, interest_key):
     user_id = UserController().current_user_id
