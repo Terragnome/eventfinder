@@ -171,26 +171,26 @@ class Event(Base):
     return self.end_time.date()
 
   @property
-  def interested_follows(self):
-    return self._interested_follows
-  @interested_follows.setter
-  def interested_follows(self, value):
-    self._interested_follows = value
-
-  @property
-  def user_count(self):
-    return self._user_count
-  @user_count.setter
-  def user_count(self, value):
-    self._user_count = value
-
-  @property
-  def event_users(self):
-    return self._event_users
-  @event_users.setter
-  def event_users(self, value):
-    self._event_users = value
-
-  @property
   def is_free(self):
     return self.cost == 0
+
+  @property
+  def card_interested_follows(self):
+    return self._card_interested_follows
+  @card_interested_follows.setter
+  def card_interested_follows(self, value):
+    self._card_interested_follows = value
+
+  @property
+  def card_user_count(self):
+    return self._card_user_count
+  @card_user_count.setter
+  def card_user_count(self, value):
+    self._card_user_count = value
+
+  @property
+  def card_event_users(self):
+    return self._card_event_users
+  @card_event_users.setter
+  def card_event_users(self, value):
+    self._card_event_users = value

@@ -5,7 +5,8 @@
 
 {% set event_count=user.card_event_count %}
 {% set follower_count=user.card_follower_count %}
-{% set is_followed=user.card_is_followed %}
+{% set is_following=user.card_is_following %}
+{% set is_follower=user.card_is_follower %}
 {% set is_blocked=user.card_is_blocked %}
 
 <div id="{{ relationship }}_user_{{ user.user_id }}" class='user_profile clearfix box_outline'>
@@ -30,7 +31,7 @@
           data='{"target": "#main", "action": "block", "active": false, "cb": "{{ callback }}"}'
         >Unblock</a>
       {% else %}
-        {% if is_followed %}
+        {% if is_following %}
           <a
             class='cap_button selected nav_link_post user_page_choice'
             href="{{ url_for('user_action', identifier=user.username) }}"
@@ -42,12 +43,12 @@
             href="{{ url_for('user_action', identifier=user.username) }}"
             data='{"target": "#main", "action": "follow", "active": true, "cb": "{{ callback }}"}'
           >Follow</a>
-          <a
-            class='cap_button nav_link_post user_page_choice'
-            href="{{ url_for('user_action', identifier=user.username) }}"
-            data='{"target": "#main", "action": "block", "active": true, "cb": "{{ callback }}"}'
-          >Block</a>
         {% endif %}
+        <a
+          class='cap_button nav_link_post user_page_choice'
+          href="{{ url_for('user_action', identifier=user.username) }}"
+          data='{"target": "#main", "action": "block", "active": true, "cb": "{{ callback }}"}'
+        >Block</a>
       {% endif %}
     </div>
   </div>

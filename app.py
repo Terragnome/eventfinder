@@ -419,6 +419,7 @@ def users(
 
   relationship_types = User.relationship_types()
 
+  #TODO: Clicking block/follow chips from list view doesn't refresh the page
   #TODO: Move querying into UserController
   #TODO: Refactor to export the table and paginate
   from sqlalchemy import and_, or_
@@ -467,7 +468,18 @@ def users(
   )
   follower_counts_by_user_id = {str(x[0]): x[1] for x in follower_counts_by_user_id}
   
-  is_followed_by_user_id = db_session.query(
+  is_follower_by_user_id = db_session.query(
+    Follow.follow_id
+  ).filter(
+    and_(
+      Follow.follow_id == current_user.user_id,
+      Follow.user_id.in_(all_user_ids),
+      Follow.active == True
+    )
+  )
+  is_follower_by_user_id = set(str(x[0]) for x in is_follower_by_user_id)
+
+  is_following_by_user_id = db_session.query(
     Follow.follow_id
   ).filter(
     and_(
@@ -476,16 +488,14 @@ def users(
       Follow.active == True
     )
   )
-  is_followed_by_user_id = set(str(x[0]) for x in is_followed_by_user_id)
+  is_following_by_user_id = set(str(x[0]) for x in is_following_by_user_id)
 
   is_blocked_by_user_id = db_session.query(
     Block.block_id
   ).filter(
     and_(
-      or_(
-        Block.block_id == current_user.user_id,
-        Block.block_id.in_(all_user_ids)
-      ),
+      Block.user_id == current_user.user_id,
+      Block.block_id.in_(all_user_ids),
       Block.active == True
     )
   )
@@ -496,7 +506,8 @@ def users(
       uid = str(user.user_id)
       user.card_event_count     = get_from(event_counts_by_user_id, [uid], 0)
       user.card_follower_count  = get_from(follower_counts_by_user_id, [uid], 0)
-      user.card_is_followed     = uid in is_followed_by_user_id
+      user.card_is_follower     = uid in is_follower_by_user_id
+      user.card_is_following    = uid in is_following_by_user_id
       user.card_is_blocked      = uid in is_blocked_by_user_id
   #END TODO
 
@@ -609,7 +620,6 @@ def user_action(identifier):
 
   action = request.form.get('action')
   active = request.form.get('active') == 'true'
-  callback = request.form.get('cb')
 
   if action == 'block':
     u = UserController().block_user(identifier, active)
@@ -621,16 +631,8 @@ def user_action(identifier):
     if not Block.blocks(u.user_id, current_user_id):
       events = EventController().get_events_for_user_by_interested(
         user=u,
-        interested='interested'
+        interested=UserEvent.INTERESTED
       )
-
-    # TODO: Replace this with something generic but safe
-    if 'users' in callback:
-      return users()
-    elif 'events' in callback:
-      return events()
-    elif 'user':
-      return user(identifier=identifier)
 
   return redirect(request.referrer or '/')
 

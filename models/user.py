@@ -1,9 +1,13 @@
 import datetime
 
+from flask import current_app
 from sqlalchemy import Column, Integer, String
+from sqlalchemy import alias
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
+from .base import db_session
 from .base import Base
 from .block import Block
 from .event import Event
@@ -71,7 +75,7 @@ class User(Base):
   )
 
   def blocked_users(self):
-    return self._blocked_users.filter(Block.active)
+    return self._blocked_users.filter(Block.active == True)
 
   def blocked_users_count(self):
     return self.blocked_users().count() or 0
@@ -84,8 +88,36 @@ class User(Base):
     lazy='dynamic'
   )
 
+  def all_blocks_table(self):
+    blocking = db_session.query(
+      Block.block_id.label('block_id')
+    ).filter(
+      Block.user_id == self.user_id,
+      Block.active == True
+    )
+
+    blocked_by = db_session.query(
+      Block.user_id.label('block_id')
+    ).filter(
+      Block.block_id == self.user_id,
+      Block.active == True
+    )
+
+    return blocking.union(blocked_by).subquery()
+
+  #TODO Need to exclude people that are following you
   def following_users(self):
-    return self._following_users.filter(Follow.active)
+    all_blocks_table = self.all_blocks_table()
+    return self._following_users.outerjoin(
+      all_blocks_table,
+      Follow.follow_id == all_blocks_table.c.block_id
+    ).filter(
+      and_(
+        Follow.follow_id != None,
+        all_blocks_table.c.block_id == None,
+        Follow.active == True
+      )
+    )
 
   def following_users_count(self):
     return self.following_users().count() or 0
@@ -94,12 +126,37 @@ class User(Base):
     'User',
     secondary='follows',
     primaryjoin='User.user_id==Follow.follow_id',
-    secondaryjoin='Follow.user_id==User.user_id',
+    secondaryjoin='User.user_id==Follow.user_id',
     lazy='dynamic'
   )
 
   def follower_users(self):
-    return self._follower_users.filter(Follow.active)
+    all_blocks_table = self.all_blocks_table()
+    return self._follower_users.outerjoin(
+      all_blocks_table,
+      Follow.user_id == all_blocks_table.c.block_id
+    ).filter(
+      and_(
+        Follow.user_id != None,
+        all_blocks_table.c.block_id == None,
+        Follow.active == True
+      )
+    )
+
+    return self._follower_users.filter(
+      Follow.active == True
+    ).join(
+      Block,
+      Follow.follow_id == Block.user_id
+    ).filter(
+      or_(
+        and_(
+          Follow.follow_id != None,
+          Block.user_id == None
+        ),
+        Block.active != True
+      )
+    )
 
   def follower_users_count(self):
     return self.follower_users().count() or 0
@@ -138,11 +195,11 @@ class User(Base):
     self._card_event_count = value
 
   @property
-  def card_is_followed(self):
-    return self._card_is_followed
-  @card_is_followed.setter
-  def card_is_followed(self, value):
-    self._card_is_followed = value
+  def card_is_following(self):
+    return self._card_is_following
+  @card_is_following.setter
+  def card_is_following(self, value):
+    self._card_is_following = value
 
   @property
   def card_is_blocked(self):

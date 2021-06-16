@@ -1,14 +1,14 @@
-{% if event.user_count %}
+{% if event.card_user_count %}
 <div class='float_container event_users'>
   <div class='float_center'>
     <div class='float_child'>      
       <a class='link_img'>
         <span class='event_users_count {{ event_selected_class }}'>
-          <span class='event_users_count_number'>{{ event.user_count }}</span>
+          <span class='event_users_count_number'>{{ event.card_user_count }}</span>
         </span>
       </a>
       {% if current_user %}
-        {% for user in event.event_users %}
+        {% for user in event.card_event_users %}
           <a
             class='link_img nav_link_get'
             href="{{ url_for('user', identifier=user.user_id) }}"

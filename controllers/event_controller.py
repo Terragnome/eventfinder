@@ -160,10 +160,7 @@ class EventController:
     )
 
     if events:
-      events_table = alias(
-        events,
-        'events_table'
-      )
+      events_table = alias(events, 'events_table')
 
       tag_query = tag_query.join(events_table)
       category_query = category_query.join(events_table)
@@ -344,9 +341,9 @@ class EventController:
 
     results = []
     for event, user_count in events:
-      event.user_count = user_count
+      event.carduser_count = user_count
       if event_user_ids and event.event_id in event_user_ids:
-        event.event_users = [ event_users[x] for x in event_user_ids[event.event_id] if x in event_users ]
+        event.card_event_users = [ event_users[x] for x in event_user_ids[event.event_id] if x in event_users ]
       results.append(event)
 
     return results, categories, tags, event_cities, events
@@ -375,7 +372,7 @@ class EventController:
       )
     ).count()
 
-    event.user_count = user_event_count
+    event.card_user_count = user_event_count
 
     return event
 
