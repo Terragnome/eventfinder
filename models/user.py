@@ -105,7 +105,6 @@ class User(Base):
 
     return blocking.union(blocked_by).subquery()
 
-  #TODO Need to exclude people that are following you
   def following_users(self):
     all_blocks_table = self.all_blocks_table()
     return self._following_users.outerjoin(

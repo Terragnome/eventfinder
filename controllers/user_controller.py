@@ -6,12 +6,14 @@ from flask import current_app, session
 import google.oauth2.credentials
 from googleapiclient.discovery import build
 from sqlalchemy import alias, and_, or_
+from sqlalchemy.sql import func
 
 from models.base import db_session
 from models.auth import Auth
 from models.block import Block
 from models.follow import Follow
 from models.user import User
+from models.user_event import UserEvent
 from models.user_auth import UserAuth
 
 from utils.config_utils import load_config
@@ -141,37 +143,30 @@ class UserController:
 
     return self._get_user(identifier)
 
-  def get(self, user=None, relationship_type=None):
+  def get(self, user=None, relationship_type=None, query=None, limit=None):
     if user is None: user = self.current_user
     if user is None: return []
 
-    if relationship_type == "blocked":
-      return self.get_blocked(user=user)
-    if relationship_type == "followers":
-      return self.get_followers(user=user)
-    if relationship_type == "following":
-      return self.get_following(user=user)
-    if relationship_type == "suggested":
-      return self.get_suggested(user=user)
-    return []
+    users = []
+    if relationship_type == User.BLOCKED:
+      users = user.blocked_users()
+    elif relationship_type == User.FOLLOWER:
+      users = user.follower_users()
+    elif relationship_type == User.FOLLOWING:
+      users = user.following_users()
+    elif relationship_type == User.SUGGESTED:
+      users = self.get_suggested(user=user, query=query)
 
-  def get_blocked(self, user=None):
-    if user is None: user = self.current_user
-    if user is None: return []
-    return user.blocked_users().all()
+    if query:
+      users = users.filter(User.username.ilike("{}%".format(query)))
 
-  def get_followers(self, user=None):
-    if user is None: user = self.current_user
-    if user is None: return []
-    return user.follower_users().all()
+    if limit:
+        users = users.limit(limit)
 
-  def get_following(self, user=None):
-    if user is None: user = self.current_user
-    if user is None: return []
-    return user.following_users().all()
+    return users.all()
 
   # TODO: Add ranking algorithm
-  def get_suggested(self, user=None):
+  def get_suggested(self, user=None, query=None):
     if user is None: user = self.current_user
     if user is None: return []
 
@@ -189,21 +184,13 @@ class UserController:
       'already_following_user_ids'
     )
 
+    # TODO Check that it exculdes people blocking you User.all_blocks_table
     blocking_user_ids = alias(
-      db_session.query(
-        Block.block_id
-      ).select_from(
-        Block
-      ).filter(
-        and_(
-          Block.user_id == user.user_id,
-          Block.active
-        )
-      ),
+      user.all_blocks_table(),
       'blocking_user_ids'
     )
 
-    query = db_session.query(
+    suggested_users = db_session.query(
       User
     ).filter(
       and_(
@@ -211,14 +198,108 @@ class UserController:
         ~User.user_id.in_(already_following_user_ids),
         ~User.user_id.in_(blocking_user_ids)
       )
-    ).limit(
-      5
-    ).all()
+    )
 
-    return query
+    return suggested_users
 
   def get_user(self, identifier):
     return self._get_user(identifier)
 
-  def get_users(self):
-    return User.query.all()
+  def get_users(self, relationship_types, query=None, tag=None, page=None):
+    current_user = self.current_user
+
+    #TODO: Refactor to export the table and paginate
+    users = []
+    if tag:
+      for relationship_type in relationship_types:
+        if relationship_type in tag:
+          users.append({
+            'relationship_type': relationship_type,
+            'users': self.get(
+              relationship_type=relationship_type,
+              query=query
+            )
+          })
+          if relationship_type == User.FOLLOWING:
+            users.append({
+              'relationship_type': User.SUGGESTED,
+              'users': self.get(
+                relationship_type=User.SUGGESTED,
+                query=query,
+                limit=5
+              )
+            })
+
+    all_user_ids = set()
+    for user_data in users:
+      all_user_ids |= set([x.user_id for x in user_data['users']])
+
+    event_counts_by_user_id = db_session.query(
+      UserEvent.user_id,
+      func.count(UserEvent.event_id).label('ct')
+    ).filter(
+      and_(
+        UserEvent.user_id.in_(all_user_ids),
+        UserEvent.interest.in_(UserEvent.INTERESTED_LEVELS)
+      )
+    ).group_by(
+      UserEvent.user_id
+    )
+    event_counts_by_user_id = {str(x[0]): x[1] for x in event_counts_by_user_id}
+
+    follower_counts_by_user_id = db_session.query(
+      Follow.follow_id,
+      func.count(Follow.user_id).label('ct')
+    ).filter(
+      and_(
+        Follow.follow_id.in_(all_user_ids),
+        Follow.active == True
+      )
+    ).group_by(
+      Follow.follow_id
+    )
+    follower_counts_by_user_id = {str(x[0]): x[1] for x in follower_counts_by_user_id}
+    
+    is_follower_by_user_id = db_session.query(
+      Follow.follow_id
+    ).filter(
+      and_(
+        Follow.follow_id == current_user.user_id,
+        Follow.user_id.in_(all_user_ids),
+        Follow.active == True
+      )
+    )
+    is_follower_by_user_id = set(str(x[0]) for x in is_follower_by_user_id)
+
+    is_following_by_user_id = db_session.query(
+      Follow.follow_id
+    ).filter(
+      and_(
+        Follow.user_id == current_user.user_id,
+        Follow.follow_id.in_(all_user_ids),
+        Follow.active == True
+      )
+    )
+    is_following_by_user_id = set(str(x[0]) for x in is_following_by_user_id)
+
+    is_blocked_by_user_id = db_session.query(
+      Block.block_id
+    ).filter(
+      and_(
+        Block.user_id == current_user.user_id,
+        Block.block_id.in_(all_user_ids),
+        Block.active == True
+      )
+    )
+    is_blocked_by_user_id = set(str(x[0]) for x in is_blocked_by_user_id)
+
+    for user_data in users:
+      for user in user_data['users']:
+        uid = str(user.user_id)
+        user.card_event_count     = get_from(event_counts_by_user_id, [uid], 0)
+        user.card_follower_count  = get_from(follower_counts_by_user_id, [uid], 0)
+        user.card_is_follower     = uid in is_follower_by_user_id
+        user.card_is_following    = uid in is_following_by_user_id
+        user.card_is_blocked      = uid in is_blocked_by_user_id
+
+    return users

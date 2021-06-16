@@ -419,97 +419,12 @@ def users(
 
   relationship_types = User.relationship_types()
 
-  #TODO: Clicking block/follow chips from list view doesn't refresh the page
-  #TODO: Move querying into UserController
-  #TODO: Refactor to export the table and paginate
-  from sqlalchemy import and_, or_
-  from sqlalchemy.sql import func
-  users = []
-  if tag:
-    for relationship_type in relationship_types:
-      if relationship_type in tag:
-        users.append({
-          'relationship_type': relationship_type,
-          'users': UserController().get(relationship_type=relationship_type)
-        })
-        if relationship_type == User.FOLLOWING:
-          users.append({
-            'relationship_type': User.SUGGESTED,
-            'users': UserController().get(relationship_type=User.SUGGESTED)
-          })
-
-  all_user_ids = set()
-  for user_data in users:
-    all_user_ids |= set([x.user_id for x in user_data['users']])
-
-  event_counts_by_user_id = db_session.query(
-    UserEvent.user_id,
-    func.count(UserEvent.event_id).label('ct')
-  ).filter(
-    and_(
-      UserEvent.user_id.in_(all_user_ids),
-      UserEvent.interest.in_(UserEvent.INTERESTED_LEVELS)
-    )
-  ).group_by(
-    UserEvent.user_id
+  users = UserController().get_users(
+    relationship_types=relationship_types,
+    query=query,
+    tag=tag,
+    page=page
   )
-  event_counts_by_user_id = {str(x[0]): x[1] for x in event_counts_by_user_id}
-
-  follower_counts_by_user_id = db_session.query(
-    Follow.follow_id,
-    func.count(Follow.user_id).label('ct')
-  ).filter(
-    and_(
-      Follow.follow_id.in_(all_user_ids),
-      Follow.active == True
-    )
-  ).group_by(
-    Follow.follow_id
-  )
-  follower_counts_by_user_id = {str(x[0]): x[1] for x in follower_counts_by_user_id}
-  
-  is_follower_by_user_id = db_session.query(
-    Follow.follow_id
-  ).filter(
-    and_(
-      Follow.follow_id == current_user.user_id,
-      Follow.user_id.in_(all_user_ids),
-      Follow.active == True
-    )
-  )
-  is_follower_by_user_id = set(str(x[0]) for x in is_follower_by_user_id)
-
-  is_following_by_user_id = db_session.query(
-    Follow.follow_id
-  ).filter(
-    and_(
-      Follow.user_id == current_user.user_id,
-      Follow.follow_id.in_(all_user_ids),
-      Follow.active == True
-    )
-  )
-  is_following_by_user_id = set(str(x[0]) for x in is_following_by_user_id)
-
-  is_blocked_by_user_id = db_session.query(
-    Block.block_id
-  ).filter(
-    and_(
-      Block.user_id == current_user.user_id,
-      Block.block_id.in_(all_user_ids),
-      Block.active == True
-    )
-  )
-  is_blocked_by_user_id = set(str(x[0]) for x in is_blocked_by_user_id)
-
-  for user_data in users:
-    for user in user_data['users']:
-      uid = str(user.user_id)
-      user.card_event_count     = get_from(event_counts_by_user_id, [uid], 0)
-      user.card_follower_count  = get_from(follower_counts_by_user_id, [uid], 0)
-      user.card_is_follower     = uid in is_follower_by_user_id
-      user.card_is_following    = uid in is_following_by_user_id
-      user.card_is_blocked      = uid in is_blocked_by_user_id
-  #END TODO
 
   chips = {
     'tags': _parse_chip(
@@ -530,6 +445,9 @@ def users(
     'selected': selected,
     'chips': chips
   }
+
+  for x in users:
+    current_app.logger.debug(x['users'])
 
   if request.is_xhr:
     return render_template(template, vargs=vargs, **vargs)
