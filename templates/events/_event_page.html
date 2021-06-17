@@ -5,7 +5,8 @@
 {% set is_selected = event.current_user_event and event.current_user_event.is_selected %}
 {% set event_selected_class = "" if is_me else "event_selected" if (is_selected) else "" %}
 
-<div class='app_page'>
+<div id="event_page" class='app_page'>
+  {% with url=url_for('events') %}{% include "_search_bar.html" %}{% endwith %}
   <a id='event_back_button' class='left button_back shadow'>{% include "icon/_back.html"%}</a>
   <div id="event_{{ event.event_id }}" class='event_container'>
     {% if event.backdrop_url %}

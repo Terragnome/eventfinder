@@ -233,11 +233,8 @@ class EventController:
     klass,
     events,
     page,
-    query=None,
-    cities=None,
-    user=None,
-    selected_tags=None,
-    selected_categories=None,
+    query=None, cities=None, user=None,
+    selected_tags=None, selected_categories=None,
     future_only=None
   ):
     # event_scores = alias(
@@ -376,7 +373,11 @@ class EventController:
 
     return event
 
-  def get_events(self, query=None, categories=None, tags=None, cities=None, page=1, future_only=False):
+  def get_events(
+    self,
+    query=None, categories=None, tags=None, cities=None,
+    page=1, future_only=False
+  ):
     current_user = UserController().current_user
     selected_categories = set(categories.split(',') if categories else [])
     selected_tags = set(tags.split(',') if tags else [])
@@ -415,7 +416,12 @@ class EventController:
     return results, categories, tags, event_cities
 
   # TODO Can this be combined with get_events?
-  def get_events_for_user_by_interested(self, interested, user=None, query=None, categories=None, tags=None, cities=None, page=1, future_only=False):
+  def get_events_for_user_by_interested(
+    self,
+    interested,
+    user=None, query=None, categories=None, tags=None, cities=None,
+    page=1, future_only=False
+  ):
     current_user = UserController().current_user
     if not user: user = current_user
     selected_categories = set(categories.split(',') if categories else [])

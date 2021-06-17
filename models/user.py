@@ -180,6 +180,13 @@ class User(Base):
     ).first() != None
 
   @property
+  def card_relationship_type(self):
+    return self._card_relationship_type
+  @card_relationship_type.setter
+  def card_relationship_type(self, value):
+    self._card_relationship_type = value
+
+  @property
   def card_follower_count(self):
     return self._card_follower_count
   @card_follower_count.setter
@@ -206,3 +213,10 @@ class User(Base):
   @card_is_blocked.setter
   def card_is_blocked(self, value):
     self._card_is_blocked = value
+
+  @property
+  def card_is_suggested(self):
+    return self._card_is_suggested
+  @card_is_suggested.setter
+  def card_is_suggested(self, value):
+    self._card_is_suggested = value

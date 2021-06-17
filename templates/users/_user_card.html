@@ -1,6 +1,5 @@
 {% set current_user=user or (vargs.current_user if vargs else None) %}
 {% set user=user or (vargs.user if vargs else None) %}
-{% set relationship=relationship or (vargs.relationship if vargs else None) %}
 {% set callback=callback or (vargs.callback if vargs else None) %}
 
 {% set event_count=user.card_event_count %}
@@ -8,13 +7,19 @@
 {% set is_following=user.card_is_following %}
 {% set is_follower=user.card_is_follower %}
 {% set is_blocked=user.card_is_blocked %}
+{% set is_suggested=user.card_is_suggested %}
 
-<div id="{{ relationship }}_user_{{ user.user_id }}" class='user_profile clearfix box_outline'>
+<div id="{{ relationship_type }}_user_{{ user.user_id }}" class='user_profile clearfix box_outline'>
   <a class='nav_link_get' href="{{ url_for('user', identifier=user.username, selected='c', interested='interested') }}">
     <img class="user_profile_img" src="{{ user.image_url }}"></img>
   </a>
   <div class='user_profile_data'>
-    <div class='user_page_name'>{{ user.username }}</div>
+    {% if is_suggested %}
+      {% set username="({}) {}".format("Suggested", user.username) %}
+    {% else %}
+      {% set username=user.username %}
+    {% endif %}
+    <div class='user_page_name'>{{ username }}</div>
     <div class='user_page_counts'>
       <div class='user_page_count'>
         {{ pluralize(event_count, 'Event') }}
@@ -23,6 +28,7 @@
         {{ pluralize(follower_count, 'Follower') }}
       </div>
     </div>
+
     <div class='user_page_choices'>
       {% if is_blocked %}
         <a

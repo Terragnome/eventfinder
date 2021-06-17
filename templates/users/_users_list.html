@@ -1,18 +1,14 @@
-{% set relationship=relationship or (vargs.relationship if vargs else None) %}
 {% set user_list=user_list or (vargs.user_list if vargs else None) %}
 
 <div class='app_section user_list'>
   {% if user_list%}
-    {% if relationship == 'suggested' %}
-      <div class='title'>{{relationship}}</div>
-    {% endif %}
     <div class='body'>
       <div class='float_container'>
         <div class='float_center'>
           {% for user in user_list %}
             <div class='float_child left'>
               <div class='user_card'>
-                {% with vargs=vargs, user=user, relationship=relationship %}
+                {% with vargs=vargs, user=user %}
                   {% include "users/_user_card.html" %}
                 {% endwith %}
               </div>
@@ -22,8 +18,6 @@
       </div>
     </div>
   {% else %}
-    {% if relationship != 'suggested' %}
-      {% include "_empty.html" %}
-    {% endif %}
+    {% include "_empty.html" %}
   {% endif %}
 </div>

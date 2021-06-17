@@ -5,13 +5,9 @@
   {% with vargs=vargs, chips_key='users' %}{% include "_chips.html" %}{% endwith %}
 
   {% if users%}
-    {% for user_data in users %}
-      {% set relationship = user_data['relationship_type'] %}
-      {% set user_list = user_data['users'] %}
-      {% with vargs=vargs, relationship=relationship, user_list=user_list %}
-        {% include "users/_users_list.html" %}
-      {% endwith %}
-    {% endfor %}
+    {% with vargs=vargs, user_list=users %}
+      {% include "users/_users_list.html" %}
+    {% endwith %}
   {% else %}
     {% include "_empty.html" %}
   {% endif %}

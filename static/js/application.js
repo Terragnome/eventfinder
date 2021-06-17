@@ -186,7 +186,7 @@ Application.onBack = function(e){
   let state = e.originalEvent.state;
   if (state != null) {
     if(state.title){ document.title = state.title; }
-    Application.getElem(Application.main, state.url, false, false, true, false, true);
+    Application.getElem(Application.main, state.url, false, false, true, false, Application.mainSpinner);
   }else{
     Spinner.show(Application.mainSpinner);
     let backUrl = document.referrer;

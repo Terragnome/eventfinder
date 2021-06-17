@@ -417,10 +417,7 @@ def users(
 
   template = TEMPLATE_USERS
 
-  relationship_types = User.relationship_types()
-
-  users = UserController().get_users(
-    relationship_types=relationship_types,
+  users, relationship_types = UserController().get_users(
     query=query,
     tag=tag,
     page=page
@@ -445,9 +442,6 @@ def users(
     'selected': selected,
     'chips': chips
   }
-
-  for x in users:
-    current_app.logger.debug(x['users'])
 
   if request.is_xhr:
     return render_template(template, vargs=vargs, **vargs)
