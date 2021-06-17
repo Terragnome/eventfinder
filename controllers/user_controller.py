@@ -89,7 +89,6 @@ class UserController:
     else:
       row_user = row_user_auth.user
       for k,v in user.items():
-        # current_app.logger.debug("{}: {}".format(k, v))
         setattr(row_user, k, v)
       db_session.merge(row_user)
       db_session.commit()
@@ -237,8 +236,6 @@ class UserController:
           (page-1)*self.PAGE_SIZE
         )
       users = users_table.all()
-      for u in users:
-        current_app.logger.debug(u)
     else:
       users = []
 
