@@ -745,16 +745,16 @@ span{
 
 .event_users_count{
   background-color: black;
-  border-radius: 17px;
+  border-radius: 18px;
   color: white;
   cursor: pointer;
   display: inline-block;
   float: left;
   font-size: 12px;  
-  height: 34px;
+  height: 36px;
   margin: 2px 3px 2px 3px;
   text-align: center;
-  width: 34px;
+  width: 36px;
 }
 
 .event_users_count_number{

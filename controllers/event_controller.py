@@ -338,7 +338,7 @@ class EventController:
 
     results = []
     for event, user_count in events:
-      event.carduser_count = user_count
+      event.card_user_count = user_count
       if event_user_ids and event.event_id in event_user_ids:
         event.card_event_users = [ event_users[x] for x in event_user_ids[event.event_id] if x in event_users ]
       results.append(event)

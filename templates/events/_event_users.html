@@ -11,7 +11,7 @@
         {% for user in event.card_event_users %}
           <a
             class='link_img nav_link_get'
-            href="{{ url_for('user', identifier=user.user_id) }}"
+            href="{{ url_for('user', identifier=user.username) }}"
           >
             <img class="user_profile_mini_img" title="{{ user.username }}" src="{{ user.image_url }}"></img>
           </a>
