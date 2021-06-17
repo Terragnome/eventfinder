@@ -948,19 +948,31 @@ span{
   background: none;
   box-shadow: none;
   width: 100%;
+  margin: auto;
   overflow: none;
+  padding: 0px;
   text-align: center;
+}
+
+.user_page > .user_profile > .nav_link_get{
+  float: none;
 }
 
 .user_page > .user_profile > .nav_link_get > .user_profile_img{
   border-radius: 150px;
+  float: none;
   width: 150px;
   height: 150px;
 }
 
 .user_page > .user_profile > .user_profile_data{
+  float: none;
   font-size: 14px;
   margin: 10px 0 0 0;
+}
+
+.user_page > .user_profile > .user_profile_data > .user_page_name{
+  float: none;
 }
 
 .user_page > .user_profile > .user_profile_data > .user_page_choices{

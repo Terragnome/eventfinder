@@ -212,6 +212,7 @@ class UserController:
 
     relationship_types = User.relationship_types()
 
+    users_table=None
     if tag and tag in relationship_types:
       users_table = self.get(
         relationship_type=tag,
