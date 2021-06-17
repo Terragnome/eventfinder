@@ -4,8 +4,8 @@
   {% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
   {% with vargs=vargs, chips_key='event' %}{% include "_chips.html" %}{% endwith %}
 
-  <ul id='event_list' class='effect_in'>
+  <ul id='event_list' class='entity_list effect_in'>
     {% with vargs=vargs %}{% include "events/_events_list.html" %}{% endwith %}
   </ul>
-  <div id='events_spinner'></div>
+  <div class='entity_list_spinner'></div>
 </div>

@@ -6,7 +6,7 @@
 {% set is_selected = event.current_user_event and event.current_user_event.is_selected %}
 {% set event_selected_class = "" if is_me else "event_skip" if is_skip else "event_selected" if (is_selected) else "" %}
 
-<div id="event_{{ event.event_id }}" class='event_container'>
+<div id="event_{{ event.event_id }}" class='entity_card event_container'>
   <div class='event event_card box_outline {{ event_selected_class }}'>
     <a class='event_header nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">
       {% if not is_skip or is_me %}

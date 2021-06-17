@@ -4,11 +4,8 @@
   {% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
   {% with vargs=vargs, chips_key='users' %}{% include "_chips.html" %}{% endwith %}
 
-  {% if users%}
-    {% with vargs=vargs, user_list=users %}
-      {% include "users/_users_list.html" %}
-    {% endwith %}
-  {% else %}
-    {% include "_empty.html" %}
-  {% endif %}
+  <ul id='user_list' class='entity_list effect_in'>
+    {% with vargs=vargs %}{% include "users/_users_list.html" %}{% endwith %}
+  </ul>
+  <div class='entity_list_spinner'></div>
 </div>

@@ -1,23 +1,12 @@
-{% set user_list=user_list or (vargs.user_list if vargs else None) %}
+{% set users=users or (vargs.users if vargs else None) %}
 
-<div class='app_section user_list'>
-  {% if user_list%}
-    <div class='body'>
-      <div class='float_container'>
-        <div class='float_center'>
-          {% for user in user_list %}
-            <div class='float_child left'>
-              <div class='user_card'>
-                {% with vargs=vargs, user=user %}
-                  {% include "users/_user_card.html" %}
-                {% endwith %}
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-  {% else %}
-    {% include "_empty.html" %}
-  {% endif %}
-</div>
+{% if users%}
+  {% for user in users %}
+     <li id="user_card_{{ user.user_id }}">
+      {% with vargs=vargs, user=user %}{% include "users/_user_card.html" %}{% endwith %}
+    </li>
+  {% endfor %}
+  {% with vargs=vargs %}{% include "_pagination.html" %}{% endwith %}
+{% else %}
+  {% include "_empty.html" %}
+{% endif %}

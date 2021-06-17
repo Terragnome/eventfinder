@@ -164,16 +164,20 @@ Application.ajaxifyLinks = function() {
 }
 
 Application.animateElems = function() {
-  if($('#event_list').length > 0 && $('.event_card').length > 0){
-    new AnimOnScroll(
-      document.getElementById('event_list'),
-      {
-        minDuration : 0.4,
-        maxDuration : 0.7,
-        viewportFactor : 0.2
-      }
-    );
-  }
+  let entityLists = $('.entity_list');
+  entityLists.each(function(){
+    if($(this).length > 0 && $('.entity_card').length > 0){
+      let elId = $(this).attr('id');
+      new AnimOnScroll(
+        document.getElementById(elId),
+        {
+          minDuration : 0.4,
+          maxDuration : 0.7,
+          viewportFactor : 0.2
+        }
+      );
+    }
+  });
 }
 
 Application.backButton = function(e){

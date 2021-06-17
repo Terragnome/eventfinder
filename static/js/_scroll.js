@@ -65,7 +65,7 @@ Scroll.getNext = function(){
       if(Scroll.lastScrollUrl != nextUrl){
         Scroll.lastScrollUrl = nextUrl;
         let pushUrl = UrlParams.delParam('scroll');
-        Application.getElem('.pagination:last', nextUrl+'&scroll=true', nextUrl, true, true, false, '#events_spinner');
+        Application.getElem('.pagination:last', nextUrl+'&scroll=true', nextUrl, true, true, false, $('.entity_list_spinner:last'));
       }
     }
   }

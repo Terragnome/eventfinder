@@ -656,38 +656,38 @@ span{
   width: 420px;
 }
 
-#event_list {
+.entity_list {
   border: 0px;
   list-style: none;
   margin: 20px auto;
   padding: 0px;
 }
 
-#event_list li {
+.entity_list li {
   display: inline-block;
   max-width: 100%;
   opacity: 0;
 }
 
-#event_list li.shown,
-#event_list .no-js li,
-#event_list .no-cssanimations li {
+.entity_list li.shown,
+.entity_list .no-js li,
+.entity_list .no-cssanimations li {
   opacity: 1;
 }
 
-#event_list li img {
+.entity_list li img {
   display: block;
   max-width: 100%;
 }
 
-#event_list.effect_in li.animate {
+.entity_list.effect_in li.animate {
   -webkit-transform: translateY(100px);
   transform: translateY(100px);
   -webkit-animation: anim-move-up 0.3s ease forwards;
   animation: anim-move-up 0.3s ease forwards;
 }
 
-#event_list > .pagination{
+.entity_list > .pagination{
   bottom: 10px;
   color: white;
   position: absolute;
@@ -926,24 +926,20 @@ span{
   margin: 20px 0px 10px 0;
 }
 
-.user_list{
-  margin: 20px 0 0 0;
-}
-
-.user_card{
+.user_profile{
   margin: 5px 10px 10px 10px;
 }
 
-.user_card > .user_profile > .nav_link_get {
+.user_profile > .nav_link_get {
   float: left;
   margin: 0 15px 0 0;
 }
 
-.user_card > .user_profile > .user_profile_data {
+.user_profile > .user_profile_data {
   float: left;
 }
 
-.user_card > .user_profile > .user_profile_data > .user_page_name {
+.user_profile > .user_profile_data > .user_page_name {
   float: left;
 }
 

@@ -9,7 +9,7 @@
 {% set is_blocked=user.card_is_blocked %}
 {% set is_suggested=user.card_is_suggested %}
 
-<div id="{{ relationship_type }}_user_{{ user.user_id }}" class='user_profile clearfix box_outline'>
+<div id="{{ relationship_type }}_user_{{ user.user_id }}" class='entity_card user_profile clearfix box_outline'>
   <a class='nav_link_get' href="{{ url_for('user', identifier=user.username, selected='c', interested='interested') }}">
     <img class="user_profile_img" src="{{ user.image_url }}"></img>
   </a>

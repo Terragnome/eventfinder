@@ -6,7 +6,7 @@
       {% with vargs=vargs, event=event, card=True %}{% include "events/_event_card.html"%}{% endwith %}
     </li>
   {% endfor %}
-  {% with vargs=vargs %}{% include "events/_events_pagination.html" %}{% endwith %}
+  {% with vargs=vargs %}{% include "_pagination.html" %}{% endwith %}
 {% else %}
   {% include "_empty.html" %}
 {% endif %}
