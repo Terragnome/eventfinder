@@ -479,12 +479,11 @@ span{
   text-align: left;
 }
 
-.event.event_page > .event_body > .event_description {
-  margin-left: 10px;
-}
-
 .event_page > .event_img_wrapper {
   float: left;
+  margin-right: 10px;
+  min-height: 100px;
+  min-width: 10px;
 }
 
 .event_page > .event_img_wrapper > .event_img{
@@ -628,9 +627,10 @@ span{
 
 .event_description{
   font-size: 13px;
-  text-align: left;
+  text-align: justify;
   text-indent: 30px;
   text-transform: none;
+  margin: 10px;
 }
 
 .event_header{
@@ -716,9 +716,9 @@ span{
   text-decoration: none;
 }
 
-.event_page > .event_header{
+/*.event_page > .event_header{
   margin: auto 15px auto 15px;
-}
+}*/
 
 .event_page > .event_header > .event_title{
   font-size: 28px;
