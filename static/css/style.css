@@ -523,7 +523,7 @@ span{
 
 .event_card > .event_header > .event_title > .event_name{
   font-size: 20px;
-  margin: 5px 5px 10px 5px;
+  margin: 5px 5px 8px 5px;
 }
 
 .event_choice{
@@ -532,7 +532,7 @@ span{
 }
 
 .event_choices{
-  margin: 20px 0 20px 0;
+  margin: 10px 0 20px 0;
   text-align: center;
 }
 
@@ -628,9 +628,9 @@ span{
 .event_description{
   font-size: 13px;
   text-align: justify;
-  text-indent: 30px;
+  /*text-indent: 30px;*/
   text-transform: none;
-  margin: 10px;
+  margin: 15px 10px 15px 10px;
 }
 
 .event_header{
@@ -1116,6 +1116,7 @@ span{
   .event_page > .event_img_wrapper{
     background: none;
     float: none;
+    min-height: 0px;
     text-align: center;
   }
 

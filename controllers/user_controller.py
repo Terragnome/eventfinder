@@ -186,7 +186,6 @@ class UserController:
       'already_following_user_ids'
     )
 
-    # TODO Check that it exculdes people blocking you User.all_blocks_table
     blocking_user_ids = alias(
       user.all_blocks_table(),
       'blocking_user_ids'
