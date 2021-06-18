@@ -7,6 +7,7 @@ import datetime
 import json
 import os
 import re
+from tempfile import NamedTemporaryFile
 
 from sqlalchemy import and_
 import usaddress
@@ -27,8 +28,23 @@ class ConnectorMMVillage:
   MM_VILLAGE_SHEET_ID = 'Locations!$A$1:$L'
 
   def __init__(self):
-    tmp_file = "config/secrets/EventFinder-9a13920d2b2c.json"
-    creds = service_account.Credentials.from_service_account_file(tmp_file, scopes=self.SCOPES)
+    service_account_str=None
+    try:
+      service_account_str = os.getenv('SERVICE_ACCOUNT')
+    except Exception as e:
+      print(e)
+
+    if not service_account_str:
+      with open("config/secrets/EventFinder-9a13920d2b2c.json") as f:
+        service_account_str = f.read()
+
+    with NamedTemporaryFile(mode="w+") as temp:
+      temp.write(service_account_str)
+      temp.flush()
+      creds = service_account.Credentials.from_service_account_file(
+        temp.name,
+        scopes=self.SCOPES
+      )
     self.service = build('sheets', 'v4', credentials=creds)
 
   def get_places(self):
