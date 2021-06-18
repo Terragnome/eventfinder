@@ -365,6 +365,24 @@ class EventController:
       if user_event:
         event.current_user_event=user_event
 
+      following_event_users = db_session.query(
+        User
+      ).filter(
+        and_(
+          UserEvent.event_id==event.event_id,
+          UserEvent.user_id==Follow.follow_id,
+          Follow.user_id==user.user_id,
+          User.user_id!=user.user_id
+        )
+      )
+      event.card_event_users = [
+        {
+          "user_id": u.user_id,
+          "username": u.username,
+          "image_url": u.image_url
+        } for u in following_event_users
+      ]
+
     user_event_count = UserEvent.query.filter(
       and_(
         UserEvent.event_id==event_id,

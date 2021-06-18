@@ -301,11 +301,13 @@ def paginated(fn):
 @app.route("/event/<int:event_id>/", methods=['GET'])
 def event(event_id):
   event = EventController().get_event(event_id=event_id)
+  current_user = UserController().current_user
 
   if event:
     template = TEMPLATE_EVENT_PAGE
 
     vargs = {
+      'current_user': current_user,
       'event': event
     }
 
@@ -317,6 +319,8 @@ def event(event_id):
 @app.route("/event/<int:event_id>/", methods=['POST'])
 @oauth2_required
 def event_update(event_id):
+  current_user = UserController().current_user
+
   is_card = request.form.get('card') == 'true'
   choice = request.form.get('choice')
 
@@ -349,6 +353,7 @@ def event_update(event_id):
     )
 
     vargs = {
+      'current_user': current_user,
       'event': event,
       'chips': chips,
       'card': is_card
