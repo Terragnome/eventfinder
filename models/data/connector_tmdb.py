@@ -120,8 +120,7 @@ class ConnectorTMDB(ConnectorEvent):
     end_date=None,
     purge=False
   ):
-    if purge:
-      self.purge_events()
+    if purge: self.purge_events()
 
     discover = tmdb.Discover()
 

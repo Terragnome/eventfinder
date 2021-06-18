@@ -47,7 +47,9 @@ class ConnectorMMVillage:
       )
     self.service = build('sheets', 'v4', credentials=creds)
 
-  def get_places(self):
+  def get_places(self, purge=False):
+    if purge: self.purge_events()
+
     # Call the Sheets API
     sheet = self.service.spreadsheets()
     result = sheet.values().get(
@@ -76,8 +78,8 @@ class ConnectorMMVillage:
       location_categories = set([x.strip() for x in re.split(r'[/;]', obj['categories'])])
       location_rating = obj['tier']
 
-      # if location_rating in ['✖']:
-      #   continue
+      if location_rating in ['✖']:
+        continue
 
       # if location_rating not in ['♡', '☆']:
       #   continue
@@ -196,6 +198,7 @@ class ConnectorMMVillage:
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
+  parser.add_argument('--purge', action="store_true")
   group = parser.add_mutually_exclusive_group()
   args = parser.parse_args()
 

@@ -219,7 +219,7 @@ def _parse_chips(
     )
 
   return {
-    'categories': _parse_chip(categories, key="c", display_name="Categories"),
+    'categories': _parse_chip(categories, key="c", mode=Tag.EXCLUSIVE, display_name="Categories"),
     'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
     'cities': _parse_chip(cities, key="cities", mode=Tag.EXCLUSIVE, display_name="Cities") if cities else default,
     'interested': interested_chips
