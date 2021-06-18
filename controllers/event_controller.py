@@ -316,7 +316,7 @@ class EventController:
 
       events_with_following_counts = db_session.query(
         UserEvent.event_id,
-        func.array_agg(User.user_id).label('user_ids')
+        func.array_agg(func.distinct(User.user_id)).label('user_ids')
       ).filter(
         and_(
           Follow.user_id==user.user_id,
@@ -327,7 +327,9 @@ class EventController:
       ).group_by(
         UserEvent.event_id
       )
-      event_user_ids = { row[0]: [str(follower_id) for follower_id in row[1]] for row in events_with_following_counts }
+      event_user_ids = {
+        row[0]: set(str(follower_id) for follower_id in row[1]) for row in events_with_following_counts
+      }
 
     events = klass._order_events(events)
     events = events.limit(
@@ -340,7 +342,9 @@ class EventController:
     for event, user_count in events:
       event.card_user_count = user_count
       if event_user_ids and event.event_id in event_user_ids:
-        event.card_event_users = [ event_users[x] for x in event_user_ids[event.event_id] if x in event_users ]
+        event.card_event_users = [
+          event_users[x] for x in event_user_ids[event.event_id] if x in event_users
+        ]
       results.append(event)
 
     return results, categories, tags, event_cities, events
