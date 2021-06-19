@@ -1104,7 +1104,8 @@ span{
     background: none;
     border-radius: 0px;
     box-shadow: none;
-    margin: 5px;
+    margin: 0px;
+    min-width: auto;
     position: relative;
     text-align: center;
   }
@@ -1116,6 +1117,7 @@ span{
   .event_page > .event_img_wrapper{
     background: none;
     float: none;
+    margin-right:  0px;
     min-height: 0px;
     text-align: center;
   }
