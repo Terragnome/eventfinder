@@ -1,5 +1,4 @@
 <div id="event_page" class='app_page'>
   {% with url=url_for('events') %}{% include "_search_bar.html" %}{% endwith %}
-  <a id='event_back_button' class='left button_back shadow'>{% include "icon/_back.html"%}</a>
   {% with %}{% include "events/_event_page_body.html" %}{% endwith %}
 </div>

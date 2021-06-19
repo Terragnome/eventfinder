@@ -368,15 +368,21 @@ span{
   z-index: 10;
 }
 
-/*TODO Why is this margin off*/
-#user_back_button.button_back{
-  margin-top: -20px;
-}
-
 .button_back > svg{
   width: 40px;
   height: 40px;
   margin: 5px 5px 5px 0;
+}
+
+.app_search > .button_back{
+  position: absolute;
+  fill: black;
+  z-index: 5;
+  top:  5px;
+}
+
+.app_search > .button_back > svg{
+  width: 32px;
 }
 
 .cap_button{

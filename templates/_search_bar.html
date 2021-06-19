@@ -2,6 +2,7 @@
 {% set placeholder=placeholder or (vargs.placeholder if vargs else '') %}
 
 <form class='app_search nav_link_form' action='{{ url }}' method='get'>
+  <a class='button_back'>{% include "icon/_back.html"%}</a>
   <input type='text' class='box_outline search_field' name='q' placeholder='{{ placeholder }}'>
     <input type='submit' class='nav_link_form icon_search' value=''></input>
   </input>
