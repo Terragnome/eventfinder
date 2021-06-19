@@ -234,3 +234,19 @@ if __name__ == '__main__':
     for i, entry in enumerate(events):
       event, genres = entry
       print(i, event.name, genres)
+
+# {
+#   "adult": false,
+#   "backdrop_path": "/q7vmCCmyiHnuKGMzHZlr0fD44b9.jpg",
+#   "genre_ids": [10749, 14, 10751, 18],
+#   "id": 150689, "original_language": "en",
+#   "original_title": "Cinderella",
+#   "overview": "When her father unexpectedly passes away, young Ella finds herself at the mercy of her cruel stepmother and her daughters. Never one to give up hope, Ella's fortunes begin to change after meeting a dashing stranger in the woods.",
+#   "popularity": 46.164,
+#   "poster_path": "/ryKwNlAfDXu0do6SX9h4G9Si1kG.jpg",
+#   "release_date": "2015-03-12",
+#   "title": "Cinderella",
+#   "video": false,
+#   "vote_average": 6.8,
+#   "vote_count": 5859
+# }

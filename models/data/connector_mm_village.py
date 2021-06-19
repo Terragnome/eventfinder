@@ -207,3 +207,18 @@ if __name__ == '__main__':
   if places:
     for i, place in enumerate(place):
       print(i, place.name)
+
+# {
+#   "location": "A16",
+#   "link": "https://maps.google.com/?cid=3777065943552364342",
+#   "name": "A16", "address": "5356 College Ave, Oakland, CA 94618, USA",
+#   "tags": "bar, restaurant, food, point_of_interest, establishment",
+#   "status": "",
+#   "photos": "",
+#   "categories": "European / Italian",
+#   "city": "Oakland",
+#   "tier": "\u25ce",
+#   "accolades": "2019 Mercury 50 best,\n2019 Michelin Bib Gourmand,\n2019 SF Chronicle 100 best",
+#   "notes": "",
+#   "slug": "5356-college-ave-oakland-ca-94618-usa"
+# }

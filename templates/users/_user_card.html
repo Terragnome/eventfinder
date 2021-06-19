@@ -33,26 +33,26 @@
       {% if is_blocked %}
         <a
           class='cap_button selected nav_link_post user_page_choice'
-          href="{{ url_for('user_action', identifier=user.username) }}"
+          href="{{ url_for('user_update', identifier=user.username) }}"
           data='{"target": "#main", "action": "block", "active": false, "cb": "{{ callback }}"}'
         >Unblock</a>
       {% else %}
         {% if is_following %}
           <a
             class='cap_button selected nav_link_post user_page_choice'
-            href="{{ url_for('user_action', identifier=user.username) }}"
+            href="{{ url_for('user_update', identifier=user.username) }}"
             data='{"target": "#main", "action": "follow", "active": false, "cb": "{{ callback }}"}'
           >Unfollow</a>
         {% else %}
           <a
             class='cap_button nav_link_post user_page_choice'
-            href="{{ url_for('user_action', identifier=user.username) }}"
+            href="{{ url_for('user_update', identifier=user.username) }}"
             data='{"target": "#main", "action": "follow", "active": true, "cb": "{{ callback }}"}'
           >Follow</a>
         {% endif %}
         <a
           class='cap_button nav_link_post user_page_choice'
-          href="{{ url_for('user_action', identifier=user.username) }}"
+          href="{{ url_for('user_update', identifier=user.username) }}"
           data='{"target": "#main", "action": "block", "active": true, "cb": "{{ callback }}"}'
         >Block</a>
       {% endif %}

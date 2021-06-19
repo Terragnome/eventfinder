@@ -63,13 +63,19 @@ param_to_kwarg = {
 }
 
 TEMPLATE_MAIN = "main.html"
-TEMPLATE_EVENT_CARD   = "events/_event_card.html"
-TEMPLATE_EVENT_PAGE   = "events/_event_page.html"
-TEMPLATE_EVENTS       = "events/_events.html"
-TEMPLATE_EVENTS_LIST  = "events/_events_list.html"
-TEMPLATE_EXPLORE      = "events/_explore.html"
-TEMPLATE_USER_PAGE    = "users/_user_page.html"
-TEMPLATE_USERS        = "users/_users.html"
+
+TEMPLATE_EXPLORE          = "events/_explore.html"
+
+TEMPLATE_EVENTS           = "events/_events.html"
+TEMPLATE_EVENTS_LIST      = "events/_events_list.html"
+TEMPLATE_EVENT_CARD       = "events/_event_card.html"
+TEMPLATE_EVENT_PAGE       = "events/_event_page.html"
+TEMPLATE_EVENT_PAGE_BODY  = "events/_event_page_body.html"
+
+TEMPLATE_USERS            = "users/_users.html"
+TEMPLATE_USERS_LIST       = "users/_users_list.html"
+TEMPLATE_USER_CARD        = "users/_user_card.html"
+TEMPLATE_USER_PAGE        = "users/_user_page.html"
 
 def get_oauth2_callback():
   if not is_prod():
@@ -359,7 +365,11 @@ def event_update(event_id):
       'card': is_card
     }
 
+    current_app.logger.debug(request.is_xhr)
+
     if request.is_xhr:
+      if template == TEMPLATE_EVENT_PAGE:
+        template = TEMPLATE_EVENT_PAGE_BODY
       return render_template(template, vargs=vargs, **vargs)
     if callback:
       return redirect(callback)
@@ -531,7 +541,7 @@ def user(
 
 @app.route("/user/<identifier>/", methods=['POST'])
 @oauth2_required
-def user_action(identifier):
+def user_update(identifier):
   current_user = UserController().current_user
   current_user_id = UserController().current_user_id
 

@@ -1,37 +1,5 @@
-{% set is_me=is_me or (vargs.is_me if vargs else None) %}
-{% set event=event or (vargs.event if vargs else None) %}
-{% set card=card or (vargs.card if vargs else None) %}
-
-{% set is_selected = event.current_user_event and event.current_user_event.is_selected %}
-{% set event_selected_class = "" if is_me else "event_selected" if (is_selected) else "" %}
-
 <div id="event_page" class='app_page'>
   {% with url=url_for('events') %}{% include "_search_bar.html" %}{% endwith %}
   <a id='event_back_button' class='left button_back shadow'>{% include "icon/_back.html"%}</a>
-  <div id="event_{{ event.event_id }}" class='event_container'>
-    {% if event.backdrop_url %}
-      <script>
-        Application.setAppBackground('{{ event.backdrop_url }}');
-      </script>
-    {% endif %}
-    <div class='event event_page box_outline {{ event_selected_class }}'>
-      <div class='clearfix event_header'>  
-        <div class='event_title'>
-          <div class='event_name'>{{ event.display_name }}</div>
-          {% if event.display_city %}<div class='event_venue_name'>{{ event.display_city }}</div>{% endif %}
-        </div>
-        {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
-      </div>
-      <div class='left event_img_wrapper'>
-        {% if event.img_url %}
-          <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
-        {% endif %}
-      </div>
-      <div class='event_body'>
-        {% if event.description %}<p class='event_description'>{{ event.description }}</p>{% endif %}
-        {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
-        {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
-      </div>
-    </div>
-  </div>
+  {% with %}{% include "events/_event_page_body.html" %}{% endwith %}
 </div>
