@@ -1088,16 +1088,20 @@ span{
 }
 
 @media(max-width: 700px), (max-height: 320px){
-  #app_panel{
+  /*#app_panel{
     text-align: center;
   }
   
-  #app_panel{
+  #user_panel{
     text-align: center;
-  }
+  }*/
 
   .app_background{
     display: none;
+  }
+
+  .app_search > .search_field{
+    font-size: 14px;
   }
 
   .event.event_page{
