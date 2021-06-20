@@ -60,6 +60,9 @@ class Event(Base):
     return self.tags.filter(Tag.id == row_tag.id).first() is not None
 
   def add_tag(self, tag_name, tag_type=None):
+    if tag_name is None:
+      return
+
     row_tag = Tag.create_tag(tag_name, tag_type)
 
     row_event_tag = self.tags.filter(Tag.tag_id == row_tag.tag_id).first()

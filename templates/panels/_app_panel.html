@@ -1,6 +1,7 @@
 <div id='app_panel' class="app_panel">
   <div class='app_panel_contents'>
-    {% for category in ['watch', 'eat', 'acquire', 'todo'] %}
+    <a class="col nav_link_get" href="{{ url_for('events') }}">Explore</a>
+    {% for category in app_panel_types() %}
       <a class="col nav_link_get" href="{{ url_for('events', selected='t', c=category) }}">{{category.upper()}}</a>
     {% endfor %}
   </div>

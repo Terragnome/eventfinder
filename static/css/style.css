@@ -360,18 +360,28 @@ span{
 }
 
 .button_back{
+  border-radius: 20px;
   cursor: pointer;
   color: white;
   fill: white;
-  margin-top: -10px;
-  width: 54px;
-  z-index: 10;
-}
-
-.button_back > svg{
+  margin-top: -5px;
+  height:  40px;
   width: 40px;
-  height: 40px;
-  margin: 5px 5px 5px 0;
+  z-index: 5;
+}
+.button_back > svg{
+  width: 30px;
+  height: 30px;
+  margin: 5px 5px 5px 5px;
+}
+.button_back:hover{
+  background-color: black;
+  transition: 0.3s;
+}
+.button_back:hover > svg{
+  color: white;
+  fill: white;
+  transition: 0.3s;
 }
 
 .app_search > .button_back{
@@ -379,10 +389,6 @@ span{
   fill: black;
   z-index: 5;
   top:  5px;
-}
-
-.app_search > .button_back > svg{
-  width: 32px;
 }
 
 .cap_button{

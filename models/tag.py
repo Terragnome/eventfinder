@@ -16,8 +16,16 @@ class Tag(Base):
   TVM = "watch"
   FOOD_DRINK = "eat"
   GEAR = "acquire"
-  TODO = "todo"
+  ACTIVITY = "go"
   SERVICES = "services"
+
+  TYPES = [
+    TVM,
+    FOOD_DRINK,
+    GEAR,
+    ACTIVITY,
+    SERVICES
+  ]
 
   __tablename__ = 'tags'
   tag_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -27,6 +35,10 @@ class Tag(Base):
   updated_at = Column(DateTime)
 
   events = relationship('Event', secondary='event_tags')
+
+  @classmethod
+  def types(klass):
+    return klass.TYPES
 
   @classmethod
   def types_with_counts(klass):

@@ -1,3 +1,4 @@
+import geocoder
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from google.oauth2.credentials import Credentials
@@ -18,14 +19,14 @@ from models.event import Event
 from models.tag import Tag
 from utils.get_from import get_from
 
-class ConnectorMMVillage:
+class ConnectorMMVillage(ConnectorEvent):
   CONNECTOR_TYPE = "MM Village"
 
   # If modifying these scopes, delete the file token.pickle.
   SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
   MM_VILLAGE_TRIX_ID = '1F2ftN4x6tCe0xiOCZ93I0PLdI0-FfAbFlWGoeKRIh1A'
-  MM_VILLAGE_SHEET_ID = 'Locations!$A$1:$L'
+  MM_VILLAGE_SHEET_ID = 'Locations!$A$1:$M'
 
   def __init__(self):
     service_account_str=None
@@ -47,9 +48,7 @@ class ConnectorMMVillage:
       )
     self.service = build('sheets', 'v4', credentials=creds)
 
-  def get_places(self, purge=False):
-    if purge: self.purge_events()
-
+  def get_events(self):
     # Call the Sheets API
     sheet = self.service.spreadsheets()
     result = sheet.values().get(
@@ -78,6 +77,30 @@ class ConnectorMMVillage:
       location_categories = set([x.strip() for x in re.split(r'[/;]', obj['categories'])])
       location_rating = obj['tier']
 
+      location_tags = set([x.strip() for x in obj['tags'].split(',')])
+      filter_location_tags = {
+        "aquarium",
+        "bakery",
+        "bar",
+        "cafe",
+        "campground",
+        "car_repair",
+        "grocery_or_supermarket",
+        "library",
+        "movie_theater",
+        "museum",
+        "natural_feature",
+        "park",
+        "spa",
+        "stadium",
+        "supermarket",
+        "tourist_attraction",
+        "zoo",
+      }
+      location_tags = location_tags & filter_location_tags
+      location_categories = location_categories | location_tags
+
+
       if location_rating in ['✖']:
         continue
 
@@ -102,30 +125,14 @@ class ConnectorMMVillage:
 
       print(json.dumps(row_connector_event.data, indent=2))
 
-      # {
-      #   "location": "Zushi Puzzle",
-      #   "link": "https://maps.google.com/?cid=13797947637975436515",
-      #   "address": "1910 Lombard St, San Francisco, CA 94123, USA",
-      #   "tags": "restaurant, food, point_of_interest, establishment",
-      #   "status": "",
-      #   "photos": "",
-      #   "categories": "Asian / Japanese / Sushi",
-      #   "city": "SF",
-      #   "tier": "\u25ce",
-      #   "accolades": "2016 Zagat 50 best",
-      #   "notes": "DJ",
-      #   "slug": "1910-lombard-st-san-francisco-ca-94123-usa"
-      # }
-
       if row_connector_event.event_id:
         row_event = Event.query.filter(Event.event_id == row_connector_event.event_id).first()
         row_event.name = location_name
         row_event.description = location_description
         row_event.short_name = location_short_name
         db_session.merge(row_event)
-        db_session.commit()
-
         row_event.remove_all_tags()
+        db_session.commit()
       else:
         row_event = Event(
           name = location_name,
@@ -139,7 +146,16 @@ class ConnectorMMVillage:
         db_session.merge(row_connector_event)
         db_session.commit()
 
-      row_event.link = row_connector_event.data['link']
+      # row_event.link = row_connector_event.data['link']
+      
+      # raw_addr = row_connector_event.data['address']
+      # raw_addr = geocoder.google(raw_addr)
+      # addr_num = raw_addr.housenumber
+      # addr_street = raw_addr.street_long
+      # addr_city = raw_addr.city
+      # addr_state = raw_addr.state
+      # print(row_connector_event.data['address'])
+      # print(raw_addr)
 
       try:
         raw_addr = row_connector_event.data['address']
@@ -161,52 +177,69 @@ class ConnectorMMVillage:
         print(e)
 
       tag_type = Tag.FOOD_DRINK
-      if (
-        'culture' in location_categories
-        or 'entertainment' in location_categories
-        or 'fitness' in location_categories
-        or 'nature' in location_categories
-      ):
-        tag_type = Tag.TODO
 
       if (
-        'utilities' in location_categories
+        'Culture' in location_categories
+        or 'Entertainment' in location_categories
+        or 'Fitness' in location_categories
+        or 'Nature' in location_categories
+        or 'aquarium' in location_categories
+        or 'campground' in location_categories
+        or 'library' in location_categories
+        or 'movie_theater' in location_categories
+        or 'museum' in location_categories
+        or 'natural_feature' in location_categories
+        or 'park' in location_categories
+        or 'spa' in location_categories
+        or 'stadium' in location_categories
+        or 'tourist_attraction' in location_categories
+        or 'zoo' in location_categories
+      ):
+        tag_type = Tag.ACTIVITY
+
+      if (
+        'Utilities' in location_categories
+        or 'car_repair' in location_categories
       ):
         tag_type = Tag.SERVICES
 
       category_remappings = {
-        'entertainment': None,
-        'western': ['european'],
-        'sea': ['southeast asian'],
-        'pmt': ['asian', 'boba'],
-        'fine dining': ['dinner', 'fine dining'],
-        'mochi': ['asian', 'mochi']
+        'Entertainment': None,
+        'Western': ['European'],
+        'SEA': ['Southeast'],
+        'PMT': ['Asian', 'Boba'],
+        'Fine Dining': ['Dinner', 'Fine Dining'],
+        'Mochi': ['Asian', 'Mochi'],
+        "car_repair": ["Repair"],
+        "grocery_or_supermarket": ["Market"],
+        "movie_theater": ["Theatre"],
+        "natural_feature": ["Nature"],
+        "park": ["Nature"],
+        'tourist_attraction': None
       }
 
       for cats in location_categories:
-        try:
-          cats = category_remappings[category]
-        except Exception as e:
-          cats = [cats]
+        if cats:
+          cats = get_from(category_remappings, [cats], [cats])
 
         if cats:
+          cats = [x for x in cats if x is not None]
           for cat in cats:
             row_event.add_tag(cat.lower(), tag_type)
 
       db_session.merge(row_event)
       db_session.commit()
 
+      yield row_event, row_event.name
+
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--purge', action="store_true")
   group = parser.add_mutually_exclusive_group()
-  args = parser.parse_args()
+  args = vars(parser.parse_args())
 
   e = ConnectorMMVillage()
-  places = e.get_places(**vars(args))
-  if places:
-    for i, place in enumerate(place):
-      print(i, place.name)
+  e.sync(args)
 
 # {
 #   "location": "A16",

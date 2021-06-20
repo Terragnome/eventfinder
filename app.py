@@ -49,6 +49,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.jinja_env.globals.update(pluralize=pluralize)
 app.jinja_env.globals.update(update_url_params=update_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
+app.jinja_env.globals.update(app_panel_types=Tag.types)
 
 Session(app)
 

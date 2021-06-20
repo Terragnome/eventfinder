@@ -117,11 +117,8 @@ class ConnectorTMDB(ConnectorEvent):
   def get_events(
     self,
     start_date=None,
-    end_date=None,
-    purge=False
+    end_date=None
   ):
-    if purge: self.purge_events()
-
     discover = tmdb.Discover()
 
     event_params = {
@@ -212,7 +209,7 @@ class ConnectorTMDB(ConnectorEvent):
         db_session.merge(row_event)
         db_session.commit()
 
-        yield (row_event, genres)
+        yield row_event, "{} {}".format(row_event.name, genres)
 
       del raw_events['results']
 
@@ -226,14 +223,10 @@ if __name__ == '__main__':
   parser.add_argument('--end_date', default=None)
   parser.add_argument('--purge', action="store_true")
   group = parser.add_mutually_exclusive_group()
-  args = parser.parse_args()
+  args = vars(parser.parse_args())
 
   e = ConnectorTMDB()
-  events = e.get_events(**vars(args))
-  if events:
-    for i, entry in enumerate(events):
-      event, genres = entry
-      print(i, event.name, genres)
+  e.sync(args)
 
 # {
 #   "adult": false,

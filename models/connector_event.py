@@ -26,6 +26,8 @@ class ConnectorEvent(Base):
 
   @classmethod
   def all(klass):
+    if klass.CONNECTOR_TYPE is None:
+      current_app.logger.error("CONNECTOR_TYPE has not been set")
     return ConnectorEvent.query.filter(ConnectorEvent.connector_type == klass.CONNECTOR_TYPE)
 
   @classmethod
@@ -41,3 +43,14 @@ class ConnectorEvent(Base):
     ConnectorEvent.query.filter(ConnectorEvent.event_id.in_(event_ids)).delete(synchronize_session='fetch')
     Event.query.filter(Event.event_id.in_(event_ids)).delete(synchronize_session='fetch')
     db_session.commit()
+
+  def sync(self, args):
+    if 'purge' in args:
+      del args['purge']
+      self.purge_events()
+
+    events = self.get_events(**args)
+    if events:
+      for i, entry in enumerate(events):
+        event, debug_output = entry
+        print(i, debug_output, "\n")
