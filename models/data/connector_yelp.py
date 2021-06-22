@@ -31,15 +31,15 @@ class ConnectorYelp(ConnectorEvent):
       Event.event_id
     )
 
-    for event in events:
+    for row_event in events:
       search_results = None
       b_details = None
       try:
-        term = " ".join([event.name, event.city, event.state])
-        location = " ".join([event.city, event.state])
+        term = " ".join([row_event.name, row_event.city, row_event.state])
+        location = " ".join([row_event.city, row_event.state])
       except Exception as e:
         print(e)
-        print(event)
+        print(row_event)
 
       # search_results = self.api.search_query(
       #   term = term,
@@ -50,24 +50,24 @@ class ConnectorYelp(ConnectorEvent):
       print("query: \"{}\" | location: \"{}|\"".format(term, location))
       try:
         search_results = self.api.business_match_query(
-          name = event.name,
-          address1 = event.address,
-          city = event.city,
-          state = event.state,
+          name = row_event.name,
+          address1 = row_event.address,
+          city = row_event.city,
+          state = row_event.state,
           country = "US"
         )
       except Exception as e:
         print(e)
-        print(event)
+        print(row_event)
 
       if search_results:
         for r in search_results['businesses']:
           b_details = self.api.business_query(id = r['id'])
           
           row_event.update_meta(self.TYPE, {**r, **b_details})
-          db_session.merge(event)
+          db_session.merge(row_event)
           db_session.commit()
-      yield event.name, b_details
+      yield row_event.name, b_details
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()

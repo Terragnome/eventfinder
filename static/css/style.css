@@ -1159,6 +1159,10 @@ span{
     font-size: 14px;
   }
 
+  .event_card > .event_header > .event_title > .event_name{
+    font-size: 18px;
+  }
+
   .event.event_page{
     background: none;
     border-radius: 0px;

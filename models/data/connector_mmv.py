@@ -101,7 +101,7 @@ class ConnectorMMVillage(ConnectorEvent):
       location_categories = location_categories | location_tags
 
 
-      if location_rating in ['✖']:
+      if location_rating not in ['♡', '☆', '◎']:
         continue
 
       # if location_rating not in ['♡', '☆']:
