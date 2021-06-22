@@ -1,0 +1,20 @@
+{% set event=event or (vargs.event if vargs else None) %}
+{% set card=card or (vargs.card if vargs else None) %}
+
+<div class='event_accolades {{"card" if card else "page"}}'>
+  {% if event.accolades %}
+    {% if card %}
+      <div class='accolade clearfix'>
+        <div class='accolade_icon'>{% include "icon/_accolade.html" %}</div>
+      </div>
+    {% else %}
+      {% for x in range(0, 3) %}
+        {% for accolade in event.accolades %}
+          <div class="accolade clearfix">
+            <div class='left accolade_icon'>{% include "icon/_accolade.html" %}</div><span class='left accolade_name'>{{accolade}}</span>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+</div>

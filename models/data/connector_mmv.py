@@ -20,7 +20,7 @@ from models.tag import Tag
 from utils.get_from import get_from
 
 class ConnectorMMVillage(ConnectorEvent):
-  CONNECTOR_TYPE = "MM Village"
+  TYPE = "MM Village"
 
   # If modifying these scopes, delete the file token.pickle.
   SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
@@ -31,7 +31,7 @@ class ConnectorMMVillage(ConnectorEvent):
   def __init__(self):
     service_account_str=None
     try:
-      service_account_str = os.getenv('SERVICE_ACCOUNT')
+      service_account_str = os.getenv('GOOGLE_SERVICE')
     except Exception as e:
       print(e)
 
@@ -48,7 +48,7 @@ class ConnectorMMVillage(ConnectorEvent):
       )
     self.service = build('sheets', 'v4', credentials=creds)
 
-  def get_events(self):
+  def extract(self):
     # Call the Sheets API
     sheet = self.service.spreadsheets()
     result = sheet.values().get(
@@ -64,13 +64,13 @@ class ConnectorMMVillage(ConnectorEvent):
         continue
 
       obj = { val: get_from(row, [i], None) for i, val in enumerate(headers) }
-      slug = re.sub(r'-+', '-', re.sub(r'[^a-z0-9]', "-", obj['address'].lower()))
-      obj['slug'] = slug
+      alias = re.sub(r'-+', '-', re.sub(r'[^a-z0-9]', "-", obj['address'].lower()))
+      obj['alias'] = alias
 
-      if not slug:
+      if not alias:
         continue
 
-      connector_event_id = slug
+      connector_event_id = alias
       location_name = obj['name']
       location_short_name = location_name
       location_description = obj['notes']
@@ -110,14 +110,14 @@ class ConnectorMMVillage(ConnectorEvent):
       row_connector_event = ConnectorEvent.query.filter(
         and_(
           ConnectorEvent.connector_event_id == connector_event_id,
-          ConnectorEvent.connector_type == self.CONNECTOR_TYPE
+          ConnectorEvent.connector_type == self.TYPE
         )
       ).first()
 
       if not row_connector_event:
         row_connector_event = ConnectorEvent(
           connector_event_id=connector_event_id,
-          connector_type=self.CONNECTOR_TYPE,
+          connector_type=self.TYPE,
           data=obj
         )
         db_session.merge(row_connector_event)
@@ -227,6 +227,9 @@ class ConnectorMMVillage(ConnectorEvent):
           for cat in cats:
             row_event.add_tag(cat.lower(), tag_type)
 
+      row_event.primary_type = tag_type
+
+      row_event.update_meta(self.TYPE, obj)
       db_session.merge(row_event)
       db_session.commit()
 
@@ -253,5 +256,5 @@ if __name__ == '__main__':
 #   "tier": "\u25ce",
 #   "accolades": "2019 Mercury 50 best,\n2019 Michelin Bib Gourmand,\n2019 SF Chronicle 100 best",
 #   "notes": "",
-#   "slug": "5356-college-ave-oakland-ca-94618-usa"
+#   "alias": "5356-college-ave-oakland-ca-94618-usa"
 # }

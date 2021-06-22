@@ -480,6 +480,46 @@ span{
   z-index: 1;
 }
 
+.event_accolades{
+  color: black;
+  margin: 5px;
+  text-align: center;
+}
+
+.accolade_icon{
+  background-position: center center;
+  background-size: auto 48px;
+  background-repeat: no-repeat;
+
+  height: 48px;
+  width: 48px;
+}
+
+.event_accolades.page > .accolade > .accolade_icon {
+  display: inline-block;
+  background-size: 24px;
+  height: 24px;
+  width: 24px;
+}
+
+.event_accolades.page > .accolade > .accolade_name {
+  font-size: 14px;
+  margin: 4px 5px 2px 5px;
+}
+
+.event_card > .event_header > .event_accolades{
+  position: absolute;
+  top: 5px;
+  left:  5px;
+  z-index: 3;
+}
+
+.event_header > .event_accolades > .accolade > .accolade_icon{
+  fill:  white;
+  -webkit-filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
+}
+
 .event.event_page{
   position: fixed;
   bottom: 0px;
@@ -488,6 +528,7 @@ span{
   margin: 10px 10px 20px 10px;
   min-width: 500px;
   max-width: 1024px;
+  padding-right: 10px;
   text-align: left;
 }
 
@@ -504,7 +545,8 @@ span{
   border-top-right-radius: 0px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 0px;
-  height: 200px;
+  max-height: 150px;
+  max-width: 200px;
   margin: auto 0 5px auto;
   object-fit: contain;
   width: auto;
@@ -530,7 +572,7 @@ span{
   border-radius: 10px;
   margin: 0 10px 30px 10px;
   text-align: center;
-  width: 320px;
+  width: 300px;
 }
 
 .event_card > .event_header > .event_title > .event_name{
@@ -663,11 +705,11 @@ span{
 .event_img_wrapper{
   min-height: 20px;
 }
-
+/*
 .event_img_wrapper > .event_img{
   width: 420px;
 }
-
+*/
 .entity_list {
   border: 0px;
   list-style: none;
@@ -706,7 +748,7 @@ span{
 }
 
 .event_tags{
-  margin: 0 5px 0 5px;
+  margin: 5px;
 }
 
 .event_tags > .cap_button{
@@ -739,7 +781,7 @@ span{
 }
 
 .event_page > .event_header > .event_tags{
-  margin-left: 0px;
+  margin: 0 10px 0 0;
 }
 
 .event_page > .event_header > .event_title > .event_name{
@@ -846,6 +888,7 @@ span{
 }
 
 .round_button{
+  background-color: white;
   border: 1px solid var(--link-color);
   border-radius: 20px;
   display: inline-block;
@@ -880,7 +923,7 @@ span{
   display: none;
   font-size: 30px;
   height: 40px;
-  opacity: 0;
+  opacity: 1;
   padding: 6px 0 1px 0;
   position: fixed;
   right: 10px;
@@ -1122,8 +1165,20 @@ span{
     box-shadow: none;
     margin: 0px;
     min-width: auto;
+    padding: 0px;
     position: relative;
     text-align: center;
+  }
+
+  .event_page > .event_header > .event_title{
+    font-size: 18px;
+    margin-left: 5px;
+    margin-right: 5px;
+    text-align: center;
+  }
+
+  .event_page > .event_header > .event_tags{
+    margin: 0 5px 0 5px;
   }
 
   .event.event_page > .event_header > .event_title > .event_venue_name{
@@ -1138,10 +1193,6 @@ span{
     text-align: center;
   }
 
-  .event_page > .event_header > .event_tags{
-    margin-top: 5px;
-  }
-
   .event_page > .event_img_wrapper{
     display: block;
     float: none;
@@ -1152,5 +1203,7 @@ span{
     height: auto;
     margin-top: 10px;
     margin-right: auto;
+    max-height: none;
+    max-width: 100%;
   }
 }

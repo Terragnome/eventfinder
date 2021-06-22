@@ -10,7 +10,7 @@ from models.user_event import UserEvent
 from models.tag import Tag
 
 class ConnectorEvent(Base):
-  CONNECTOR_TYPE = None
+  TYPE = None
 
   __tablename__ = 'connector_events'
   connector_event_id = Column(String, primary_key=True)
@@ -22,21 +22,23 @@ class ConnectorEvent(Base):
 
   @property
   def type(self):
-    return self.CONNECTOR_TYPE
+    return self.TYPE
 
   @classmethod
   def all(klass):
-    if klass.CONNECTOR_TYPE is None:
-      current_app.logger.error("CONNECTOR_TYPE has not been set")
-    return ConnectorEvent.query.filter(ConnectorEvent.connector_type == klass.CONNECTOR_TYPE)
+    if klass.TYPE is None:
+      current_app.logger.error("TYPE has not been set")
+    return ConnectorEvent.query.filter(ConnectorEvent.connector_type == klass.TYPE)
 
   @classmethod
   def purge_events(klass):
-    if klass.CONNECTOR_TYPE is None:
-      current_app.logger.error("CONNECTOR_TYPE has not been set")
+    if klass.TYPE is None:
+      current_app.logger.error("TYPE has not been set")
       return
 
-    event_ids = [int(e.event_id) for e in klass.all()]
+    all_events = klass.all()
+    if all_events:
+      event_ids = [int(e.event_id) for e in all_events ]
 
     EventTag.query.filter(EventTag.event_id.in_(event_ids)).delete(synchronize_session='fetch')
     UserEvent.query.filter(UserEvent.event_id.in_(event_ids)).delete(synchronize_session='fetch')
@@ -46,11 +48,15 @@ class ConnectorEvent(Base):
 
   def sync(self, args):
     if 'purge' in args:
+      if args['purge']:
+        self.purge_events()
       del args['purge']
-      self.purge_events()
 
-    events = self.get_events(**args)
+    events = self.extract(**args)
     if events:
       for i, entry in enumerate(events):
         event, debug_output = entry
         print(i, debug_output, "\n")
+
+  def extract(self):
+    return None

@@ -16,7 +16,7 @@ from models.tag import Tag
 from utils.get_from import get_from
 
 class ConnectorTMDB(ConnectorEvent):
-  CONNECTOR_TYPE = "TMDB"
+  TYPE = "TMDB"
 
   MOVIE_GENRE_MAP = {
     28: "Action",
@@ -107,14 +107,7 @@ class ConnectorTMDB(ConnectorEvent):
       'primary_release_date.lte': end_date
     }
 
-  def __init__(self):
-    api_key = os.getenv('TMDB_API_KEY', None)
-    if api_key is None:
-      with open("config/secrets/api_keys.json", "r") as f:
-        api_key = json.load(f)[self.CONNECTOR_TYPE]["api_key"]
-    tmdb.API_KEY = api_key
-
-  def get_events(
+  def extract(
     self,
     start_date=None,
     end_date=None
@@ -149,14 +142,14 @@ class ConnectorTMDB(ConnectorEvent):
         row_connector_event = ConnectorEvent.query.filter(
           and_(
             ConnectorEvent.connector_event_id == connector_event_id,
-            ConnectorEvent.connector_type == self.CONNECTOR_TYPE
+            ConnectorEvent.connector_type == self.TYPE
           )
         ).first()
 
         if not row_connector_event:
           row_connector_event = ConnectorEvent(
             connector_event_id=connector_event_id,
-            connector_type=self.CONNECTOR_TYPE,
+            connector_type=self.TYPE,
             data=event
           )
           db_session.merge(row_connector_event)
@@ -196,6 +189,7 @@ class ConnectorTMDB(ConnectorEvent):
             start_time = event_start_time,
             end_time = event_end_time
           )
+          row_event.primary_type = Tag.TVM
           db_session.add(row_event)
           db_session.commit()
 
@@ -206,6 +200,7 @@ class ConnectorTMDB(ConnectorEvent):
         for genre in genres:
           row_event.add_tag(genre, Tag.TVM)
 
+        row_event.update_meta(self.TYPE, event)
         db_session.merge(row_event)
         db_session.commit()
 
@@ -216,6 +211,13 @@ class ConnectorTMDB(ConnectorEvent):
       sentinel = raw_events['page'] < raw_events['total_pages']
       if sentinel:
         event_params['page'] = raw_events['page']+1
+
+  def __init__(self):
+    api_key = os.getenv('TMDB_API_KEY', None)
+    if api_key is None:
+      with open("config/secrets/api_keys.json", "r") as f:
+        api_key = json.load(f)[self.TYPE]["api_key"]
+    tmdb.API_KEY = api_key
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()

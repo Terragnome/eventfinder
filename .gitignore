@@ -3,8 +3,8 @@
 *.pyc
 dump.rdb
 __pycache__
-config/secrets/
-config/certs/
-data/
-tmp/
-venv
+/config/secrets/
+/config/certs/
+/data/
+/tmp/
+/venv/

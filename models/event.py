@@ -5,6 +5,7 @@ from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, JS
 from sqlalchemy import orm
 from sqlalchemy import String
 from sqlalchemy.orm import relationship
+from sqlalchemy_json import NestedMutableJson
 
 from .base import Base
 from .base import db_session
@@ -15,15 +16,22 @@ from .user_event import UserEvent
 class Event(Base):
   __tablename__ = 'events'
   event_id = Column(Integer, primary_key=True, autoincrement=True)
+  alias = Column(String)
+
   name = Column(Integer, primary_key=True)
+  primary_type = Column(String)
+
   description = Column(String)
   short_name = Column(String)
+
   img_url = Column(String)
   backdrop_url = Column(String)
+
   start_time = Column(DateTime)
   end_time = Column(DateTime)
+
   cost = Column(Integer)
-  currency = Column(String)
+  currency = Column(String)  
 
   venue_name = Column(String)
   address = Column(JSON)
@@ -34,6 +42,9 @@ class Event(Base):
 
   link = Column(String)
 
+  accolades = Column(NestedMutableJson)
+  meta = Column(NestedMutableJson)
+
   connector_events = relationship('ConnectorEvent', cascade="all,delete-orphan")
   tags = relationship('Tag', single_parent=True, secondary='event_tags', lazy='dynamic', cascade= "all,delete-orphan")
   user_events = relationship('UserEvent', cascade= "all,delete-orphan")
@@ -42,6 +53,10 @@ class Event(Base):
   @orm.reconstructor
   def init_on_load(self):
     pass
+
+  def update_meta(self, meta_type, meta_data):
+    if self.meta is None: self.meta = {}
+    self.meta[meta_type] = meta_data
 
   def chip_names(self):
     return self.category_names() | self.tag_names()
@@ -104,14 +119,9 @@ class Event(Base):
     )
 
   @property
-  def display_city(self):
-    if self.city and self.state:
-      return ", ".join([self.city, self.state])
-    elif self.city:
-      return self.city
-    elif self.state:
-      return self.state
-    return ""
+  def display_address(self):
+    addr_components = [x for x in [self.address, self.city, self.state] if x is not None]
+    return ", ".join(addr_components)
 
   @property
   def display_end_date_day(self):

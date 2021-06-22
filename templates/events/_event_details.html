@@ -5,7 +5,7 @@
 </div>
 <div class='event_address'>
   {% if card %}
-    <div>{{ event.display_city }}</div>
+    <div>{{ event.display_address }}</div>
   {% else %}
     {% if event.address %}
       {% for addr_line in event.address %}

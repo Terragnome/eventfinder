@@ -11,6 +11,7 @@
     <a class='event_header nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">
       {% if not is_skip or is_me %}
         {% if event.img_url %}
+          {% with event=event, card=card, vargs=vargs %}{% include "events/_event_accolades.html" %}{% endwith %}
           <div class='event_img_wrapper'>
             <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
           </div>
@@ -18,7 +19,7 @@
       {% endif %}
       <div class='event_title'>
         <div class='event_name'>{{ event.display_name }}</div>
-        {% if event.display_city %}<div class='event_venue_name'>{{ event.display_city }}</div>{% endif %}
+        {% if event.display_address %}<div class='event_venue_name'>{{ event.display_address }}</div>{% endif %}
       </div>
     </a>
     <div class='event_body'>
