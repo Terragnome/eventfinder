@@ -19,7 +19,7 @@
       </div>
       {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
     </div>
-    <div class='left event_img_wrapper'>
+    <div class='event_img_wrapper'>
       {% if event.img_url %}
         <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
       {% endif %}
@@ -27,8 +27,8 @@
     <div class='event_body'>
       {% if event.description %}<p class='event_description'>{{ event.description }}</p>{% endif %}
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
-      {% with event=event, card=card, vargs=vargs %}{% include "events/_event_accolades.html" %}{% endwith %}
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
     </div>
   </div>
+  {% with event=event, card=card, vargs=vargs %}{% include "events/_event_accolades.html" %}{% endwith %}
 </div>

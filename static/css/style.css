@@ -1,19 +1,8 @@
  :root{
-  --darkest-color: #707070;
   --dark-color: #A0A0A0;
   --mid-color: #D0D0D0;
-  --light-color: #F0F0F0;
-  /*--darkest-color: #C2823C;
-  --dark-color: #D69249;
-  --mid-color: #E5B256;
-  --light-color: #E5B256;*/
-  --dark-neutral-color: #808080;
   --neutral-color: #DEDEDE;
-
   --link-color: black;
-  /*--link-color: var(--dark-color);*/
-  --searchbar-color: white;
-  --weekend-color: var(--darkest-color);
 }
 
 
@@ -134,7 +123,6 @@ span{
 .app_background{
   position: absolute;
   background-attachment: fixed;
-  /*background-color: var(--mid-color);*/
   background-position: center center;
   background-repeat: none;
   background-size: cover;
@@ -264,7 +252,7 @@ span{
 
 .app_search > .search_field{
   position: relative;
-  background-color: var(--searchbar-color);
+  background-color: white;
   border-radius: 20px;
   color: black;
   display: inline-block;
@@ -360,13 +348,15 @@ span{
 }
 
 .button_back{
+  background-color: white;
+  border: 1px solid white;
   border-radius: 20px;
   cursor: pointer;
   color: white;
   fill: white;
   margin-top: -5px;
-  height:  40px;
-  width: 40px;
+  height:  38px;
+  width: 38px;
   z-index: 5;
 }
 .button_back > svg{
@@ -483,26 +473,35 @@ span{
 .event_accolades{
   color: black;
   margin: 5px;
-  text-align: center;
 }
 
 .accolade_icon{
   background-position: center center;
-  background-size: auto 48px;
+  background-size: auto 64px;
   background-repeat: no-repeat;
 
-  height: 48px;
-  width: 48px;
+  height: 64px;
+  width: 64px;
 }
 
-.event_accolades.page > .accolade > .accolade_icon {
+.event_container > .event_accolades > .accolade {
   display: inline-block;
-  background-size: 24px;
-  height: 24px;
-  width: 24px;
+  color: white;
+  fill: white;
+  width: 100px;
+  margin-bottom: 10px;
+  -webkit-filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
 }
 
-.event_accolades.page > .accolade > .accolade_name {
+.event_container > .event_accolades > .accolade > .accolade_icon {
+  display: inline-block;
+/*  background-size: 24px;
+  height: 24px;
+  width: 24px;*/
+}
+
+.event_container > .event_accolades > .accolade > .accolade_name {
   font-size: 14px;
   margin: 4px 5px 2px 5px;
 }
@@ -515,7 +514,8 @@ span{
 }
 
 .event_header > .event_accolades > .accolade > .accolade_icon{
-  fill:  white;
+  color: white;
+  fill: white;
   -webkit-filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
   filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
 }
@@ -526,7 +526,7 @@ span{
   background-color: white;
   border-radius: 10px;
   margin: 10px 10px 20px 10px;
-  min-width: 500px;
+  min-width: 640px;
   max-width: 1024px;
   padding-right: 10px;
   text-align: left;
@@ -648,9 +648,9 @@ span{
 }
 
 .event_date{
-  border: 1px solid var(--weekend-color);
+  border: 1px solid black;
   border-radius: 5px;
-  color: var(--weekend-color);
+  color: black;
   cursor: default;
   display: inline-block;
   height: 40px;
@@ -674,8 +674,8 @@ span{
 }
 
 .event_date_weekend{
-  background-color: var(--weekend-color);
-  border-color: var(--weekend-color);
+  background-color: black;
+  border-color: black;
   color: white;
 }
 
@@ -893,8 +893,8 @@ span{
   border-radius: 20px;
   display: inline-block;
   fill: var(--link-color);
-  height: 38px;
-  width: 38px;
+  height: 36px;
+  width: 36px;
 }
 .round_button:hover{
   background-color: var(--link-color);
@@ -912,7 +912,7 @@ span{
 
 .round_button > svg {
   margin-top: 10px;
-  width: 18px;
+  width: 16px;
 }
 
 #scroll_top{
@@ -1168,6 +1168,13 @@ span{
     padding: 0px;
     position: relative;
     text-align: center;
+  }
+
+  .event_container > .event_accolades > .accolade {
+    color: black;
+    fill: black;
+    -webkit-filter: none;
+    filter: none;
   }
 
   .event_page > .event_header > .event_title{

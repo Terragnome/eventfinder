@@ -5,15 +5,16 @@
   {% if event.accolades %}
     {% if card %}
       <div class='accolade clearfix'>
-        <div class='accolade_icon'>{% include "icon/_accolade.html" %}</div>
+        <div class='accolade_icon'>
+          {% include "icon/_accolade.html" %}
+        </div>
       </div>
     {% else %}
-      {% for x in range(0, 3) %}
-        {% for accolade in event.accolades %}
-          <div class="accolade clearfix">
-            <div class='left accolade_icon'>{% include "icon/_accolade.html" %}</div><span class='left accolade_name'>{{accolade}}</span>
-          </div>
-        {% endfor %}
+      {% for accolade in event.accolades %}
+        <div class="accolade clearfix">
+          <div class='accolade_icon'>{% include "icon/_accolade.html" %}</div>
+          <div class='accolade_name'>{{accolade}}</div>
+        </div>
       {% endfor %}
     {% endif %}
   {% endif %}
