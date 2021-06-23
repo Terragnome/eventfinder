@@ -6,7 +6,6 @@ import os
 from sqlalchemy import and_, not_
 from yelpapi import YelpAPI
 
-
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
@@ -77,8 +76,14 @@ class ConnectorYelp(ConnectorEvent):
 
       if search_results:
         for r in search_results['businesses']:
-          b_details = self.api.business_query(id = r['id'])
-          
+          b_details = None
+          try:
+            b_details = self.api.business_query(id = r['id'])
+          except Exception as e:
+            print("business_query: {}".format(e))
+            print(r['id'])
+
+        if b_details:
           row_event.update_meta(self.TYPE, {**r, **b_details})
           db_session.merge(row_event)
           db_session.commit()
