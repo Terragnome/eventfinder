@@ -23,7 +23,7 @@ class ConnectorYelp(ConnectorEvent):
 
     self.api = YelpAPI(api_key)
 
-  def extract(self, name):
+  def extract(self, name=None, backfill=None):
     events = Event.query.filter(
       ~(Event.primary_type == Tag.TVM)
     )
@@ -36,6 +36,10 @@ class ConnectorYelp(ConnectorEvent):
     for row_event in events:
       search_results = None
       b_details = None
+
+      if backfill is not None:
+        if self.TYPE in row_event.meta:
+          continue
 
       if not search_results:
         kwargs = {
@@ -92,6 +96,7 @@ class ConnectorYelp(ConnectorEvent):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--purge', action="store_true")
+  parser.add_argument('--backfill', action="store_true")
   parser.add_argument('--name', action="store")
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
