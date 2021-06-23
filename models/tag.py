@@ -28,6 +28,15 @@ class Tag(Base):
     SERVICES
   ]
 
+  ACCOLADES = "accolades"
+  NEARBY = "nearby"
+  OPEN_NOW = "open"
+  FLAGS = [
+    ACCOLADES,
+    NEARBY,
+    OPEN_NOW
+  ]
+
   __tablename__ = 'tags'
   tag_id = Column(Integer, primary_key=True, autoincrement=True)
   tag_name = Column(String, nullable=False)

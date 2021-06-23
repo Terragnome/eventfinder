@@ -21,7 +21,7 @@ class EventController:
   PAGE_SIZE = 48
 
   @classmethod
-  def _filter_events(klass, events, query=None, categories=None, tags=None, accolades=None):
+  def _filter_events(klass, events, query=None, categories=None, tags=None, flags=None):
     query_tags = None
     if query:
       # tags_matching_query = Tag.query.filter(
@@ -41,22 +41,35 @@ class EventController:
         )
 
     if tags or categories:
+      # Filter out valid_tags
+      valid_tags = db_session.query(
+        func.distinct(Tag.tag_name)
+      ).filter(
+        Tag.tag_name.in_(tags)
+      )
+      tags = set(t[0] for t in valid_tags)
+      
       events = klass._filter_events_by_tags(
         events,
         tags=tags,
         categories=categories
       )
 
-    if accolades == 'true':
-      events = klass._filter_events_by_accolades(events)
+    if flags:
+      events = klass._filter_events_by_flags(events, flags=flags)
 
-    return events
+    return events, tags
 
   @classmethod
-  def _filter_events_by_accolades(klass, events):
-    return events.filter(
-      Event.accolades != None
-    )
+  def _filter_events_by_flags(klass, events, flags):
+    if Tag.ACCOLADES in flags:
+      events = events.filter(Event.accolades != None)
+    if Tag.NEARBY in flags:
+      #TODO Use Lat/Lon
+      # events = events.filter()
+      pass
+
+    return events
 
   @classmethod
   def _filter_events_by_query(klass, events, query):
@@ -187,12 +200,21 @@ class EventController:
     ).order_by(
       desc('ct')
     )
-    tags = [
-      {
-        'chip_name': t[0],
-        'ct': t[1],
-      } for t in tag_query if t[1]>0
-    ]
+
+    distinct_tags = {
+      t: {
+      'chip_name': t,
+      'ct': 0
+      } for t in selected_tags
+    }
+    for t in tag_query:
+      chip_name = t[0]
+      chip_ct = t[1]
+      if chip_ct > 0:
+        if chip_name not in distinct_tags:
+          distinct_tags[chip_name] = {'chip_name': chip_name}
+        distinct_tags[chip_name]['ct'] = chip_ct
+    tags = distinct_tags.values()
 
     category_query=category_query.group_by(
       Tag.tag_type
@@ -243,7 +265,7 @@ class EventController:
     klass,
     events,
     page,
-    query=None, cities=None, user=None, accolades=None,
+    query=None, cities=None, user=None, flags=None,
     selected_tags=None, selected_categories=None,
     future_only=None
   ):
@@ -277,12 +299,12 @@ class EventController:
         )
       )
 
-    events = klass._filter_events(
+    events, selected_tags = klass._filter_events(
       events,
       query=query,
       categories=selected_categories,
       tags=selected_tags,
-      accolades=accolades
+      flags=flags
     )
 
     event_cities = klass._cities_for_events(events)
@@ -408,7 +430,7 @@ class EventController:
 
   def get_events(
     self,
-    query=None, categories=None, tags=None, cities=None, accolades=None,
+    query=None, categories=None, tags=None, cities=None, flags=None,
     page=1, future_only=False
   ):
     current_user = UserController().current_user
@@ -443,7 +465,7 @@ class EventController:
       user=current_user,
       selected_categories=selected_categories,
       selected_tags=selected_tags,
-      accolades=accolades,
+      flags=flags,
       future_only=future_only
     )
 
@@ -453,7 +475,7 @@ class EventController:
   def get_events_for_user_by_interested(
     self,
     interested,
-    user=None, query=None, categories=None, tags=None, cities=None, accolades=None,
+    user=None, query=None, categories=None, tags=None, cities=None, flags=None,
     page=1, future_only=False
   ):
     current_user = UserController().current_user
@@ -501,7 +523,7 @@ class EventController:
         user=user,
         selected_categories=selected_categories,
         selected_tags=selected_tags,
-        accolades=accolades,
+        flags=flags,
         future_only=future_only
       )
 

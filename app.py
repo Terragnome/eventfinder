@@ -54,8 +54,8 @@ app.jinja_env.globals.update(app_panel_types=Tag.types)
 Session(app)
 
 param_to_kwarg = {
-  'a': 'accolades',
   'c': 'category',
+  'f': 'flags',
   'interested': 'interested',
   'p': 'page',
   'q': 'query',
@@ -192,6 +192,7 @@ def shutdown_session(exception=None):
    db_session.remove()
 
 def _parse_chip(chips=[], **kwargs):
+  if chips is None: chips = []
   is_selected = False
   
   if get_from(kwargs, ['mode']) == Tag.BOOLEAN:
@@ -219,7 +220,7 @@ def _parse_chips(
   cities=None,
   categories=None, selected_categories=None,
   interested=None, show_interested=False,
-  accolades=None
+  flags=None
 ):
   default = {'entries': [], 'selected': False}
 
@@ -229,12 +230,23 @@ def _parse_chips(
       if c['chip_name'] in selected_categories:
         c['selected'] = True
   interested_chips = []
-  
+
+  if flags is None:
+    flags = set()
+  else:
+    flags = set(x.strip() for x in flags.split(","))
+
+  all_flags =[{
+    'chip_name': f,
+    'selected': f in flags
+  } for f in Tag.FLAGS]
+
   results = {
     'categories': _parse_chip(categories, key="c", mode=Tag.EXCLUSIVE, display_name="Categories"),
     'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
     'cities': _parse_chip(cities, key="cities", mode=Tag.EXCLUSIVE, display_name="Cities") if cities else default,
-    'accolades': _parse_chip(accolades, key='a', mode=Tag.BOOLEAN, display_name='Accolades')
+    # 'accolades': _parse_chip(accolades, key='a', mode=Tag.BOOLEAN, display_name='Accolades')
+    'flags': _parse_chip(all_flags, key='f', display_name='Filters')
   }
 
   if show_interested:
@@ -380,8 +392,6 @@ def event_update(event_id):
       'card': is_card
     }
 
-    current_app.logger.debug(request.is_xhr)
-
     if request.is_xhr:
       if template == TEMPLATE_EVENT_PAGE:
         template = TEMPLATE_EVENT_PAGE_BODY
@@ -396,7 +406,7 @@ def event_update(event_id):
 @parse_url_params
 @paginated
 def events(
-  query=None, category=None, tag=None, cities=None, accolades=None,
+  query=None, category=None, tag=None, cities=None, flags=None,
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected=None
 ):
@@ -412,7 +422,7 @@ def events(
     categories=category,
     tags=tag,
     cities=cities,
-    accolades=accolades,
+    flags=flags,
     page=page
   )
 
@@ -421,7 +431,7 @@ def events(
     categories=categories,
     tags=tags,
     cities=event_cities,
-    accolades=accolades
+    flags=flags
   )
 
   vargs = {
@@ -441,7 +451,7 @@ def events(
 @paginated
 @oauth2_required
 def users(
-  query=None, tag=None, accolades=None,
+  query=None, tag=None, flags=None,
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected=None
 ):
@@ -497,7 +507,7 @@ def saved(**kwargs):
 def user(
   identifier,
   interested=None,
-  query=None, category=None, tag=None, cities=None, accolades=None,
+  query=None, category=None, tag=None, cities=None, flags=None,
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected = None
 ):
@@ -520,7 +530,7 @@ def user(
         categories=category,
         tags=tag,
         cities=cities,
-        accolades=accolades,
+        flags=flags,
         interested=interested,
         page=page
       )
@@ -531,7 +541,7 @@ def user(
       tags=tags,
       cities=event_cities,
       interested=interested,
-      accolades=accolades,
+      flags=flags,
       show_interested=True
     )
 
