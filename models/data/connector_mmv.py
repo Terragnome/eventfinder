@@ -48,7 +48,7 @@ class ConnectorMMV(ConnectorEvent):
       )
     self.service = build('sheets', 'v4', credentials=creds)
 
-  def extract(self):
+  def extract(self, name=None):
     # Call the Sheets API
     sheet = self.service.spreadsheets()
     result = sheet.values().get(
@@ -76,6 +76,9 @@ class ConnectorMMV(ConnectorEvent):
       location_description = obj['notes']
       location_categories = set([x.strip() for x in re.split(r'[/;]', obj['categories'])])
       location_rating = obj['tier']
+
+      if name is not None and location_name != name:
+        continue
 
       location_tags = set([x.strip() for x in obj['tags'].split(',')])
       filter_location_tags = {
@@ -229,6 +232,7 @@ class ConnectorMMV(ConnectorEvent):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--purge', action="store_true")
+  parser.add_argument('--name', action="store")
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 

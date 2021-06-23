@@ -37,6 +37,7 @@ class ConnectorYelp(ConnectorEvent):
       search_results = None
       b_details = None
 
+      # TODO: Handlle in the query if possible to filter by json
       if backfill is not None:
         if self.TYPE in row_event.meta:
           continue

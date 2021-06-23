@@ -51,7 +51,7 @@ def update_url_params(url, merge=None, replace=None, remove=None, clear=None, to
 
   if remove:
     for k,v in remove.items():
-      v_set = set(v.split(','))
+      v_set = set([x.lower() for x in v.split(',')])
       if k in url_params_dict:
         url_params_dict_v = url_params_dict[k]
         if url_params_dict_v.__class__ is not set:

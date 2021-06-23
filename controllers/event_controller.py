@@ -24,10 +24,10 @@ class EventController:
   def _filter_events(klass, events, query=None, categories=None, tags=None, accolades=None):
     query_tags = None
     if query:
-      tags_matching_query = Tag.query.filter(
-        Tag.tag_name.ilike("{}%".format(query))
-      )
-      query_tags = {t.tag_name for t in tags_matching_query}
+      # tags_matching_query = Tag.query.filter(
+      #   Tag.tag_name.ilike("{}%".format(query))
+      # )
+      # query_tags = {t.tag_name for t in tags_matching_query}
     
       if query_tags:
         if tags is None:

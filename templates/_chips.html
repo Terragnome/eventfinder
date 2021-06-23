@@ -40,9 +40,9 @@
           {% set callback=update_url_params(request.url, toggle={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
         {% else %}
           {% if chip_data.mode == 'exclusive' %}
-            {% set callback=update_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}, clear=['p']) %}
+            {% set callback=update_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
           {% else %}
-            {% set callback=update_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, clear=['p']) %}
+            {% set callback=update_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
           {% endif %}
         {% endif %}
         <a
