@@ -146,17 +146,6 @@ class ConnectorMMV(ConnectorEvent):
         db_session.merge(row_connector_event)
         db_session.commit()
 
-      # row_event.link = row_connector_event.data['link']
-      
-      # raw_addr = row_connector_event.data['address']
-      # raw_addr = geocoder.google(raw_addr)
-      # addr_num = raw_addr.housenumber
-      # addr_street = raw_addr.street_long
-      # addr_city = raw_addr.city
-      # addr_state = raw_addr.state
-      # print(row_connector_event.data['address'])
-      # print(raw_addr)
-
       try:
         raw_addr = row_connector_event.data['address']
         raw_addr = raw_addr.replace('San Jose - Local', "San Jose")

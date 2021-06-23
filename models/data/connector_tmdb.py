@@ -119,8 +119,8 @@ class ConnectorTMDB(ConnectorEvent):
       'include_video': False,
       'sort_by': 'release_date.asc',
       'with_original_language': 'en',
-      'vote_average.gte': 6,
-      'vote_count.gte': 2000
+      'vote_average.gte': 7,
+      'vote_count.gte': 1000
     }
 
     event_params.update(
