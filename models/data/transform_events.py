@@ -36,8 +36,11 @@ class TransformEvents:
     state = get_from(event.meta, [ConnectorYelp.TYPE, 'location', 'state'], None)
     if state: event.state = state
 
-    link = get_from(event.meta, [ConnectorYelp.TYPE, 'location', 'url'], None)
-    if link: event.link = link
+    yelp_link = get_from(event.meta, [ConnectorYelp.TYPE, 'url'], None)
+    if yelp_link: event.add_url("Yelp", yelp_link)
+
+    google_link = get_from(event.meta, [ConnectorMMVillage.TYPE, 'link'], None)
+    if google_link: event.add_url("Google", google_link)
 
     accolades = get_from(event.meta, [ConnectorMMVillage.TYPE, 'accolades'], None)
     if accolades:
@@ -56,9 +59,9 @@ class TransformEvents:
     )
     for i, event in enumerate(events):
       event = klass.transform_event(event)
-      print(i, event.event_id, event.name)
-      print(json.dumps(event.meta, indent=4))
 
+      print(json.dumps(event.meta, indent=4))
+      print(i, event.event_id, event.name)
       print("image: {} | backdrop: {}".format(event.img_url, event.backdrop_url))
       print(event.display_address)
       print(get_from(event.meta, [ConnectorYelp.TYPE, 'display_phone'], None))
@@ -68,6 +71,7 @@ class TransformEvents:
       print(get_from(event.meta, [ConnectorYelp.TYPE, 'hours'], None))
       print(get_from(event.meta, [ConnectorYelp.TYPE, 'categories'], None))
       print(event.accolades)
+      print(event.urls)
       print("\n")
 
 if __name__ == '__main__':

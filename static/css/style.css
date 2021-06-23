@@ -87,7 +87,6 @@ a{
 }
 
 body{
-  background-color: white;
   border: 0px;
   font-family: Roboto,sans-serif;
   margin: 0px;
@@ -121,7 +120,7 @@ span{
 }
 
 .app_background{
-  position: absolute;
+  position: fixed;
   background-attachment: fixed;
   background-position: center center;
   background-repeat: none;
@@ -485,11 +484,12 @@ span{
 }
 
 .event_container > .event_accolades > .accolade {
-  display: inline-block;
   color: white;
   fill: white;
-  width: 100px;
-  margin-bottom: 10px;
+  width: 130px;
+  height: 125px;
+  vertical-align: top;
+  margin: 10px 5px 0 5px;
   -webkit-filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
   filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
 }
@@ -793,6 +793,12 @@ span{
   margin-bottom: 5px;
 }
 
+.event_links > a {
+  font-size: 12px;
+  margin: 10px 2px 5px 2px;
+  text-decoration: underline;
+}
+
 .event_users{
   margin: -10px 0 15px 0;
 }
@@ -818,7 +824,7 @@ span{
 
 .event_venue_name{
   font-size: 13px;
-  margin: -5px 0 5px 0;
+  margin: -2px 0 10px 0;
 }
 
 .events_page{
@@ -1194,6 +1200,8 @@ span{
 
   .event.event_page > .event_header > .event_title > .event_venue_name{
     text-align: center;
+    margin-left: 0px;
+    margin-bottom: 10px;
   }
 
   .event_page > .event_img_wrapper{

@@ -28,7 +28,7 @@
   <div id='{{chips_key}}_{{chip_name}}_chips' class='event_chips {{"" if chip_data.key in selected_list else "hide"}}'>
     {% for chip in chip_data.entries %}
       {% if chip.selected %}
-        {% set callback=update_url_params(request.url, toggle={chip_data.key: chip.chip_name}, remove={'q': chip.chip_name}, clear=['p']) %}
+        {% set callback=update_url_params(request.url, toggle={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
       {% else %}
         {% if chip_data.mode == 'exclusive' %}
           {% set callback=update_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}, clear=['p']) %}

@@ -1,0 +1,10 @@
+{% set event=event or (vargs.event if vargs else None) %}
+{% set card=card or (vargs.card if vargs else None) %}
+
+<div class='event_links {{"card" if card else "page"}}'>
+  {% if event.urls %}
+    {% for url_type, url in event.urls.items() %}
+      <a class="event_link" href='{{url}}'>{{url_type}}</a>
+    {% endfor %}
+  {% endif %}
+</div>

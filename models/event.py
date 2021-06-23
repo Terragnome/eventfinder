@@ -40,7 +40,7 @@ class Event(Base):
   latitude = Column(Float)
   longitude = Column(Float)
 
-  link = Column(String)
+  urls = Column(NestedMutableJson)
 
   accolades = Column(NestedMutableJson)
   meta = Column(NestedMutableJson)
@@ -101,6 +101,13 @@ class Event(Base):
 
   def remove_all_tags(self):
     EventTag.query.filter(EventTag.event_id == self.event_id).delete()
+    db_session.commit()
+
+  def add_url(self, url_type, url):
+    if self.urls is None:
+      self.urls = {}
+    self.urls[url_type] = url
+    db_session.merge(self)
     db_session.commit()
 
   @property

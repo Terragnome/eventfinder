@@ -12,7 +12,7 @@
     </script>
   {% endif %}
   <div class='event event_page box_outline {{ event_selected_class }}'>
-    <div class='clearfix event_header'>  
+    <div class='event_header clearfix'>  
       <div class='event_title'>
         <div class='event_name'>{{ event.display_name }}</div>
         {% if event.display_address %}<div class='event_venue_name'>{{ event.display_address }}</div>{% endif %}
@@ -25,7 +25,8 @@
       {% endif %}
     </div>
     <div class='event_body'>
-      {% if event.description %}<p class='event_description'>{{ event.description }}</p>{% endif %}
+      {% with event=event, card=card, vargs=vargs%}{% include "events/_event_links.html" %}{% endwith %}
+      <p class='event_description'>{{ event.description or "" }}</p>
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
     </div>
