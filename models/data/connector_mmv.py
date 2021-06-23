@@ -19,7 +19,7 @@ from models.event import Event
 from models.tag import Tag
 from utils.get_from import get_from
 
-class ConnectorMMVillage(ConnectorEvent):
+class ConnectorMMV(ConnectorEvent):
   TYPE = "MM Village"
 
   # If modifying these scopes, delete the file token.pickle.
@@ -159,6 +159,8 @@ class ConnectorMMVillage(ConnectorEvent):
 
       try:
         raw_addr = row_connector_event.data['address']
+        raw_addr = raw_addr.replace('San Jose - Local', "San Jose")
+
         parsed_addr = usaddress.tag(raw_addr)[0]
         
         addr_city = parsed_addr['PlaceName']
@@ -241,7 +243,7 @@ if __name__ == '__main__':
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 
-  e = ConnectorMMVillage()
+  e = ConnectorMMV()
   e.sync(args)
 
 # {

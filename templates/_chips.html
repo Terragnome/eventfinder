@@ -14,7 +14,15 @@
       {% set callback=update_url_params(request.url, replace={"selected": chip_data.key}) %}
     {% endif %}
 
-    {% if chip_data.entries|length>0 %}
+    {% if chip_data.mode == 'boolean' %}
+      {% set callback=update_url_params(request.url, toggle={chip_data.key: 'true'}, clear=['p']) %}
+      <a
+        class='cap_button nav_link_get {{"selected" if chip_data.selected else ""}}'
+        href='{{callback}}'
+      >
+        {{chip_name}}
+      </a>
+    {% elif chip_data.entries|length>0 %}
       <span
         class='cap_button cap_group {{"selected" if chip_data.selected else ""}} {{"highlighted" if is_chip_group_selected else ""}}'
         target='#{{chips_key}}_{{chip_name}}_chips'
@@ -25,21 +33,23 @@
 
 {% for chip_name in chips %}
   {% set chip_data=chips[chip_name] %}
-  <div id='{{chips_key}}_{{chip_name}}_chips' class='event_chips {{"" if chip_data.key in selected_list else "hide"}}'>
-    {% for chip in chip_data.entries %}
-      {% if chip.selected %}
-        {% set callback=update_url_params(request.url, toggle={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
-      {% else %}
-        {% if chip_data.mode == 'exclusive' %}
-          {% set callback=update_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}, clear=['p']) %}
+  {% if chip_data.mode != 'boolean' %}
+    <div id='{{chips_key}}_{{chip_name}}_chips' class='event_chips {{"" if chip_data.key in selected_list else "hide"}}'>
+      {% for chip in chip_data.entries %}
+        {% if chip.selected %}
+          {% set callback=update_url_params(request.url, toggle={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
         {% else %}
-          {% set callback=update_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, clear=['p']) %}
+          {% if chip_data.mode == 'exclusive' %}
+            {% set callback=update_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}, clear=['p']) %}
+          {% else %}
+            {% set callback=update_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, clear=['p']) %}
+          {% endif %}
         {% endif %}
-      {% endif %}
-      <a
-        class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
-        href='{{callback}}'
-      >{{ chip.chip_name }}{{ "" if chip.selected else " {}".format(chip.ct) }}</a>
-    {% endfor %}
-  </div>
+        <a
+          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
+          href='{{callback}}'
+        >{{ chip.chip_name }}{{ "" if chip.selected else " {}".format(chip.ct) }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
 {% endfor %}

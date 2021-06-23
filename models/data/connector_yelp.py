@@ -24,41 +24,56 @@ class ConnectorYelp(ConnectorEvent):
 
     self.api = YelpAPI(api_key)
 
-  def extract(self):
+  def extract(self, name):
     events = Event.query.filter(
       ~(Event.primary_type == Tag.TVM)
-    ).order_by(
-      Event.event_id
     )
+
+    if name is not None:
+      events = events.filter(Event.name == name)
+
+    events = events.order_by(Event.event_id)
 
     for row_event in events:
       search_results = None
       b_details = None
-      try:
-        term = " ".join([row_event.name, row_event.city, row_event.state])
-        location = " ".join([row_event.city, row_event.state])
-      except Exception as e:
-        print(e)
-        print(row_event)
 
-      # search_results = self.api.search_query(
-      #   term = term,
-      #   location = location,
-      #   limit = 5
-      # )
+      if not search_results:
+        kwargs = {
+          'name': row_event.name,
+          'address1': row_event.address,
+          'city': row_event.city,
+          'state': row_event.state
+        }
+        print(" | ".join(["{}: \"{}\"".format(k,v) for k,v in kwargs.items()]))
 
-      print("query: \"{}\" | location: \"{}|\"".format(term, location))
-      try:
-        search_results = self.api.business_match_query(
-          name = row_event.name,
-          address1 = row_event.address,
-          city = row_event.city,
-          state = row_event.state,
-          country = "US"
-        )
-      except Exception as e:
-        print(e)
-        print(row_event)
+        try:
+          search_results = self.api.business_match_query(
+            country = "US",
+            **kwargs
+          )
+        except Exception as e:
+          print("business_match_query: {}".format(e))
+          print(row_event)
+
+      if not search_results:
+        try:
+          term = " ".join([row_event.name, row_event.city, row_event.state])
+          location = " ".join([row_event.city, row_event.state])
+
+          kwargs = {
+            'term': term,
+            'location': location
+          }
+          print(" | ".join(["{}: \"{}\"".format(k,v) for k,v in kwargs.items()]))
+
+          search_results = self.api.search_query(
+            limit = 1,
+            **kwargs
+          )
+        except Exception as e:
+          print("search_query: {}".format(e))
+          print(row_event)
 
       if search_results:
         for r in search_results['businesses']:
@@ -72,6 +87,7 @@ class ConnectorYelp(ConnectorEvent):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--purge', action="store_true")
+  parser.add_argument('--name', action="store")
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 

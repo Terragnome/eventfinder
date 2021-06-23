@@ -292,7 +292,7 @@ Application.removeElem = function(target) {
 
 Application.setBackground = function(selector, url) {
   if(url == null){
-    $(selector).css('background-image', '');
+    $(selector).removeAttr('style');
   }else{
     $(selector).css('background-image', 'url('+url+')');
   }
@@ -303,8 +303,8 @@ Application.setAppBackground = function(url) {
   var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHi || 0);
 
   if(url == null || vw < 720 || vh < 320){
-    $('.app_header').css('background-color', '');  
-    Application.setBackground('.app_background', '');
+    $('.app_header').css('background-color', '');
+    Application.setBackground('.app_background', null);
   }else{
     $('.app_header').css('background-color', 'white');
     Application.setBackground('.app_background', url);

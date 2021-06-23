@@ -322,11 +322,6 @@ span{
   filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.9));
 }
 
-.shadow_light{
-  -webkit-filter: drop-shadow( 2px 2px 3px rgba(255, 255, 255, 0.9));
-  filter: drop-shadow( 2px 2px 3px rgba(255, 255, 255, 0.9));
-}
-
 .box_outline{
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
@@ -490,8 +485,8 @@ span{
   height: 125px;
   vertical-align: top;
   margin: 10px 5px 0 5px;
-  -webkit-filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
-  filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.5));
+  -webkit-filter: drop-shadow( 1px 1px 3px rgba(0, 0, 0, 0.9));
+  filter: drop-shadow( 1px 1px 3px rgba(0, 0, 0, 0.9));
 }
 
 .event_container > .event_accolades > .accolade > .accolade_icon {
@@ -503,6 +498,7 @@ span{
 
 .event_container > .event_accolades > .accolade > .accolade_name {
   font-size: 14px;
+  font-weight: bold;
   margin: 4px 5px 2px 5px;
 }
 
@@ -769,10 +765,6 @@ span{
   text-align: center;
   text-decoration: none;
 }
-
-/*.event_page > .event_header{
-  margin: auto 15px auto 15px;
-}*/
 
 .event_page > .event_header > .event_title{
   font-size: 28px;

@@ -21,7 +21,7 @@ class EventController:
   PAGE_SIZE = 48
 
   @classmethod
-  def _filter_events(klass, events, query=None, categories=None, tags=None):
+  def _filter_events(klass, events, query=None, categories=None, tags=None, accolades=None):
     query_tags = None
     if query:
       tags_matching_query = Tag.query.filter(
@@ -47,7 +47,16 @@ class EventController:
         categories=categories
       )
 
+    if accolades == 'true':
+      events = klass._filter_events_by_accolades(events)
+
     return events
+
+  @classmethod
+  def _filter_events_by_accolades(klass, events):
+    return events.filter(
+      Event.accolades != None
+    )
 
   @classmethod
   def _filter_events_by_query(klass, events, query):
@@ -233,7 +242,7 @@ class EventController:
     klass,
     events,
     page,
-    query=None, cities=None, user=None,
+    query=None, cities=None, user=None, accolades=None,
     selected_tags=None, selected_categories=None,
     future_only=None
   ):
@@ -271,7 +280,8 @@ class EventController:
       events,
       query=query,
       categories=selected_categories,
-      tags=selected_tags
+      tags=selected_tags,
+      accolades=accolades
     )
 
     event_cities = klass._cities_for_events(events)
@@ -397,7 +407,7 @@ class EventController:
 
   def get_events(
     self,
-    query=None, categories=None, tags=None, cities=None,
+    query=None, categories=None, tags=None, cities=None, accolades=None,
     page=1, future_only=False
   ):
     current_user = UserController().current_user
@@ -432,6 +442,7 @@ class EventController:
       user=current_user,
       selected_categories=selected_categories,
       selected_tags=selected_tags,
+      accolades=accolades,
       future_only=future_only
     )
 
@@ -441,7 +452,7 @@ class EventController:
   def get_events_for_user_by_interested(
     self,
     interested,
-    user=None, query=None, categories=None, tags=None, cities=None,
+    user=None, query=None, categories=None, tags=None, cities=None, accolades=None,
     page=1, future_only=False
   ):
     current_user = UserController().current_user
@@ -489,6 +500,7 @@ class EventController:
         user=user,
         selected_categories=selected_categories,
         selected_tags=selected_tags,
+        accolades=accolades,
         future_only=future_only
       )
 

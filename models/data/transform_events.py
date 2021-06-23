@@ -5,7 +5,7 @@ from models.base import db_session
 from models.event import Event
 from models.event_tag import EventTag
 from models.tag import Tag
-from models.data.connector_mmv import ConnectorMMVillage
+from models.data.connector_mmv import ConnectorMMV
 from models.data.connector_tmdb import ConnectorTMDB
 from models.data.connector_yelp import ConnectorYelp
 
@@ -39,10 +39,10 @@ class TransformEvents:
     yelp_link = get_from(event.meta, [ConnectorYelp.TYPE, 'url'], None)
     if yelp_link: event.add_url("Yelp", yelp_link)
 
-    google_link = get_from(event.meta, [ConnectorMMVillage.TYPE, 'link'], None)
+    google_link = get_from(event.meta, [ConnectorMMV.TYPE, 'link'], None)
     if google_link: event.add_url("Google", google_link)
 
-    accolades = get_from(event.meta, [ConnectorMMVillage.TYPE, 'accolades'], None)
+    accolades = get_from(event.meta, [ConnectorMMV.TYPE, 'accolades'], None)
     if accolades:
       accolades = [x.strip() for x in accolades.split(",")]
       event.accolades = accolades

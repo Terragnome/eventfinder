@@ -12,6 +12,7 @@ from .event_tag import EventTag
 class Tag(Base):
   # Chip modes
   EXCLUSIVE = "exclusive"
+  BOOLEAN = "boolean"
 
   TVM = "watch"
   FOOD_DRINK = "eat"
