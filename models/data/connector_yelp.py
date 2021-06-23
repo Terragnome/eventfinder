@@ -23,13 +23,15 @@ class ConnectorYelp(ConnectorEvent):
 
     self.api = YelpAPI(api_key)
 
-  def extract(self, name=None, backfill=None):
+  def extract(self, name=None, event_id=None, backfill=None):
     events = Event.query.filter(
       ~(Event.primary_type == Tag.TVM)
     )
 
     if name is not None:
       events = events.filter(Event.name == name)
+    if event_id is not None:
+      events = events.filter(Event.event_id == event_id)
 
     events = events.order_by(Event.event_id)
 
@@ -38,9 +40,8 @@ class ConnectorYelp(ConnectorEvent):
       b_details = None
 
       # TODO: Handlle in the query if possible to filter by json
-      if backfill is not None:
-        if self.TYPE in row_event.meta:
-          continue
+      if backfill and self.TYPE in row_event.meta:
+        continue
 
       if not search_results:
         kwargs = {
@@ -58,9 +59,8 @@ class ConnectorYelp(ConnectorEvent):
           )
         except Exception as e:
           print("business_match_query: {}".format(e))
-          print(row_event)
 
-      if not search_results:
+      if not search_results or len(search_results['businesses']) == 0:
         try:
           term = " ".join([row_event.name, row_event.city, row_event.state])
           location = " ".join([row_event.city, row_event.state])
@@ -77,7 +77,6 @@ class ConnectorYelp(ConnectorEvent):
           )
         except Exception as e:
           print("search_query: {}".format(e))
-          print(row_event)
 
       if search_results:
         for r in search_results['businesses']:
@@ -99,6 +98,7 @@ if __name__ == '__main__':
   parser.add_argument('--purge', action="store_true")
   parser.add_argument('--backfill', action="store_true")
   parser.add_argument('--name', action="store")
+  parser.add_argument('--event_id', action="store")
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 

@@ -127,7 +127,7 @@ class Event(Base):
 
   @property
   def display_address(self):
-    addr_components = [x for x in [self.address, self.city, self.state] if x is not None]
+    addr_components = [x for x in [self.address, self.city, self.state] if x is not None and x != ""]
     return ", ".join(addr_components)
 
   @property

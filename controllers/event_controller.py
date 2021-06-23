@@ -200,11 +200,12 @@ class EventController:
       desc('ct')
     )
 
+    category_cts = {c[0]: c[1] for c in category_query}
     categories = [
       {
-        'chip_name': c[0],
-        'ct': c[1],
-      } for c in category_query if c[1]>0
+        'chip_name': c,
+        'ct': get_from(category_cts, [c], ""),
+      } for c in Tag.TYPES
     ]
 
     if selected_categories:

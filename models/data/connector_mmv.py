@@ -11,7 +11,6 @@ import re
 from tempfile import NamedTemporaryFile
 
 from sqlalchemy import and_
-import usaddress
 
 from models.base import db_session
 from models.connector_event import ConnectorEvent
@@ -48,7 +47,7 @@ class ConnectorMMV(ConnectorEvent):
       )
     self.service = build('sheets', 'v4', credentials=creds)
 
-  def extract(self, name=None):
+  def extract(self, name=None, bad_city=None):
     # Call the Sheets API
     sheet = self.service.spreadsheets()
     result = sheet.values().get(
@@ -77,6 +76,27 @@ class ConnectorMMV(ConnectorEvent):
       location_categories = set([x.strip() for x in re.split(r'[/;]', obj['categories'])])
       location_rating = obj['tier']
 
+      addr_components = [x.strip() for x in obj['address'].split(",")]
+      addr_street = " ".join(addr_components[:-3])
+      addr_city = addr_components[-3]
+      addr_state = addr_components[-2].split(" ")[0]
+      addr_country = addr_components[-1]
+
+      if bad_city:
+        obj_city = obj['city']
+        city_sub = {
+          "SF": "San Francisco",
+          "South SF": "South San Francisco",
+          "San Jose - Local": "San Jose"
+        }
+        obj_city = get_from(city_sub, [obj_city], obj_city)
+
+        if obj_city != addr_city:
+          print("{} => \n\ttarget: {} | actual: {}\n".format(location_name, obj_city, addr_city))
+        elif addr_state not in ("CA", "California"):
+          print("{} => \n\tactual: {}\n".format(location_name, addr_state))
+        continue
+
       if name is not None and location_name != name:
         continue
 
@@ -102,7 +122,6 @@ class ConnectorMMV(ConnectorEvent):
       }
       location_tags = location_tags & filter_location_tags
       location_categories = location_categories | location_tags
-
 
       if location_rating not in ['♡', '☆', '◎']:
         continue
@@ -150,23 +169,11 @@ class ConnectorMMV(ConnectorEvent):
         db_session.commit()
 
       try:
-        raw_addr = row_connector_event.data['address']
-        raw_addr = raw_addr.replace('San Jose - Local', "San Jose")
-
-        parsed_addr = usaddress.tag(raw_addr)[0]
-        
-        addr_city = parsed_addr['PlaceName']
-        addr_state = parsed_addr['StateName']
-        addr_street = []
-        for i, addr_c in enumerate(parsed_addr):
-          if addr_c == 'PlaceName':
-            break
-          addr_street.append(parsed_addr[addr_c])
-        addr_street = " ".join(addr_street)
-
         row_event.address = addr_street
-        row_event.city = addr_city.strip()
-        row_event.state = addr_state.split(",")[0].strip()
+        row_event.city = addr_city
+        row_event.state = addr_state
+        db_session.merge(row_event)
+        db_session.commit()
       except Exception as e:
         print(e)
 
@@ -227,12 +234,13 @@ class ConnectorMMV(ConnectorEvent):
       db_session.merge(row_event)
       db_session.commit()
 
-      yield row_event, row_event.name
+      yield row_event, (row_event.event_id, row_event.name)
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--purge', action="store_true")
   parser.add_argument('--name', action="store")
+  parser.add_argument('--bad_city', action="store_true")
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 

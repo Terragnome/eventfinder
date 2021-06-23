@@ -1,5 +1,8 @@
+import argparse
 import json
 import re
+
+from sqlalchemy import or_
 
 from models.base import db_session
 from models.event import Event
@@ -53,14 +56,25 @@ class TransformEvents:
     return event
 
   @classmethod
-  def transform(klass):
-    events = Event.query.filter(
-      Event.primary_type == Tag.FOOD_DRINK
-    )
+  def transform(klass, name=None, event_id=None, no_img=None, verbose=None):
+    events = Event.query.filter(Event.primary_type == Tag.FOOD_DRINK)
+
+    if name is not None: events = Event.query.filter(Event.name == name)
+    if event_id is not None: events = Event.query.filter(Event.event_id == event_id)
+    if no_img:
+      events = events.filter(
+        or_(
+          Event.img_url == None,
+          Event.img_url == ""
+        )
+        
+      )
+
     for i, event in enumerate(events):
       event = klass.transform_event(event)
 
-      print(json.dumps(event.meta, indent=4))
+      if verbose:
+        print(json.dumps(event.meta, indent=4))
       print(i, event.event_id, event.name)
       print("image: {} | backdrop: {}".format(event.img_url, event.backdrop_url))
       print(event.display_address)
@@ -75,4 +89,12 @@ class TransformEvents:
       print("\n")
 
 if __name__ == '__main__':
-  TransformEvents.transform()
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--event_id', action="store")
+  parser.add_argument('--name', action="store")
+  parser.add_argument('--no_img', action="store_true")
+  parser.add_argument('--verbose', action="store_true")
+  group = parser.add_mutually_exclusive_group()
+  args = vars(parser.parse_args())
+
+  TransformEvents.transform(**args)
