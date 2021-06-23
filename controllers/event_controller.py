@@ -1,4 +1,5 @@
 import datetime
+import geocoder
 import traceback
 
 from flask import current_app, session
@@ -65,9 +66,29 @@ class EventController:
     if Tag.ACCOLADES in flags:
       events = events.filter(Event.accolades != None)
     if Tag.NEARBY in flags:
-      #TODO Use Lat/Lon
-      # events = events.filter()
-      pass
+      geo = geocoder.ip('me')
+      
+      geo_city = geo.city
+      geo_lat, geo_lon = geo.latlng
+      
+      # 1 degree latitude ~69 miles
+      # 1 degree longitude ~55 miles
+
+      events = events.filter(
+        or_(
+          and_(
+            and_(
+              Event.latitude <= geo_lat+0.14,
+              Event.latitude >= geo_lat-0.14
+            ),
+            and_(
+              Event.longitude <= geo_lon+0.19,
+              Event.longitude >= geo_lon-0.19
+            )
+          ),
+          Event.city == geo_city
+        )
+      )
 
     return events
 
