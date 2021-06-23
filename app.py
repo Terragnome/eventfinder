@@ -202,6 +202,11 @@ def _parse_chip(chips=[], **kwargs):
         is_selected = True
         break
 
+  if chips:
+    selected_chips = [x for x in chips if 'selected' in x and x['selected']]
+    unselected_chips = [x for x in chips if 'selected' not in x or not x['selected']]
+    chips = selected_chips+unselected_chips
+
   results = {
     'entries': chips,
     'selected': is_selected
@@ -224,20 +229,22 @@ def _parse_chips(
       if c['chip_name'] in selected_categories:
         c['selected'] = True
   interested_chips = []
+  
+  results = {
+    'categories': _parse_chip(categories, key="c", mode=Tag.EXCLUSIVE, display_name="Categories"),
+    'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
+    'cities': _parse_chip(cities, key="cities", mode=Tag.EXCLUSIVE, display_name="Cities") if cities else default,
+    'accolades': _parse_chip(accolades, key='a', mode=Tag.BOOLEAN, display_name='Accolades')
+  }
+
   if show_interested:
-    interested_chips = _parse_chip(
+    results['interested'] = _parse_chip(
       [{'chip_name': k, 'selected': k in interested if interested else False} for k in UserEvent.interest_chip_names()],
       key='interested',
       display_name='Interest'
     )
 
-  return {
-    'categories': _parse_chip(categories, key="c", mode=Tag.EXCLUSIVE, display_name="Categories"),
-    'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
-    'cities': _parse_chip(cities, key="cities", mode=Tag.EXCLUSIVE, display_name="Cities") if cities else default,
-    'interested': interested_chips,
-    'accolades': _parse_chip(accolades, key='a', mode=Tag.BOOLEAN, display_name='Accolades')
-  }
+  return results
 
 def _render_events_list(
   request,
