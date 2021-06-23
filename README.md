@@ -55,7 +55,6 @@ heroku container:release web --app ventful
 # Debug
 heroku open --app ventful
 heroku logs --tail
-psql -d eventfinder -U dev
 
 # PSQL
 psql eventfinder -U dev

@@ -17,3 +17,4 @@ sqlalchemy-json == 0.4.0
 tmdbsimple == 2.2.0
 usaddress == 0.5.10
 Werkzeug == 0.16.0
+yelpapi == 2.4.0
