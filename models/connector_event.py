@@ -38,7 +38,7 @@ class ConnectorEvent(Base):
 
     all_events = klass.all()
     if all_events:
-      event_ids = [int(e.event_id) for e in all_events ]
+      event_ids = [int(e.event_id) for e in all_events if e.event_id is not None ]
 
     EventTag.query.filter(EventTag.event_id.in_(event_ids)).delete(synchronize_session='fetch')
     UserEvent.query.filter(UserEvent.event_id.in_(event_ids)).delete(synchronize_session='fetch')
