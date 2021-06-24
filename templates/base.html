@@ -19,6 +19,7 @@
   <script type='application/javascript' src="{{ url_for('static', filename='js/_spinner.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_app_panel.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/_url_params.js', v=cachebreaker) }}"></script>
+  <script type='application/javascript' src="{{ url_for('static', filename='js/_geocoder.js', v=cachebreaker) }}"></script>
   <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=cachebreaker) }}"></script>
   {% block scripts %}{% endblock %}
 </head>
@@ -67,7 +68,8 @@
     },
     'urls': {
       'auth': "{{ url_for('login') }}",
-      'explore': "{{ url_for('events') }}"
+      'explore': "{{ url_for('events') }}",
+      'geo': "{{url_for('geo')}}"
     }
   });
 </script>

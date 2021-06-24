@@ -1,4 +1,5 @@
 import functools
+import geocoder
 import json
 import os
 import redis
@@ -7,6 +8,7 @@ from urllib.parse import urlparse
 import flask
 from flask import Flask, Response
 from flask import current_app, session
+from flask import jsonify
 from flask import redirect, render_template, request
 from flask import url_for
 from flask_session import Session
@@ -591,6 +593,45 @@ def user_update(identifier):
       )
 
   return redirect(request.referrer or '/')
+
+@app.route('/geo/', methods=['POST'])
+def geo():
+  success=False
+
+  # TODO: Simplify api key management
+  api_key = os.getenv('GOOGLE_API_KEY', None)
+  if api_key is None:
+    with open("config/secrets/api_keys.json", "r") as f:
+      api_key = json.load(f)['Google']["api_key"]
+
+  try:
+    lat = float(request.form.get('lat'))
+    lon = float(request.form.get('lon'))
+    latlon = [lat, lon]
+
+    current_app.logger.debug("latlon: {}".format(latlon))
+
+    session_latlon = get_from(session, ['latlon'], None)
+    if latlon != session_latlon:
+      session['latlon'] = latlon
+
+      session_city = get_from(session, ['city'], None)
+      if not session_city:
+        geo = geocoder.google(coords, key=api_key, method='reverse')
+        current_app.logger.debug(geo)
+        current_app.logger.debug(geo.city)
+        current_app.logger.debug(geo.url)
+        if geo and geo.city:
+          session['city'] = geo.city
+
+    success=True
+  except Exception as e:
+    current_app.logger.error(e)
+
+  current_app.logger.debug("session city: {}".format(session['city']))
+  current_app.logger.debug("session latlon: {}".format(session['latlon']))
+
+  return jsonify(success=success)
 
 if __name__ == '__main__':
   port = int(os.environ.get("PORT", 5000))

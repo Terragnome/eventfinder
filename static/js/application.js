@@ -4,6 +4,7 @@ Application.init = function(params) {
   let urls = params['urls'];
   Application.urlAuth = urls['auth'];
   Application.urlExplore = urls['explore'];
+  Application.urlGeo = urls['geo'];
 
   let main = params['main'];
   Application.main = main['container'];
@@ -22,6 +23,8 @@ Application.onReady = function(){
   Scroll.init();
   Spinner.init();
   Application.onAjaxComplete();
+
+  Geocoder.getLocation();
 }
 
 Application.initBackButtons = function(){
@@ -133,6 +136,7 @@ Application.ajaxForm = function(e){
       let v = urlValues[k];
       newUrlQuery.push(k+'='+v);
     }
+
     let newUrl = urlRoot+"?"+newUrlQuery.join('&');
     Application.getElem(data.target, newUrl);
   }

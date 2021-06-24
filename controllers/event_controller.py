@@ -66,14 +66,25 @@ class EventController:
     if Tag.ACCOLADES in flags:
       events = events.filter(Event.accolades != None)
     if Tag.NEARBY in flags:
-      geo = geocoder.ip('me')
-      current_app.logger.debug(geo)
-      if geo:
-        geo_city = geo.city
-        geo_lat, geo_lon = geo.latlng
+      geo_latlon = get_from(session, ['latlon'], None)
+      geo_city = get_from(session, ['city'], None)
 
-        # 1 degree latitude ~69 miles
-        # 1 degree longitude ~55 miles
+      current_app.logger.debug("{} {}".format(geo_latlon, geo_city))
+
+      if not (geo_latlon and geo_city):
+        geo = geocoder.ip('me')
+        geo_latlon = geo.latlng
+        geo_city = geo.city
+
+        session['latlon'] = geo_latlon
+        session['city'] = geo.city
+      else:
+        current_app.logger.debug('skip geocode')
+
+      if geo_latlon and geo_city:
+        geo_lat, geo_lon = geo_latlon
+
+        # ~20mi x ~20mi bbox around geo_latlon
         events = events.filter(
           or_(
             and_(
