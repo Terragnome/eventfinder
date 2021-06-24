@@ -67,28 +67,28 @@ class EventController:
       events = events.filter(Event.accolades != None)
     if Tag.NEARBY in flags:
       geo = geocoder.ip('me')
-      
-      geo_city = geo.city
-      geo_lat, geo_lon = geo.latlng
-      
-      # 1 degree latitude ~69 miles
-      # 1 degree longitude ~55 miles
+      current_app.logger.debug(geo)
+      if geo:
+        geo_city = geo.city
+        geo_lat, geo_lon = geo.latlng
 
-      events = events.filter(
-        or_(
-          and_(
+        # 1 degree latitude ~69 miles
+        # 1 degree longitude ~55 miles
+        events = events.filter(
+          or_(
             and_(
-              Event.latitude <= geo_lat+0.14,
-              Event.latitude >= geo_lat-0.14
+              and_(
+                Event.latitude <= geo_lat+0.14,
+                Event.latitude >= geo_lat-0.14
+              ),
+              and_(
+                Event.longitude <= geo_lon+0.19,
+                Event.longitude >= geo_lon-0.19
+              )
             ),
-            and_(
-              Event.longitude <= geo_lon+0.19,
-              Event.longitude >= geo_lon-0.19
-            )
-          ),
-          Event.city == geo_city
+            Event.city == geo_city
+          )
         )
-      )
 
     return events
 
