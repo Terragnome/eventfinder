@@ -69,7 +69,7 @@ class EventController:
       geo_latlon = get_from(session, ['latlon'], None)
       geo_city = get_from(session, ['city'], None)
 
-      current_app.logger.debug("{} {}".format(geo_latlon, geo_city))
+      current_app.logger.debug("session latlon: {} | city: {}".format(geo_latlon, geo_city))
 
       if not (geo_latlon and geo_city):
         geo = geocoder.ip('me')

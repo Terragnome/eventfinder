@@ -1,8 +1,3 @@
-import geocoder
-from googleapiclient.discovery import build
-from google.oauth2 import service_account
-from google.oauth2.credentials import Credentials
-
 import argparse
 import datetime
 import json
@@ -10,8 +5,13 @@ import os
 import re
 from tempfile import NamedTemporaryFile
 
+import geocoder
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+from google.oauth2.credentials import Credentials
 from sqlalchemy import and_
 
+from helpers.secret_helper import get_secret
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
@@ -28,15 +28,7 @@ class ConnectorMMV(ConnectorEvent):
   MM_VILLAGE_SHEET_ID = 'Locations!$A$1:$M'
 
   def __init__(self):
-    service_account_str=None
-    try:
-      service_account_str = os.getenv('GOOGLE_SERVICE')
-    except Exception as e:
-      print(e)
-
-    if not service_account_str:
-      with open("config/secrets/EventFinder-9a13920d2b2c.json") as f:
-        service_account_str = f.read()
+    service_account_str = str(get_secret('GOOGLE_SERVICE'))
 
     with NamedTemporaryFile(mode="w+") as temp:
       temp.write(service_account_str)

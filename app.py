@@ -20,6 +20,7 @@ from controllers.event_controller import EventController
 from controllers.user_controller import UserController
 from helpers.env_helper import is_prod
 from helpers.jinja_helper import pluralize, filter_url_params, update_url_params
+from helpers.secret_helper import get_secret
 from models.base import db_session
 from models.block import Block
 from models.follow import Follow
@@ -598,18 +599,11 @@ def user_update(identifier):
 def geo():
   success=False
 
-  # TODO: Simplify api key management
-  api_key = os.getenv('GOOGLE_API_KEY', None)
-  if api_key is None:
-    with open("config/secrets/api_keys.json", "r") as f:
-      api_key = json.load(f)['Google']["api_key"]
-
+  api_key = get_secret('GOOGLE', 'api_key')
   try:
     lat = float(request.form.get('lat'))
     lon = float(request.form.get('lon'))
     latlon = [lat, lon]
-
-    current_app.logger.debug("latlon: {}".format(latlon))
 
     session_latlon = get_from(session, ['latlon'], None)
     if latlon != session_latlon:
@@ -628,8 +622,7 @@ def geo():
   except Exception as e:
     current_app.logger.error(e)
 
-  current_app.logger.debug("session city: {}".format(session['city']))
-  current_app.logger.debug("session latlon: {}".format(session['latlon']))
+  current_app.logger.debug("session latlon: {} | city: {}".format(session['latlon'], session['city']))
 
   return jsonify(success=success)
 

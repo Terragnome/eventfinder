@@ -6,6 +6,8 @@ import os
 from sqlalchemy import and_, not_
 from yelpapi import YelpAPI
 
+from helpers.secret_helper import get_secret
+
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
@@ -16,11 +18,7 @@ class ConnectorYelp(ConnectorEvent):
   TYPE = "Yelp"
 
   def __init__(self):
-    api_key = os.getenv('YELP_API_KEY', None)
-    if api_key is None:
-      with open("config/secrets/api_keys.json", "r") as f:
-        api_key = json.load(f)[self.TYPE]["api_key"]
-
+    api_key = get_secret('YELP', 'api_key')
     self.api = YelpAPI(api_key)
 
   def extract(self, name=None, event_id=None, backfill=None):

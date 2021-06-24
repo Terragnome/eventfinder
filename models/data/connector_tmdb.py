@@ -7,6 +7,7 @@ import re
 from sqlalchemy import and_
 import tmdbsimple as tmdb
 
+from helpers.secret_helper import get_secret
 from models.base import db_session 
 from models.connector_event import ConnectorEvent
 from models.event import Event
@@ -213,10 +214,7 @@ class ConnectorTMDB(ConnectorEvent):
         event_params['page'] = raw_events['page']+1
 
   def __init__(self):
-    api_key = os.getenv('TMDB_API_KEY', None)
-    if api_key is None:
-      with open("config/secrets/api_keys.json", "r") as f:
-        api_key = json.load(f)[self.TYPE]["api_key"]
+    api_key = get_secret("TMDB", "api_key")
     tmdb.API_KEY = api_key
 
 if __name__ == '__main__':
