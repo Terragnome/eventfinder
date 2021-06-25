@@ -585,7 +585,8 @@ def user(
       vargs['user'] = user
       user.card_follower_count = user.follower_users_count()
       user.card_event_count = user.active_user_events_count()
-      user.card_is_followed = current_user.is_follows_user(user) if current_user else False
+      user.card_is_followed = user.is_follows_user(current_user) if current_user else False
+      user.card_is_following = current_user.is_follows_user(user) if current_user else False
       user.card_is_blocked = current_user.is_blocks_user(user) if current_user else False
 
       return _render_events_list(request, events, vargs, template=TEMPLATE_USER_PAGE, scroll=scroll)
