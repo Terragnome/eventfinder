@@ -39,11 +39,11 @@ class TransformEvents:
     state = get_from(event.meta, [ConnectorYelp.TYPE, 'location', 'state'], None)
     if state: event.state = state
 
-    yelp_link = get_from(event.meta, [ConnectorYelp.TYPE, 'url'], None)
-    if yelp_link: event.add_url("Yelp", yelp_link)
-
     google_link = get_from(event.meta, [ConnectorMMV.TYPE, 'link'], None)
     if google_link: event.add_url("Google", google_link)
+
+    yelp_link = get_from(event.meta, [ConnectorYelp.TYPE, 'url'], None)
+    if yelp_link: event.add_url("Yelp", yelp_link)
 
     accolades = get_from(event.meta, [ConnectorMMV.TYPE, 'accolades'], None)
     if accolades:
