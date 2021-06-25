@@ -211,7 +211,7 @@ def _parse_chip(chips=[], **kwargs):
         is_selected = True
         break
 
-  if chips:
+  if chips and get_from(kwargs, ['selected_first']):
     selected_chips = [x for x in chips if 'selected' in x and x['selected']]
     unselected_chips = [x for x in chips if 'selected' not in x or not x['selected']]
     chips = selected_chips+unselected_chips
@@ -252,7 +252,7 @@ def _parse_chips(
   results = {
     'categories': _parse_chip(categories, key="c", mode=Tag.EXCLUSIVE, display_name="Categories"),
     'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
-    'cities': _parse_chip(cities, key="cities", mode=Tag.EXCLUSIVE, display_name="Cities") if cities else default,
+    'cities': _parse_chip(cities, key="cities", mode=Tag.EXCLUSIVE, display_name="Cities", selected_first=True) if cities else default,
     'flags': _parse_chip(all_flags, key='f', display_name='Filters')
   }
 
