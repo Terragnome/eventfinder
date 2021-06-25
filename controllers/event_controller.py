@@ -333,10 +333,11 @@ class EventController:
           func.distinct(Follow.follow_id)
         ).filter(
           and_(
-            Follow.user_id == user.user_id,
-            UserEvent.user_id == Follow.follow_id,
             UserEvent.event_id.in_(event_ids),
-            Follow.follow_id != user.user_id
+            UserEvent.user_id == Follow.follow_id,
+            Follow.user_id == user.user_id,
+            Follow.follow_id != user.user_id,
+            Follow.active == True
           )
         ),
         "following_user_ids"
@@ -405,10 +406,12 @@ class EventController:
         User
       ).filter(
         and_(
-          UserEvent.event_id==event.event_id,
-          UserEvent.user_id==Follow.follow_id,
-          Follow.user_id==user.user_id,
-          User.user_id!=user.user_id
+          UserEvent.event_id == event.event_id,
+          UserEvent.user_id == User.user_id,
+          Follow.user_id == user.user_id,
+          Follow.follow_id == User.user_id,
+          User.user_id != user.user_id,
+          Follow.active == True
         )
       )
       event.card_event_users = [
