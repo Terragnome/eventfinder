@@ -515,8 +515,9 @@ class EventController:
           filter_conditions.extend(UserEvent.DONE_LEVELS)
         if UserEvent.INTERESTED in interested:
           filter_conditions.extend([UserEvent.interest_level(UserEvent.GO), UserEvent.interest_level(UserEvent.MAYBE)])
-        if UserEvent.SKIP in interested:
-          filter_conditions.append(UserEvent.interest_level(UserEvent.SKIP))
+        for il in [UserEvent.GO, UserEvent.MAYBE, UserEvent.SKIP]:
+          if il in interested:
+            filter_conditions.append(UserEvent.interest_level(il))
 
         if filter_conditions:
           events_with_counts = events_with_counts.filter(UserEvent.interest.in_(filter_conditions))

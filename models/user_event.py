@@ -42,6 +42,8 @@ class UserEvent(Base):
   def interest_chip_names(klass):
     return [
       klass.INTERESTED,
+      klass.GO,
+      klass.MAYBE,
       klass.DONE,
       klass.SKIP
     ]

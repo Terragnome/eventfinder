@@ -16,7 +16,7 @@ from utils.get_from import get_from
 
 class SeedMICHAELLIN:
   @classmethod
-  def seed(klass):
+  def seed(klass, purge=None):
     u = User.query.filter(User.email == "michaellin@gmail.com").first()
     if not u: u = User(email="michaellin@gmail.com")
     u.username="MICHAELLIN Guide",
@@ -32,10 +32,12 @@ class SeedMICHAELLIN:
       )
     )
 
+    if purge:
+      UserEvent.query.filter(UserEvent.user_id == u.user_id).delete()
+
     tier_to_interest = {
       '♡': UserEvent.interest_level(UserEvent.GO),
-      '☆': UserEvent.interest_level(UserEvent.GO),
-      '◎': UserEvent.interest_level(UserEvent.MAYBE)
+      '☆': UserEvent.interest_level(UserEvent.MAYBE)
     }
 
     for i, e in enumerate(events):
@@ -62,6 +64,7 @@ class SeedMICHAELLIN:
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
+  parser.add_argument('--purge', action="store_true")
   # parser.add_argument('--verbose', action="store_true")
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())

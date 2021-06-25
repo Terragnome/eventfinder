@@ -258,7 +258,12 @@ def _parse_chips(
 
   if show_interested:
     results['interested'] = _parse_chip(
-      [{'chip_name': k, 'selected': k in interested if interested else False} for k in UserEvent.interest_chip_names()],
+      [
+        {
+          'chip_name': k,
+          'selected': k in interested if interested else False
+        } for k in UserEvent.interest_chip_names()
+      ],
       key='interested',
       display_name='Interest'
     )
