@@ -855,6 +855,36 @@ span{
   display: none;
 }
 
+.event_link {
+  display: inline-block;
+}
+
+.event_link > .icon {
+  float: left;
+  width: 24px;
+  height: 24px;
+}
+
+.event_link > .name {
+  float: left;
+  text-decoration: underline;
+  margin: 2px 5px;
+}
+
+.icon.google {
+  background: url(/static/icons/svg/google.svg) no-repeat;
+  background-position: center center;
+  background-size: auto 24px;
+  background-repeat: no-repeat;
+}
+
+.icon.yelp {
+  background: url(/static/icons/svg/yelp.svg) no-repeat;
+  background-position: center center;
+  background-size: auto 24px;
+  background-repeat: no-repeat;
+}
+
 .left{
   float: left;
 }

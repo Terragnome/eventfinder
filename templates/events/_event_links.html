@@ -4,7 +4,10 @@
 <div class='event_links {{"card" if card else "page"}}'>
   {% if event.urls %}
     {% for url_type, url in event.urls.items() %}
-      <a class="event_link" target="_blank" href='{{url}}'>{{url_type}}</a>
+      <a class='event_link clearfix' target="_blank" href='{{url}}'>
+        <div class='icon {{url_type.lower()}}'></div>
+        <span class="name" >{{url_type}}</span>
+      </a>
     {% endfor %}
   {% endif %}
 </div>
