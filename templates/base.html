@@ -1,5 +1,5 @@
 {% set app_name="Omakase" %}
-{% set cachebreaker = 17 %}
+{% set cachebreaker = 19 %}
 
 <!doctype html>
 <head>
@@ -68,8 +68,7 @@
     },
     'urls': {
       'auth': "{{ url_for('login') }}",
-      'explore': "{{ url_for('events') }}",
-      'geo': "{{url_for('geo')}}"
+      'explore': "{{ url_for('events') }}"
     }
   });
 </script>

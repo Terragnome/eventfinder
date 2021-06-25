@@ -36,23 +36,29 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app = Flask(__name__)
 app.config.update(**app_config)
 
+# TODO: Does this do anything?
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['REMEMBER_COOKIE_HTTPONLY'] = True
+#TODO:
+# response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
+
+#TODO check these config settings
 redis_url = os.getenv('REDIS_URL', 'redis://redis:6379/')
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url(redis_url)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-# app.config.update(
-#   SESSION_COOKIE_SECURE=True,
-#   SESSION_COOKIE_HTTPONLY=True,
-#   SESSION_COOKIE_SAMESITE='Lax',
-# )
-#TODO:
-# response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
-
 app.jinja_env.globals.update(pluralize=pluralize)
 app.jinja_env.globals.update(update_url_params=update_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
+app.jinja_env.globals.update(get_secret=get_secret)
 app.jinja_env.globals.update(app_panel_types=Tag.types)
+
+import functools
+url_for = functools.partial(url_for, _external=True, _scheme='https')
 
 Session(app)
 
@@ -60,6 +66,8 @@ param_to_kwarg = {
   'c': 'category',
   'f': 'flags',
   'interested': 'interested',
+  'lat': 'lat',
+  'lon': 'lon',
   'p': 'page',
   'q': 'query',
   'r': 'relationship',
@@ -290,6 +298,45 @@ def parse_url_params(fn):
     return fn(*args, **kwargs)
   return decorated_fn
 
+def parse_geo(fn):
+  @functools.wraps(fn)
+  def decorated_fn(*args, **kwargs):
+    lat = get_from(kwargs, ['lat'])
+    lon = get_from(kwargs, ['lon'])
+
+    if lat and lon:
+      try:
+        latlon = [float(lat), float(lon)]
+        if latlon != get_from(session, ['latlon']):
+          current_app.logger.debug('geocoding')
+          session['latlon'] = latlon
+
+          api_key = get_secret('GOOGLE', "api_key")
+          geo = geocoder.google(latlon, key=api_key, method='reverse')
+          if geo and geo.city:
+            session['city'] = geo.city
+        else:
+          current_app.logger.debug('skip geocode')
+      except Exception as e:
+        current_app.logger.error(e)
+
+    session_latlon = get_from(session, ['latlon'])
+    if session_latlon is None:
+      session_city = get_from(session, ['city'])
+      if not (session_latlon and session_city):
+        current_app.logger.debug('geocode with ip')
+        geo = geocoder.ip('me')
+        session['latlon'] = geo.latlng
+        session['city'] = geo.city
+
+    current_app.logger.debug("session latlon: {} | city: {}".format(
+      get_from(session, ['latlon']),
+      get_from(session, ['city'])
+    ))
+
+    return fn(*args, **kwargs)
+  return decorated_fn
+
 def parse_url_for(*args, **kwargs):
   for param,kw in param_to_kwarg.items():
     if kw in kwargs:
@@ -407,10 +454,12 @@ def event_update(event_id):
 @app.route("/", methods=['GET'])
 @app.route("/explore/", methods=['GET'])
 @parse_url_params
+@parse_geo
 @paginated
 def events(
   query=None, category=None, tag=None, cities=None, flags=None,
   page=1, next_page_url=None, prev_page_url=None,
+  lat=None, lon=None,
   scroll=False, selected=None
 ):
   selected_categories = category
@@ -495,6 +544,7 @@ def users(
 @app.route("/saved/", methods=['GET'])
 @oauth2_required
 @parse_url_params
+@parse_geo
 @paginated
 def saved(**kwargs):
   current_user = UserController().current_user
@@ -506,11 +556,13 @@ def saved(**kwargs):
 
 @app.route("/user/<identifier>/", methods=['GET'])
 @parse_url_params
+@parse_geo
 @paginated
 def user(
   identifier,
   interested=None,
   query=None, category=None, tag=None, cities=None, flags=None,
+  lat=None, lon=None,
   page=1, next_page_url=None, prev_page_url=None,
   scroll=False, selected = None
 ):
@@ -594,37 +646,6 @@ def user_update(identifier):
       )
 
   return redirect(request.referrer or '/')
-
-@app.route('/geo/', methods=['POST'])
-def geo():
-  success=False
-
-  api_key = get_secret('GOOGLE', 'api_key')
-  try:
-    lat = float(request.form.get('lat'))
-    lon = float(request.form.get('lon'))
-    latlon = [lat, lon]
-
-    session_latlon = get_from(session, ['latlon'], None)
-    if latlon != session_latlon:
-      session['latlon'] = latlon
-
-      session_city = get_from(session, ['city'], None)
-      if not session_city:
-        geo = geocoder.google(coords, key=api_key, method='reverse')
-        current_app.logger.debug(geo)
-        current_app.logger.debug(geo.city)
-        current_app.logger.debug(geo.url)
-        if geo and geo.city:
-          session['city'] = geo.city
-
-    success=True
-  except Exception as e:
-    current_app.logger.error(e)
-
-  current_app.logger.debug("session latlon: {} | city: {}".format(session['latlon'], session['city']))
-
-  return jsonify(success=success)
 
 if __name__ == '__main__':
   port = int(os.environ.get("PORT", 5000))

@@ -46,7 +46,7 @@
           {% endif %}
         {% endif %}
         <a
-          class='cap_button nav_link_get {{"selected" if chip.selected else ""}}'
+          class='cap_button {{"selected" if chip.selected else ""}} {{"needs_location" if chip.chip_name == "nearby" else "nav_link_get"}}'
           href='{{callback}}'
         >{{ chip.chip_name }}{{ "" if chip.selected else " {}".format(chip.ct) }}</a>
       {% endfor %}

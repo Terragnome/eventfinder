@@ -4,7 +4,6 @@ Application.init = function(params) {
   let urls = params['urls'];
   Application.urlAuth = urls['auth'];
   Application.urlExplore = urls['explore'];
-  Application.urlGeo = urls['geo'];
 
   let main = params['main'];
   Application.main = main['container'];
@@ -23,8 +22,6 @@ Application.onReady = function(){
   Scroll.init();
   Spinner.init();
   Application.onAjaxComplete();
-
-  Geocoder.getLocation();
 }
 
 Application.initBackButtons = function(){
@@ -37,6 +34,16 @@ Application.initBackButtons = function(){
   }
 }
 
+Application.initLocationButtons = function(){
+  let locationButtons = $('a.needs_location');
+  if(locationButtons){
+    try{
+      locationButtons.unbind('click', Geocoder.getLocation);
+    }catch(e){}
+    locationButtons.click(Geocoder.getLocation);
+  }
+}
+
 Application.onAjaxStart = function(){
   $(Application.main).removeClass('anim_fade_in');
   Scroll.disable();
@@ -46,6 +53,7 @@ Application.onAjaxComplete = function(){
   Application.ajaxifyLinks();
   Application.initGroupChips();
   Application.initBackButtons();
+  Application.initLocationButtons();
   Scroll.enable();
 }
 
