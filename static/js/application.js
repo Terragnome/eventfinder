@@ -35,13 +35,13 @@ Application.initBackButtons = function(){
 }
 
 Application.initLocationButtons = function(){
-  let locationButtons = $('a.needs_location');
-  if(locationButtons){
-    try{
-      locationButtons.unbind('click', Geocoder.getLocation);
-    }catch(e){}
-    locationButtons.click(Geocoder.getLocation);
-  }
+  // let locationButtons = $('a.needs_location');
+  // if(locationButtons){
+  //   try{
+  //     locationButtons.unbind('click', Geocoder.getLocation);
+  //   }catch(e){}
+  //   locationButtons.click(Geocoder.getLocation);
+  // }
 }
 
 Application.onAjaxStart = function(){
