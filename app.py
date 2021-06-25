@@ -325,7 +325,8 @@ def parse_geo(fn):
       session_city = get_from(session, ['city'])
       if not (session_latlon and session_city):
         current_app.logger.debug('geocode with ip')
-        geo = geocoder.ip('me')
+
+        geo = geocoder.ip(request.access_route[-1])
         session['latlon'] = geo.latlng
         session['city'] = geo.city
 

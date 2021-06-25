@@ -37,8 +37,8 @@ Geocoder.getLocation = function(e) {
       onDefault(e);
     };
 
-    navigator.geolocation.getCurrentPosition(onSuccess, onError, geoOptions);
     Spinner.show(Application.mainSpinner);
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, geoOptions);
   }
 }
 
