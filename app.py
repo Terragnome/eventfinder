@@ -20,6 +20,7 @@ from controllers.event_controller import EventController
 from controllers.user_controller import UserController
 from helpers.env_helper import is_prod
 from helpers.jinja_helper import pluralize, filter_url_params, update_url_params
+from helpers.geo_helper import get_geo, set_geo
 from helpers.secret_helper import get_secret
 from models.base import db_session
 from models.block import Block
@@ -39,9 +40,9 @@ app.config.update(**app_config)
 # TODO: Does this do anything?
 app.config['PREFERRED_URL_SCHEME'] = 'https'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
-app.config['SESSION_COOKIE_SECURE'] = True
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['REMEMBER_COOKIE_HTTPONLY'] = True
+# app.config['SESSION_COOKIE_SECURE'] = True
+# app.config['SESSION_COOKIE_HTTPONLY'] = True
+# app.config['REMEMBER_COOKIE_HTTPONLY'] = True
 #TODO:
 # response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
 
@@ -93,11 +94,7 @@ TEMPLATE_USER_PAGE        = "users/_user_page.html"
 def get_oauth2_callback():
   if not is_prod():
     return "https://linfamily.us/oauth2callback/"
-  return flask.url_for(
-      'oauth2callback',
-      _scheme='https',
-      _external=True
-    )
+  return flask.url_for('oauth2callback', _scheme='https', _external=True)
 
 def get_oauth2_config(**keys):
   try:
@@ -256,7 +253,6 @@ def _parse_chips(
     'categories': _parse_chip(categories, key="c", mode=Tag.EXCLUSIVE, display_name="Categories"),
     'tags':   _parse_chip(tags, key="t", display_name="Type") if tags else default,
     'cities': _parse_chip(cities, key="cities", mode=Tag.EXCLUSIVE, display_name="Cities") if cities else default,
-    # 'accolades': _parse_chip(accolades, key='a', mode=Tag.BOOLEAN, display_name='Accolades')
     'flags': _parse_chip(all_flags, key='f', display_name='Filters')
   }
 
@@ -304,36 +300,7 @@ def parse_geo(fn):
     lat = get_from(kwargs, ['lat'])
     lon = get_from(kwargs, ['lon'])
 
-    if lat and lon:
-      try:
-        latlon = [float(lat), float(lon)]
-        if latlon != get_from(session, ['latlon']):
-          current_app.logger.debug('geocoding')
-          session['latlon'] = latlon
-
-          api_key = get_secret('GOOGLE', "api_key")
-          geo = geocoder.google(latlon, key=api_key, method='reverse')
-          if geo and geo.city:
-            session['city'] = geo.city
-        else:
-          current_app.logger.debug('skip geocode')
-      except Exception as e:
-        current_app.logger.error(e)
-
-    session_latlon = get_from(session, ['latlon'])
-    if session_latlon is None:
-      session_city = get_from(session, ['city'])
-      if not (session_latlon and session_city):
-        current_app.logger.debug('geocode with ip')
-
-        geo = geocoder.ip(request.access_route[-1])
-        session['latlon'] = geo.latlng
-        session['city'] = geo.city
-
-    current_app.logger.debug("session latlon: {} | city: {}".format(
-      get_from(session, ['latlon']),
-      get_from(session, ['city'])
-    ))
+    geo_latlon, geo_city = set_geo(lat, lon)
 
     return fn(*args, **kwargs)
   return decorated_fn

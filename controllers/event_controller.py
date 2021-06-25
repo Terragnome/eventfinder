@@ -2,12 +2,13 @@ import datetime
 import geocoder
 import traceback
 
-from flask import current_app, session
+from flask import current_app, request, session
 from sqlalchemy import alias, asc, case, desc, distinct, nullslast
 from sqlalchemy import and_, or_
 from sqlalchemy.sql import func
 
 from controllers.user_controller import UserController
+from helpers.geo_helper import get_geo
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
@@ -66,8 +67,12 @@ class EventController:
     if Tag.ACCOLADES in flags:
       events = events.filter(Event.accolades != None)
     if Tag.NEARBY in flags:
-      geo_latlon = get_from(session, ['latlon'])
-      geo_city = get_from(session, ['city'])
+      geo_latlon, geo_city = get_geo()
+
+      current_app.logger.debug("geo latlon: {} | city: {}".format(
+        geo_latlon,
+        geo_city
+      ))
 
       if geo_latlon and geo_city:
         geo_lat, geo_lon = geo_latlon
@@ -289,28 +294,6 @@ class EventController:
     selected_tags=None, selected_categories=None,
     future_only=None
   ):
-    # event_scores = alias(
-    #   db_session.query(
-    #     UserEvent.event_id.label('event_id'),
-    #     func.count(UserEvent.interest).label('ct'),
-    #     func.sum(UserEvent.interest).label('score')
-    #   ).filter(
-    #     UserEvent.interest > 0
-    #   ).group_by(
-    #     UserEvent.event_id
-    #   ),
-    #   'event_scores'
-    # )
-
-    # events_with_counts = db_session.query(
-    #   Event,
-    #   event_scores.c.ct,
-    #   event_scores.c.score
-    # ).outerjoin(
-    #   event_scores,
-    #   Event.event_id == event_scores.c.event_id
-    # )
-
     if future_only:
       events_with_counts = events_with_counts.filter(
         or_(
