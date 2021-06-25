@@ -1,3 +1,5 @@
+from flask import current_app
+
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 def pluralize(ct, singular_str, plural_str=None):
@@ -64,14 +66,19 @@ def update_url_params(url, merge=None, replace=None, remove=None, clear=None, to
 
   if toggle:
     for k,v in toggle.items():
-      v_set = set(v.split(','))
       if k not in url_params_dict:
         url_params_dict[k] = set(v_set)
       else:
         url_params_dict_v = url_params_dict[k]
         if url_params_dict_v.__class__ is not set:
           url_params_dict_v = set(url_params_dict_v.split(','))
-        new_url_params = url_params_dict_v.difference(v_set)
+
+        if v in url_params_dict_v:
+          url_params_dict_v.remove(v)
+        else:
+          url_params_dict_v.add(v)
+
+        new_url_params = url_params_dict_v
         if not new_url_params:
           del url_params_dict[k]
         else:
