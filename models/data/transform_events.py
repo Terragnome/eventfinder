@@ -16,6 +16,19 @@ from utils.get_from import get_from
 
 class TransformEvents:
   @classmethod
+  def transform_event_details(klass, event):
+    event.details = {
+      Event.DETAILS_PHONE: get_from(event.meta, [ConnectorYelp.TYPE, 'display_phone']),
+      Event.DETAILS_RATING: {
+        ConnectorYelp.TYPE: {
+          Event.DETAILS_RATING: get_from(event.meta, [ConnectorYelp.TYPE, 'rating']),
+          Event.DETAILS_REVIEW_COUNT: get_from(event.meta, [ConnectorYelp.TYPE, 'review_count'])
+        }
+      }
+    }
+
+
+  @classmethod
   def transform_event(klass, event):
     img_url = get_from(event.meta, [ConnectorYelp.TYPE, 'image_url'])
     if img_url:
@@ -45,10 +58,15 @@ class TransformEvents:
     yelp_link = get_from(event.meta, [ConnectorYelp.TYPE, 'url'], None)
     if yelp_link: event.add_url("Yelp", yelp_link)
 
+    yelp_cost = get_from(event.meta, [ConnectorYelp.TYPE, 'cost'], None)
+    if yelp_cost: event.cost = len(yelp_cost)
+
     accolades = get_from(event.meta, [ConnectorMMV.TYPE, 'accolades'], None)
     if accolades:
       accolades = [x.strip() for x in accolades.split(",")]
       event.accolades = accolades
+
+    klass.transform_event_details(event)
 
     db_session.merge(event)
     db_session.commit()
@@ -86,6 +104,7 @@ class TransformEvents:
       print(get_from(event.meta, [ConnectorYelp.TYPE, 'categories'], None))
       print(event.accolades)
       print(event.urls)
+      print(event.details)
       print("\n")
 
 if __name__ == '__main__':
