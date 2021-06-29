@@ -1,6 +1,10 @@
 {% set event=event or (vargs.event if vargs else None) %}
 {% set card=card or (vargs.card if vargs else None) %}
 
+{% if not card and event.accolades %}
+  <div class='divider smallscreen_only'></div>
+{% endif %}
+
 <div class='event_accolades {{"card" if card else "page"}}'>
   {% if event.accolades %}
     {% if card %}

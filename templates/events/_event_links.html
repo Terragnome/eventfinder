@@ -10,7 +10,7 @@
         {% set rating = get_from(event.details, ['rating', url_type, 'rating']) %}
         {% set review_ct = get_from(event.details, ['rating', url_type, 'review_count']) %}
         {% if rating %}
-          <div class="rating">☆ {{rating}} | {{review_ct}}</div>
+          <div class="rating">☆ {{rating}} | {{round_ct(review_ct*1000000)}}</div>
         {% endif %}
       </a>
     {% endfor %}

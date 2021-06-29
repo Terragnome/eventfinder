@@ -483,40 +483,56 @@ span{
 
 .event_users.card{
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 5px;
-  z-index: 3;
   -webkit-filter: drop-shadow( 1px 1px 3px rgba(0, 0, 0, 0.9));
   filter: drop-shadow( 1px 1px 3px rgba(0, 0, 0, 0.9));
+  z-index: 3;
 }
 
-.event_users.card > .link_img > .event_users_count{
-  background-color: white;
-  color: black;
+.event_users.page > .event_users_counter{
+  border: 1px solid black;
 }
 
-.event_users.page > .link_img > .event_users_count{
+.event_users > .event_users_counter{
   float: left;
-  background-color: black;
-  color: white;
-}
-
-.event_users > .link_img > .event_users_count{
   background-color: white;
-  border-radius: 18px;
   color: black;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 12px;  
-  height: 36px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 20px;
+  padding: 4px 6px 4px 6px;
   margin: 2px 3px 2px 3px;
-  text-align: center;
-  width: 36px;
 }
 
-.event_users > .link_img > .event_users_count > .event_users_count_number{
-  position: relative;
-  top: 10px;
+.user_img{
+  border-radius: 18px;
+  width: 36px;
+  height: 36px;
+}
+
+
+.event_users > .event_users_counter > .icon.user{
+  float: left;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  fill: white;
+}
+
+.event_users > .event_user_img{
+  float: left;
+  display: inline-block;
+  margin: 2px 3px 2px 3px;
+}
+
+.event_users_counter > .event_users_count{
+  display: inline-block;
+}
+
+.event_user_icon{
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .event_accolades{
@@ -546,9 +562,13 @@ span{
 
 .event_container > .event_accolades > .accolade > .accolade_icon {
   display: inline-block;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 28px;
 }
 
 .event_container > .event_accolades > .accolade > .accolade_name {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
   font-size: 14px;
   font-weight: bold;
   margin: 4px 5px 2px 5px;
@@ -936,11 +956,6 @@ span{
   float: left;
 }
 
-.link_img{
-  cursor: pointer;
-  text-decoration: none;
-}
-
 #main{
   position: absolute;
   width: 100%;
@@ -1215,14 +1230,6 @@ span{
   background-repeat: no-repeat;
 }
 
-.user_profile_mini_img{
-  border-radius: 18px;
-  display: inline-block;
-  float: left;
-  margin: 2px 3px 2px 3px;
-  width: 36px;
-}
-
 @media(max-width: 700px), (max-height: 420px){
   /*#app_panel{
     text-align: center;
@@ -1276,7 +1283,12 @@ span{
     filter: none;
   }
 
+  .event_container > .event_accolades > .accolade > .accolade_icon {
+    background-color: inherit;
+  }
+
   .event_container > .event_accolades > .accolade > .accolade_name {
+    background-color: inherit;
     font-size: 12px;
     margin: 4px 5px 2px 5px;
   }

@@ -1,6 +1,17 @@
+from sigfig import round
+
 from flask import current_app
 
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
+def round_ct(ct):
+  if ct > 1000000000:
+    return "{}B+".format(round(ct/1000000000, sigfigs=2))
+  if ct > 1000000:
+    return "{}M+".format(round(ct/1000000, sigfigs=2))
+  if ct > 1000:
+    return "{}K+".format(round(ct/1000, sigfigs=2))
+  return ct
 
 def pluralize(ct, singular_str, plural_str=None):
   if plural_str is None: plural_str = "{}s".format(singular_str)

@@ -216,15 +216,21 @@ class EventController:
       tag_query = tag_query.filter(Event.end_time >= datetime.datetime.now())
       category_query = category_query.filter(Event.end_time >= datetime.datetime.now())
 
-    if limit:
-      tag_query = tag_query.limit(limit)
-      category_query = category_query.limit(limit)
-
     tag_query = tag_query.group_by(
       Tag.tag_name
     ).order_by(
       desc('ct')
     )
+
+    category_query=category_query.group_by(
+      Tag.tag_type
+    ).order_by(
+      desc('ct')
+    )
+
+    if limit:
+      tag_query = tag_query.limit(limit)
+      category_query = category_query.limit(limit)
 
     distinct_tags = {
       t: {
@@ -241,11 +247,6 @@ class EventController:
         distinct_tags[chip_name]['ct'] = chip_ct
     tags = distinct_tags.values()
 
-    category_query=category_query.group_by(
-      Tag.tag_type
-    ).order_by(
-      desc('ct')
-    )
 
     category_cts = {c[0]: c[1] for c in category_query}
     categories = [

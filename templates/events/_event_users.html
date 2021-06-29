@@ -2,20 +2,17 @@
 
 {% if event.card_user_count %}
   <div class='event_users {{"card" if card else "page"}} clearfix'>
-    {% if card %}
-      <span class='link_img'>
-        <div class='event_users_count {{ event_selected_class }}'>
-          <span class='event_users_count_number'>{{ event.card_user_count }}</span>
-        </div>
-      </span>
-    {% endif %}
+    <div class='event_users_counter'>
+      <div class='icon user'></div>
+      <div class='event_users_count {{ event_selected_class }}'>{{ round_ct(event.card_user_count) }}</div>
+    </div>
     {% if current_user and not card %}
       {% for user in event.card_event_users %}
         <a
-          class='link_img nav_link_get'
+          class='event_user_icon nav_link_get'
           href="{{ url_for('user', identifier=user.username) }}"
         >
-          <img class="user_profile_mini_img" title="{{ user.username }}" src="{{ user.image_url }}"></img>
+          <img class="user_img" title="{{ user.username }}" src="{{ user.image_url }}"></img>
         </a>
       {% endfor %}
     {% endif %}

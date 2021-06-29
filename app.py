@@ -19,7 +19,7 @@ from config.app_config import app_config
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
 from helpers.env_helper import is_prod
-from helpers.jinja_helper import pluralize, filter_url_params, update_url_params
+from helpers.jinja_helper import round_ct, pluralize, filter_url_params, update_url_params
 from helpers.geo_helper import get_geo, set_geo
 from helpers.secret_helper import get_secret
 from models.base import db_session
@@ -54,6 +54,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 app.jinja_env.globals.update(get_from=get_from)
 app.jinja_env.globals.update(pluralize=pluralize)
+app.jinja_env.globals.update(round_ct=round_ct)
 app.jinja_env.globals.update(update_url_params=update_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
 app.jinja_env.globals.update(get_secret=get_secret)
