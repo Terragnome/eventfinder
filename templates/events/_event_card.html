@@ -12,11 +12,12 @@
       {% if not is_skip or is_me %}
         {% if event.img_url %}
           {% with event=event, card=card, vargs=vargs %}{% include "events/_event_accolades.html" %}{% endwith %}
+          {% with event=event, card=card, vargs=vargs %}{% include "events/_event_users.html" %}{% endwith %}
           <div class='event_img_wrapper'>
             <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
           </div>
         {% else %}
-          <!-- TODO Handle accolades when there is not image -->
+          <!-- TODO Handle accolades when there is no image -->
         {% endif %}
       {% endif %}
       <div class='event_title'>
@@ -27,9 +28,6 @@
     <div class='event_body'>
       {% with event=event, card=card, vargs=vargs %}{% include "events/_event_tags.html" %}{% endwith %}
       {% with event=event, card=card, vargs=vargs %}{% include "events/_event_choices.html" %}{% endwith %}
-      {% if not is_skip %}
-        {% with event=event, card=card, vargs=vargs %}{% include "events/_event_users.html" %}{% endwith %}
-      {% endif%}
     </div>
   </div>
 </div>

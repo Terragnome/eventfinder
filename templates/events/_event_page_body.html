@@ -26,10 +26,16 @@
     </div>
     <div class='event_body'>
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_links.html" %}{% endwith %}
-      <p class='event_description'>{{ event.description or "" }}</p>
+      {% if event.description %}
+        <p class='event_description'>asdadasdasdsada{{ event.description or "" }}</p>
+      {% endif %}
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
-      {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
+      {% if event.card_user_count %}
+        <div class='divider'></div>
+        {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
+      {% endif %}
     </div>
   </div>
+  <div class='divider smallscreen_only'></div>
   {% with event=event, card=card, vargs=vargs %}{% include "events/_event_accolades.html" %}{% endwith %}
 </div>
