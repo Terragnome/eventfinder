@@ -773,11 +773,7 @@ span{
 .event_img_wrapper{
   min-height: 20px;
 }
-/*
-.event_img_wrapper > .event_img{
-  width: 420px;
-}
-*/
+
 .entity_list {
   border: 0px;
   list-style: none;
@@ -1325,12 +1321,14 @@ span{
 
   .event_page > .event_img_wrapper > .event_img{
     border-radius: 0px;
+    border: 0px;
+    padding: 0px;
     height: auto;
     width: 100%;
     max-width: 100%;
     max-height: none;
     margin-top: 10px;
-    margin-right: auto;
-    margin-left: auto;
+    margin-right: 0px;
+    margin-left: 0px;
   }
 }
