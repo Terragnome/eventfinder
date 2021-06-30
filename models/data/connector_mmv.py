@@ -55,10 +55,14 @@ class ConnectorMMV(ConnectorEvent):
       alias = re.sub(r'-+', '-', re.sub(r'[^a-z0-9]', "-", obj['address'].lower()))
       obj['alias'] = alias
 
-      if not alias:
+      place_id = obj['place id']
+
+      if not (place_id and alias):
+        print("Missing Alias or Place ID: {} | place_id: {} | alias: {}".format(obj['name'], place_id, alias))
+        print("\t{}".format(obj))
         continue
 
-      connector_event_id = obj['place id']
+      connector_event_id = place_id
       location_name = obj['name']
       location_short_name = location_name
       location_description = obj['notes']
@@ -71,19 +75,22 @@ class ConnectorMMV(ConnectorEvent):
       addr_state = addr_components[-2].split(" ")[0]
       addr_country = addr_components[-1]
 
-      if bad_city:
-        obj_city = obj['city']
-        city_sub = {
-          "SF": "San Francisco",
-          "South SF": "South San Francisco",
-          "San Jose - Local": "San Jose"
-        }
-        obj_city = get_from(city_sub, [obj_city], obj_city)
+      obj_city = obj['city']
+      city_sub = {
+        "SF": "San Francisco",
+        "South SF": "South San Francisco",
+        "San Jose - Local": "San Jose"
+      }
+      obj_city = get_from(city_sub, [obj_city], obj_city)
 
-        if obj_city != addr_city:
-          print("{} => \n\ttarget: {} | actual: {}\n".format(location_name, obj_city, addr_city))
-        elif addr_state not in ("CA", "California"):
-          print("{} => \n\tactual: {}\n".format(location_name, addr_state))
+      if obj_city != addr_city:
+        print("{} => \n\ttarget: {} | actual: {}\n".format(location_name, obj_city, addr_city))
+        continue
+      elif addr_state not in ("CA", "California"):
+        print("{} => \n\tactual: {}\n".format(location_name, addr_state))
+        continue
+
+      if bad_city:
         continue
 
       if name is not None and location_name != name:

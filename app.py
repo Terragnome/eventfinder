@@ -95,8 +95,8 @@ TEMPLATE_USER_PAGE        = "users/_user_page.html"
 
 def get_oauth2_callback():
   if not is_prod():
-    return "https://linfamily.us/oauth2callback/"
-  return flask.url_for('oauth2callback', _scheme='https', _external=True)
+    return "https://linfamily.us/auth/"
+  return flask.url_for('auth_callback', _scheme='https', _external=True)
 
 def get_oauth2_config(**keys):
   try:
@@ -125,8 +125,8 @@ def redirect_url(default='/'):
 def debug():
   user_info = UserController()._request_user_info()
 
-@app.route("/oauth2callback/", methods=['GET'])
-def oauth2callback():
+@app.route("/auth/", methods=['GET'])
+def auth_callback():
   if 'state' not in session:
     return redirect('/')
 
