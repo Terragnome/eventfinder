@@ -4,7 +4,7 @@ import json
 import os
 
 from sqlalchemy import and_, not_
-from yelpapi import YelpAPI
+import googlemaps
 
 from helpers.secret_helper import get_secret
 
@@ -20,8 +20,8 @@ class ConnectorGPlaces(ConnectorEvent):
   TYPE = "Google Places"
 
   def __init__(self):
-    api_key = get_secret('Google', 'api_key')
-    self.api = YelpAPI(api_key)
+    api_key = get_secret('GOOGLE', "api_key")
+    self.client = googlemaps.Client(key=api_key)
 
   def extract(self, name=None, event_id=None, backfill=None):
     events = Event.query.filter(
@@ -37,60 +37,44 @@ class ConnectorGPlaces(ConnectorEvent):
 
     for row_event in events:
       search_results = None
-      b_details = None
 
       # TODO: Handlle in the query if possible to filter by json
       if backfill and self.TYPE in row_event.meta:
         continue
 
+      print(row_event.meta)
+
+      return
+
       if not search_results:
         kwargs = {
-          'name': row_event.name,
-          'address1': row_event.address,
-          'city': row_event.city,
-          'state': row_event.state
+          'fields': []
         }
         print(" | ".join(["{}: \"{}\"".format(k,v) for k,v in kwargs.items()]))
 
         try:
-          search_results = self.api.business_match_query(
-            country = "US",
+          search_results = self.client.find_place(
             **kwargs
           )
         except Exception as e:
-          print("business_match_query: {}".format(e))
+          print("find_place: {}".format(e))
 
-      if not search_results or len(search_results['businesses']) == 0:
-        try:
-          term = " ".join([row_event.name, row_event.city, row_event.state])
-          location = " ".join([row_event.city, row_event.state])
-
-          kwargs = {
-            'term': term,
-            'location': location
-          }
-          print(" | ".join(["{}: \"{}\"".format(k,v) for k,v in kwargs.items()]))
-
-          search_results = self.api.search_query(
-            limit = 1,
-            **kwargs
-          )
-        except Exception as e:
-          print("search_query: {}".format(e))
+      return
 
       if search_results:
-        for r in search_results['businesses']:
-          b_details = None
-          try:
-            b_details = self.api.business_query(id = r['id'])
-          except Exception as e:
-            print("business_query: {}".format(e))
-            print(r['id'])
+        pass
+        # for r in search_results['businesses']:
+        #   b_details = None
+        #   try:
+        #     b_details = self.api.business_query(id = r['id'])
+        #   except Exception as e:
+        #     print("business_query: {}".format(e))
+        #     print(r['id'])
 
-        if b_details:
-          row_event.update_meta(self.TYPE, {**r, **b_details})
-          db_session.merge(row_event)
-          db_session.commit()
+        # if b_details:
+        #   row_event.update_meta(self.TYPE, {**r, **b_details})
+        #   db_session.merge(row_event)
+        #   db_session.commit()
       yield row_event.name, b_details
 
 if __name__ == '__main__':

@@ -59,3 +59,10 @@ heroku logs --tail
 # PSQL
 psql eventfinder -U dev
 \dt
+
+# Git Personal Access Token
+echo "\
+protocol=https
+host=github.com
+username=$NAME
+password=$PASSWD" | git credential-osxkeychain store

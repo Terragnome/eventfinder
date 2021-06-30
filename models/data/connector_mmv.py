@@ -21,11 +21,8 @@ from utils.get_from import get_from
 class ConnectorMMV(ConnectorEvent):
   TYPE = "MM Village"
 
-  # If modifying these scopes, delete the file token.pickle.
-  SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
-
   MM_VILLAGE_TRIX_ID = '1F2ftN4x6tCe0xiOCZ93I0PLdI0-FfAbFlWGoeKRIh1A'
-  MM_VILLAGE_SHEET_ID = 'Locations!$A$1:$M'
+  MM_VILLAGE_SHEET_ID = 'Locations!$A$1:$L'
 
   def __init__(self):
     service_account_str = str(get_secret('GOOGLE_SERVICE'))
@@ -35,7 +32,7 @@ class ConnectorMMV(ConnectorEvent):
       temp.flush()
       creds = service_account.Credentials.from_service_account_file(
         temp.name,
-        scopes=self.SCOPES
+        scopes=['https://www.googleapis.com/auth/spreadsheets.readonly']
       )
     self.service = build('sheets', 'v4', credentials=creds)
 
@@ -61,7 +58,7 @@ class ConnectorMMV(ConnectorEvent):
       if not alias:
         continue
 
-      connector_event_id = alias
+      connector_event_id = obj['place id']
       location_name = obj['name']
       location_short_name = location_name
       location_description = obj['notes']
