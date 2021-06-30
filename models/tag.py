@@ -22,10 +22,10 @@ class Tag(Base):
 
   TYPES = [
     TVM,
-    FOOD_DRINK,
-    GEAR,
-    ACTIVITY,
-    SERVICES
+    FOOD_DRINK
+    # GEAR,
+    # ACTIVITY,
+    # SERVICES
   ]
 
   ACCOLADES = "accolades"
