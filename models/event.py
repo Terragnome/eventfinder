@@ -14,9 +14,11 @@ from .tag import Tag
 from .user_event import UserEvent
 
 class Event(Base):
+  DETAILS_COST = "cost"
   DETAILS_PHONE = "phone"
   DETAILS_RATING = "rating"
   DETAILS_REVIEW_COUNT = "review_count"
+  DETAILS_URL = "url"
 
   __tablename__ = 'events'
   event_id = Column(Integer, primary_key=True, autoincrement=True)

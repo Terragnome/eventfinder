@@ -7,10 +7,10 @@
       <a class='event_link cap_button' target="_blank" href='{{url}}'>
         <div class='icon {{url_type.lower()}}'></div>
         <div class="name clearfix" >{{url_type}}</div>
-        {% set rating = get_from(event.details, ['rating', url_type, 'rating']) %}
-        {% set review_ct = get_from(event.details, ['rating', url_type, 'review_count']) %}
+        {% set rating = get_from(event.details, [url_type, 'rating']) %}
+        {% set review_ct = get_from(event.details, [url_type, 'review_count']) %}
         {% if rating %}
-          <div class="rating">☆ {{rating}} | {{round_ct(review_ct*1000000)}}</div>
+          <div class="rating">☆ {{rating}} | {{round_ct(review_ct)}}</div>
         {% endif %}
       </a>
     {% endfor %}
