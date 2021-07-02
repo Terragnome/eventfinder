@@ -1,4 +1,5 @@
 alembic == 1.6.5
+beautifulsoup4 == 4.9.3
 flask == 1.0.2
 flask-session == 0.3.1
 geocoder == 1.38
