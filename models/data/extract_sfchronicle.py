@@ -25,15 +25,19 @@ class ExtractSFChronicle(ConnectorEvent):
 
     self.data = []
     article_links = self.parser.find_all('h2', attrs={'class': 'headline'})
+    
+    article_urls = set()
     for i, article_link in enumerate(article_links):
       link = article_link.find('a')
-      url = "https://www.sfchronicle.com/{}".format(link['href'])
-      results = [x for x in self.parse_article_url(url)]
+      url = "https://www.sfchronicle.com{}".format(link['href'])
+      article_urls.add(url)
+
+    for i, au in enumerate(sorted(article_urls)):
+      results = [x for x in self.parse_article_url(au)]
 
       print(i, json.dumps(results, indent=2))
 
       self.data.extend(results)
-
 
   def parse_article_url(self, url):
     r = requests.get(url)
@@ -43,7 +47,7 @@ class ExtractSFChronicle(ConnectorEvent):
       headers = parser.find_all('h1', attrs={'class': 'articleHeader--headline'})
       for header in headers:
         results = {}
-        results['name'] = header.text.strip()
+        results['name'] = header.text.replace("(New)", "").replace("(closed)", "").strip()
 
         tag = header
 
