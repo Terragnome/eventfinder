@@ -23,6 +23,7 @@ class ExtractMMV(ConnectorEvent):
 
   MM_VILLAGE_TRIX_ID = '1F2ftN4x6tCe0xiOCZ93I0PLdI0-FfAbFlWGoeKRIh1A'
   MM_VILLAGE_SHEET_ID = 'Locations!$A$1:$L'
+  ID = MM_VILLAGE_TRIX_ID
 
   def __init__(self):
     service_account_str = str(get_secret('GOOGLE_SERVICE'))
@@ -44,6 +45,8 @@ class ExtractMMV(ConnectorEvent):
       range=self.MM_VILLAGE_SHEET_ID
     ).execute()
     rows = result.get('values', [])
+
+    self.data = []
 
     headers = None
     for row in rows:
@@ -122,56 +125,13 @@ class ExtractMMV(ConnectorEvent):
       if location_rating not in ['♡', '☆', '◎']:
         continue
 
-      # if location_rating not in ['♡', '☆']:
-      #   continue
-
-      row_connector_event = ConnectorEvent.query.filter(
-        and_(
-          ConnectorEvent.connector_event_id == connector_event_id,
-          ConnectorEvent.connector_type == self.TYPE
-        )
-      ).first()
-
-      if not row_connector_event:
-        row_connector_event = ConnectorEvent(
-          connector_event_id=connector_event_id,
-          connector_type=self.TYPE,
-          data=obj
-        )
-        db_session.merge(row_connector_event)
-        db_session.commit()
-
-      print(json.dumps(row_connector_event.data, indent=2))
-
-      if row_connector_event.event_id:
-        row_event = Event.query.filter(Event.event_id == row_connector_event.event_id).first()
-        row_event.name = location_name
-        row_event.description = location_description
-        row_event.short_name = location_short_name
-        db_session.merge(row_event)
-        row_event.remove_all_tags()
-        db_session.commit()
-      else:
-        row_event = Event(
-          name = location_name,
-          description = location_description,
-          short_name = location_short_name
-        )
-        db_session.add(row_event)
-        db_session.commit()
-
-        row_connector_event.event_id = row_event.event_id
-        db_session.merge(row_connector_event)
-        db_session.commit()
-
-      try:
-        row_event.address = addr_street
-        row_event.city = addr_city
-        row_event.state = addr_state
-        db_session.merge(row_event)
-        db_session.commit()
-      except Exception as e:
-        print(e)
+      obj['name'] = location_name
+      obj['short_name'] = location_short_name
+      obj['description'] = location_description
+      obj['address'] = addr_street
+      obj['city'] = addr_city
+      obj['state'] = addr_state
+      self.data.append(obj)
 
       tag_type = Tag.FOOD_DRINK
 
@@ -215,22 +175,41 @@ class ExtractMMV(ConnectorEvent):
         'tourist_attraction': None
       }
 
+      if tag_type != Tag.FOOD_DRINK:
+        continue
+
       for cats in location_categories:
         if cats:
           cats = get_from(category_remappings, [cats], [cats])
 
         if cats:
           cats = [x for x in cats if x is not None]
-          for cat in cats:
-            row_event.add_tag(cat.lower(), tag_type)
+          obj['tags'] = [cat.lower() for cat in cats]
 
-      row_event.primary_type = tag_type
+      obj['primary_type'] = tag_type
+      print(json.dumps(obj, indent=2))
+      yield obj, (obj['name'], obj['city'], obj['tags'])
 
-      row_event.update_meta(self.TYPE, obj)
-      db_session.merge(row_event)
-      db_session.commit()
+    row_connector_event = ConnectorEvent.query.filter(
+      and_(
+        ConnectorEvent.connector_event_id == self.ID,
+        ConnectorEvent.connector_type == self.TYPE
+      )
+    ).first()
 
-      yield row_event, (row_event.event_id, row_event.name)
+    if not row_connector_event:
+      row_connector_event = ConnectorEvent(
+        connector_event_id = self.ID,
+        connector_type = self.TYPE
+      )
+
+    events = { self.create_key(x['name'], x['city']): x for x in self.data }
+    row_connector_event.data = events
+    db_session.merge(row_connector_event)
+    db_session.commit()
+
+    for key, restaurant in row_connector_event.data.items():
+      yield restaurant['name'], restaurant
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()

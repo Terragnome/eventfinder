@@ -16,6 +16,7 @@ class ExtractMercuryNews(ConnectorEvent):
   TYPE = "Mercury News"
 
   TARGET_URLS = "https://www.mercurynews.com/tag/best-50-bay-area-restaurants/"
+  ID = TARGET_URLS
 
   def __init__(self):
     r = requests.get(self.TARGET_URLS)
@@ -66,22 +67,23 @@ class ExtractMercuryNews(ConnectorEvent):
   def extract(self):
     row_connector_event = ConnectorEvent.query.filter(
       and_(
-        ConnectorEvent.connector_event_id == self.TARGET_URLS,
+        ConnectorEvent.connector_event_id == self.ID,
         ConnectorEvent.connector_type == self.TYPE
       )
     ).first()
 
     if not row_connector_event:
       row_connector_event = ConnectorEvent(
-        connector_event_id = self.TARGET_URLS,
+        connector_event_id = self.ID,
         connector_type = self.TYPE
       )
 
-    row_connector_event.data = self.data
+    events = { self.create_key(x['name'], x['city']): x for x in self.data }
+    row_connector_event.data = events
     db_session.merge(row_connector_event)
     db_session.commit()
 
-    for restaurant in row_connector_event.data:
+    for key, restaurant in row_connector_event.data.items():
       yield restaurant['name'], restaurant
 
 if __name__ == '__main__':

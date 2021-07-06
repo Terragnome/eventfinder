@@ -1,6 +1,7 @@
 from flask import current_app, session
 from sqlalchemy import Column, ForeignKey, JSON, String
 from sqlalchemy.orm import relationship
+from sqlalchemy_json import NestedMutableJson
 
 from .base import Base
 from models.base import db_session
@@ -15,10 +16,16 @@ class ConnectorEvent(Base):
   __tablename__ = 'connector_events'
   connector_event_id = Column(String, primary_key=True)
   connector_type = Column(String, primary_key=True)
-  data = Column(JSON)
-  event_id = Column(String, ForeignKey('events.event_id'))
+  data = Column(NestedMutableJson)
 
+  event_id = Column(String, ForeignKey('events.event_id'))
   event = relationship('Event', uselist=False)
+
+  @classmethod
+  def create_key(self, name, city, *args):
+    key_components = [name, city]
+    key_components.extend(args or [])
+    return " | ".join(key_components)
 
   @property
   def type(self):

@@ -17,6 +17,7 @@ class ExtractMichelin(ConnectorEvent):
 
   URL_ROOT = 'https://guide.michelin.com'
   TARGET_URLS = "https://guide.michelin.com/us/en/california/restaurants"
+  ID = TARGET_URLS
 
   def __init__(self):
     r = requests.get(self.TARGET_URLS)
@@ -92,24 +93,23 @@ class ExtractMichelin(ConnectorEvent):
   def extract(self):
     row_connector_event = ConnectorEvent.query.filter(
       and_(
-        ConnectorEvent.connector_event_id == self.TARGET_URLS,
+        ConnectorEvent.connector_event_id == self.ID,
         ConnectorEvent.connector_type == self.TYPE
       )
     ).first()
 
     if not row_connector_event:
       row_connector_event = ConnectorEvent(
-        connector_event_id = self.TARGET_URLS,
+        connector_event_id = self.ID,
         connector_type = self.TYPE
       )
 
-    print(self.data)
-
-    row_connector_event.data = self.data
+    events = { self.create_key(x['name'], x['city']): x for x in self.data }
+    row_connector_event.data = events
     db_session.merge(row_connector_event)
     db_session.commit()
 
-    for restaurant in row_connector_event.data:
+    for key, restaurant in row_connector_event.data.items():
       yield restaurant['name'], restaurant
 
 if __name__ == '__main__':

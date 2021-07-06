@@ -72,14 +72,14 @@ class TransformEvents:
 
   @classmethod
   def transform_event(klass, event, skip_write=None):
-    accolades = get_from(event.meta, [ConnectorMMV.TYPE, 'accolades'])
-    if accolades:
-      accolades = [x.strip() for x in accolades.split(",")]
-      event.accolades = accolades
+    # accolades = get_from(event.meta, [ConnectorMMV.TYPE, 'accolades'])
+    # if accolades:
+    #   accolades = [x.strip() for x in accolades.split(",")]
+    #   event.accolades = accolades
 
     klass.transform_event_details(event)
 
-    google_link = get_from(event.meta, [ConnectorMMV.TYPE, 'link'])
+    google_link = get_from(event.meta, [ConnectorGoogle.TYPE, 'link'])
     if google_link: event.add_url(ConnectorGoogle.TYPE, google_link)
 
     # Details

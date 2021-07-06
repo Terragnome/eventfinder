@@ -7,7 +7,6 @@ from sqlalchemy import and_, not_
 import googlemaps
 
 from helpers.secret_helper import get_secret
-
 from models.data.connector_mmv import ConnectorMMV
 from models.base import db_session
 from models.connector_event import ConnectorEvent

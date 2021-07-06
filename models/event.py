@@ -40,7 +40,7 @@ class Event(Base):
   currency = Column(String)  
 
   venue_name = Column(String)
-  address = Column(JSON)
+  address = Column(NestedMutableJson)
   city = Column(String)
   state = Column(String)
   latitude = Column(Float)
