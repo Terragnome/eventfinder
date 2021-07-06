@@ -2,6 +2,7 @@
 {% set chips=chips or (vargs.chips if vargs else None) %}
 {% set selected=selected or (vargs.selected if vargs else None) %}
 {% set selected_list=selected.split(',') if selected else [] %}
+{% set url=relpath(request.url) %}
 
 <div id='{{chips_key}}_group_chips' class='event_chips'>
   {% for chip_name in chips %}
@@ -9,13 +10,13 @@
     {% set is_chip_group_selected = chip_data.key in selected_list %}
 
     {% if is_chip_group_selected %}
-      {% set callback=update_url_params(request.url, remove={"selected": chip_data.key}) %}
+      {% set callback=update_url_params(url, remove={"selected": chip_data.key}) %}
     {% else %}
-      {% set callback=update_url_params(request.url, replace={"selected": chip_data.key}) %}
+      {% set callback=update_url_params(url, replace={"selected": chip_data.key}) %}
     {% endif %}
 
     {% if chip_data.mode == 'boolean' %}
-      {% set callback=update_url_params(request.url, toggle={chip_data.key: 'true'}, clear=['p']) %}
+      {% set callback=update_url_params(url, toggle={chip_data.key: 'true'}, clear=['p']) %}
       <a
         class='cap_button nav_link_get {{"selected" if chip_data.selected else ""}}'
         href='{{callback}}'
@@ -37,12 +38,12 @@
     <div id='{{chips_key}}_{{chip_name}}_chips' class='event_chips {{"" if chip_data.key in selected_list else "hide"}}'>
       {% for chip in chip_data.entries %}
         {% if chip.selected %}
-          {% set callback=update_url_params(request.url, toggle={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
+          {% set callback=update_url_params(url, toggle={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
         {% else %}
           {% if chip_data.mode == 'exclusive' %}
-            {% set callback=update_url_params(request.url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
+            {% set callback=update_url_params(url, replace={chip_data.key: chip.chip_name, 'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
           {% else %}
-            {% set callback=update_url_params(request.url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
+            {% set callback=update_url_params(url, merge={chip_data.key: chip.chip_name}, replace={'selected': chip_data.key}, remove={'q': chip.chip_name}, clear=['p']) %}
           {% endif %}
         {% endif %}
         <a

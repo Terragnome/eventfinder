@@ -18,13 +18,15 @@ class SeedMICHAELLIN:
   @classmethod
   def seed(klass, purge=None):
     u = User.query.filter(User.email == "michaellin@gmail.com").first()
-    if not u: u = User(email="michaellin@gmail.com")
-    u.username="MICHAELLIN Guide",
-    u.first_name = "Michael"
-    u.last_name = "Lin"
-    u.image_url="https://pbs.twimg.com/profile_images/1115632604626259973/kMoP8dTJ_400x400.png"
-    db_session.merge(u)
-    db_session.commit()
+    if not u:
+      u = User(email="michaellin@gmail.com")
+      u.username="MICHAELLIN Guide",
+      u.first_name = "Michael"
+      u.last_name = "Lin"
+      u.image_url="https://pbs.twimg.com/profile_images/1115632604626259973/kMoP8dTJ_400x400.png"
+      db_session.merge(u)
+      db_session.commit()
+      u = User.query.filter(User.email == "michaellin@gmail.com").first()
 
     events = Event.query.filter(
       and_(

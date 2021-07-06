@@ -1,7 +1,7 @@
 {% set events=events or (vargs.events if vargs else None) %}
 
 <div class='app_page'>
-  {% with url=request.url %}{% include "_search_bar.html" %}{% endwith %}
+  {% with url=url_for('events') %}{% include "_search_bar.html" %}{% endwith %}
   {% with vargs=vargs, chips_key='event' %}{% include "_chips.html" %}{% endwith %}
 
   <ul id='event_list' class='entity_list effect_in'>

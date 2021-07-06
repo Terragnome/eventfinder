@@ -911,7 +911,7 @@ span{
 .event_link {
   display: inline-block;
   float: left;
-  min-width: 125px;
+  min-width: 140px;
 }
 
 .event_link > .icon {

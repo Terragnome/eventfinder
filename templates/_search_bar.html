@@ -1,5 +1,5 @@
-{% set url=url or (vargs.url if vargs else request.url) %}
 {% set placeholder=placeholder or (vargs.placeholder if vargs else '') %}
+{% set url=url or (vargs.url if vargs else relpath(request.url)) %}
 
 <form class='app_search nav_link_form' action='{{ url }}' method='get'>
   <a class='button_back'>{% include "icon/_back.html"%}</a>

@@ -22,9 +22,7 @@ class ConnectorYelp(ConnectorEvent):
     self.api = YelpAPI(api_key)
 
   def extract(self, name=None, event_id=None, backfill=None):
-    events = Event.query.filter(
-      ~(Event.primary_type == Tag.TVM)
-    )
+    events = Event.query.filter(Event.primary_type == Tag.FOOD_DRINK)
 
     if name is not None:
       events = events.filter(Event.name == name)

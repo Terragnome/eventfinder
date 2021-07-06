@@ -1,8 +1,11 @@
+import re
+
 from sigfig import round
-
 from flask import current_app
+from urllib.parse import parse_qsl, urlencode, urlparse, urlsplit, urlunsplit
 
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+def relpath(url):
+  return re.search(r'http[s]?://[^/]+(/.*)', url).group(1)
 
 def round_ct(ct):
   if ct > 1000000000:

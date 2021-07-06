@@ -18,7 +18,7 @@ from models.event import Event
 from models.tag import Tag
 from utils.get_from import get_from
 
-class ConnectorMMV(ConnectorEvent):
+class ExtractMMV(ConnectorEvent):
   TYPE = "MM Village"
 
   MM_VILLAGE_TRIX_ID = '1F2ftN4x6tCe0xiOCZ93I0PLdI0-FfAbFlWGoeKRIh1A'
@@ -240,7 +240,7 @@ if __name__ == '__main__':
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 
-  e = ConnectorMMV()
+  e = ExtractMMV()
   e.sync(args)
 
 # {

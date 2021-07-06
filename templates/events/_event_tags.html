@@ -1,4 +1,5 @@
 {% set card=card or (vargs.card if vargs else None) %}
+{% set url=relpath(request.url) %}
 
 <div class='event_tags'>
 {% if card %}
@@ -9,7 +10,7 @@
   {% for chip_data in chip_types %}
     {% for chip in chip_data.entries %}
       {% if chip.chip_name in event_chip_names %}
-        {% set callback=update_url_params(request.url, toggle={chip_data.key: chip.chip_name}, remove={'q': chip.chip_name}, clear=["scroll","p"]) %}
+        {% set callback=update_url_params(url, toggle={chip_data.key: chip.chip_name}, remove={'q': chip.chip_name}, clear=["scroll","p"]) %}
         <a class='cap_button nav_link_get {{"selected" if chip.selected else ""}}' href='{{callback}}'>{{ chip.chip_name }}</a>
       {% endif %}
     {% endfor %}

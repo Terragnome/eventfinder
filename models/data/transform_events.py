@@ -22,9 +22,14 @@ class TransformEvents:
 
   @classmethod
   def transform_event_details(klass, event):
-    google_raw_addr = get_from(event.meta, [ConnectorGoogle.TYPE, 'address_components']),
+    google_raw_addr = get_from(event.meta, [ConnectorGoogle.TYPE, 'address_components', 0]),
+
+    if not google_raw_addr:
+      print("No Google Address for {}".format(event.name))
+      return
+
     google_addr = {}
-    for addr in google_raw_addr[0]:
+    for addr in google_raw_addr:
       addr_type = get_from(addr, ["types", 0])
       if addr_type:
         google_addr[addr_type] = addr["short_name"] if addr_type != "locality" else addr['long_name']
