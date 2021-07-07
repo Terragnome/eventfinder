@@ -7,31 +7,29 @@ from sqlalchemy import and_, not_
 import googlemaps
 
 from helpers.secret_helper import get_secret
-from models.data.connector_mmv import ConnectorMMV
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
 from models.tag import Tag
+from models.data.extract_mmv import ExtractMMV
+from models.data.extract_events import ExtractEvents
 from utils.get_from import get_from
 
-class ConnectorGoogle(ConnectorEvent):
+class ConnectGoogle(ConnectorEvent):
   TYPE = "Google"
 
   def __init__(self):
     api_key = get_secret('GOOGLE', "api_key")
     self.client = googlemaps.Client(key=api_key)
 
+    events_connector = ConnectorEvent.query.filter(
+      ConnectorEvent.connector_type == ExtractEvents.TYPE,
+      ConnectorEvent.connector_event_id == ExtractEvents.ID
+    ).first()
+    self.events = events_connector.data
+
   def extract(self, name=None, event_id=None, backfill=None):
-    events = Event.query.filter(
-      ~(Event.primary_type == Tag.TVM)
-    )
-
-    if name is not None:
-      events = events.filter(Event.name == name)
-    if event_id is not None:
-      events = events.filter(Event.event_id == event_id)
-
-    events = events.order_by(Event.event_id)
+    connector = self.get_connector()
 
     detail_fields = [
       # Basic
@@ -61,19 +59,21 @@ class ConnectorGoogle(ConnectorEvent):
       "user_ratings_total"
     ]
 
-    for row_event in events:
-      results = None
+    for key, event in self.events.items():
+      place_id = get_from(event, ['place_id'])
+      place_name = get_from(event, ['name'])
 
-      # TODO: Handlle in the query if possible to filter by json
-      if backfill and self.TYPE in row_event.meta:
+      if not place_id: continue
+      if event_id is not None and place_id != event_id: continue
+      if name is not None and name != place_name: continue
+
+      if backfill and place_id in connector.data:
+        print("Found Place ID {} => {} | {}".format(place_id, key, connector.data[place_id]['name']))
         continue
 
-      print(row_event.meta)
-
-      place_id = get_from(row_event.meta, [ConnectorMMV.TYPE, 'place id'])
-      print(place_id)
-
+      results = None
       try:
+        print("Getting details for ({})".format(place_id))
         results = self.client.place(
           place_id,
           fields=detail_fields
@@ -83,10 +83,11 @@ class ConnectorGoogle(ConnectorEvent):
 
       results = get_from(results, ["result"])
       if results:
-        row_event.update_meta(self.TYPE, results)
-        db_session.merge(row_event)
+        connector.data[place_id] = results
+        db_session.merge(connector)
         db_session.commit()
-      yield row_event.name, results
+        yield results['name'], (results['place_id'], results['name'])
+    #
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -97,7 +98,7 @@ if __name__ == '__main__':
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 
-  e = ConnectorGoogle()
+  e = ConnectGoogle()
   e.sync(args)
 
 # {

@@ -19,8 +19,7 @@ from models.data.extract_sfchronicle import ExtractSFChronicle
 from utils.get_from import get_from
 
 class ExtractEvents(ConnectorEvent):
-  TYPE = "ExtractEvents"
-  ID = "Geocode"
+  TYPE = "Geocode"
 
   def __init__(self):
     api_key = get_secret('GOOGLE', "api_key")
@@ -52,6 +51,9 @@ class ExtractEvents(ConnectorEvent):
 
         res_addr = get_from(res, ['address'])
         if res_addr: obj['address'] = res_addr
+        res_state = get_from(res, ['state'])
+        if res_state: obj['state'] = res_state
+
         if ty == ExtractMMV: obj['place_id'] = res['place id']
 
         res_key = self.create_key(res['name'], res['city'])
@@ -61,22 +63,6 @@ class ExtractEvents(ConnectorEvent):
 
     # print(json.dumps(self.data, indent=2))
     # print(len(self.data.keys()))
-
-  def get_connector(self):
-    connector = ConnectorEvent.query.filter(
-      ConnectorEvent.connector_event_id == self.ID,
-      ConnectorEvent.connector_type == self.TYPE
-    ).first()
-
-    if not connector:
-      connector = ConnectorEvent(
-        connector_event_id = self.ID,
-        connector_type = self.TYPE,
-        data = {}
-      )
-      db_session.merge(connector)
-      db_session.commit()
-    return connector
 
   def extract(self):
     connector = self.get_connector()
@@ -90,7 +76,8 @@ class ExtractEvents(ConnectorEvent):
 
       place_id = get_from(res, ['place_id'])
       if place_id:
-        print("{} | Found: {} => {}".format(i, res_key, place_id))        
+        # print("Found {} | {} => {}".format(i, place_id, res_key))
+        pass
       else:
         place_q = ", ".join([
           res['name'] or "",
@@ -112,22 +99,54 @@ class ExtractEvents(ConnectorEvent):
         if res_addr: res_data["address"] = res_addr
 
         res.update(res_data)
-        self.data[res_key] = res
 
-        connector = self.get_connector()
-        connector.data = self.data
+        connector.data[res_key] = res
         db_session.merge(connector)
         db_session.commit()
 
         print("\t{}".format(res))
       i += 1
 
-    
+    i = 0
+    for key, res in self.data.items():
+      place_id = get_from(res, ['place_id'])
+      if not place_id: continue
 
-    # print("Match: {}% | Missing: {}%".format(
-    #   round(match_count/(match_count+miss_count)*100, 2),
-    #   round(miss_count/(match_count+miss_count)*100), 2)
-    # )
+      ev = Event.query.filter(
+        or_(
+          Event.name == res['name'],
+          Event.alias == place_id
+        )
+      ).first()
+
+      if ev:
+        print("Found Event({}) => {}".format(
+          place_id,
+          res['name']
+        ))
+      else:
+        print("Create Event({}) => {}".format(
+          place_id,
+          res['name'])
+        )
+        print(res)
+
+        ev = Event(
+          name = res['name'],
+          alias = res['place_id']
+        )
+
+      # print(i, json.dumps(res, indent=2))
+      i += 1
+
+      ev.primary_type = Tag.FOOD_DRINK
+      ev.address = get_from(res, ['address'])
+      ev.city = res['city']
+      ev.state = res['state']
+      if not ev.meta: ev.meta = {}
+      ev.meta[self.TYPE] = res
+      db_session.merge(ev)
+      db_session.commit()
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()

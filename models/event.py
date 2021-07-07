@@ -24,7 +24,7 @@ class Event(Base):
   event_id = Column(Integer, primary_key=True, autoincrement=True)
   alias = Column(String)
 
-  name = Column(Integer, primary_key=True)
+  name = Column(String)
   primary_type = Column(String)
 
   description = Column(String)
@@ -40,7 +40,7 @@ class Event(Base):
   currency = Column(String)  
 
   venue_name = Column(String)
-  address = Column(NestedMutableJson)
+  address = Column(JSON)
   city = Column(String)
   state = Column(String)
   latitude = Column(Float)

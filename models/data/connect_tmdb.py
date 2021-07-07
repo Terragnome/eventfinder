@@ -16,7 +16,7 @@ from models.tag import Tag
 
 from utils.get_from import get_from
 
-class ConnectorTMDB(ConnectorEvent):
+class ConnectTMDB(ConnectorEvent):
   TYPE = "TMDB"
 
   MOVIE_GENRE_MAP = {
@@ -225,7 +225,7 @@ if __name__ == '__main__':
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 
-  e = ConnectorTMDB()
+  e = ConnectTMDB()
   e.sync(args)
 
 # {

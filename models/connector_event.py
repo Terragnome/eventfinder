@@ -1,4 +1,5 @@
 from flask import current_app, session
+from sqlalchemy import and_, or_
 from sqlalchemy import Column, ForeignKey, JSON, String
 from sqlalchemy.orm import relationship
 from sqlalchemy_json import NestedMutableJson
@@ -12,6 +13,7 @@ from models.tag import Tag
 
 class ConnectorEvent(Base):
   TYPE = None
+  ID = "default"
 
   __tablename__ = 'connector_events'
   connector_event_id = Column(String, primary_key=True)
@@ -52,6 +54,26 @@ class ConnectorEvent(Base):
     ConnectorEvent.query.filter(ConnectorEvent.event_id.in_(event_ids)).delete(synchronize_session='fetch')
     Event.query.filter(Event.event_id.in_(event_ids)).delete(synchronize_session='fetch')
     db_session.commit()
+
+  @classmethod
+  def get_connector(klass, read_only=False):
+    connector = ConnectorEvent.query.filter(
+      and_(
+        ConnectorEvent.connector_type == klass.TYPE,
+        ConnectorEvent.connector_event_id == klass.ID
+      )
+    ).first()
+
+    if not connector and not read_only:
+      connector = ConnectorEvent(
+        connector_type = klass.TYPE,
+        connector_event_id = klass.ID
+      )
+      connector.data = {}
+      db_session.merge(connector)
+      db_session.commit()
+
+    return connector
 
   def sync(self, args):
     if 'purge' in args:

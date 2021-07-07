@@ -131,9 +131,8 @@ class ExtractMMV(ConnectorEvent):
       obj['address'] = addr_street
       obj['city'] = addr_city
       obj['state'] = addr_state
-      self.data.append(obj)
 
-      tag_type = Tag.FOOD_DRINK
+      primary_tag_type = Tag.FOOD_DRINK
 
       if (
         'Culture' in location_categories
@@ -152,13 +151,13 @@ class ExtractMMV(ConnectorEvent):
         or 'tourist_attraction' in location_categories
         or 'zoo' in location_categories
       ):
-        tag_type = Tag.ACTIVITY
+        primary_tag_type = Tag.ACTIVITY
 
       if (
         'Utilities' in location_categories
         or 'car_repair' in location_categories
       ):
-        tag_type = Tag.SERVICES
+        primary_tag_type = Tag.SERVICES
 
       category_remappings = {
         'Entertainment': None,
@@ -175,7 +174,7 @@ class ExtractMMV(ConnectorEvent):
         'tourist_attraction': None
       }
 
-      if tag_type != Tag.FOOD_DRINK:
+      if primary_tag_type != Tag.FOOD_DRINK:
         continue
 
       for cats in location_categories:
@@ -186,8 +185,10 @@ class ExtractMMV(ConnectorEvent):
           cats = [x for x in cats if x is not None]
           obj['tags'] = [cat.lower() for cat in cats]
 
-      obj['primary_type'] = tag_type
+      obj['primary_type'] = primary_tag_type
+      self.data.append(obj)
       print(json.dumps(obj, indent=2))
+
       yield obj, (obj['name'], obj['city'], obj['tags'])
 
     row_connector_event = ConnectorEvent.query.filter(

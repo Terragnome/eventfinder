@@ -12,39 +12,51 @@ from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
 from models.tag import Tag
+from models.data.extract_events import ExtractEvents
 from utils.get_from import get_from
 
-class ConnectorYelp(ConnectorEvent):
+class ConnectYelp(ConnectorEvent):
   TYPE = "Yelp"
 
   def __init__(self):
     api_key = get_secret('YELP', 'api_key')
     self.api = YelpAPI(api_key)
 
+    events_connector = ConnectorEvent.query.filter(
+      ConnectorEvent.connector_type == ExtractEvents.TYPE,
+      ConnectorEvent.connector_event_id == ExtractEvents.ID
+    ).first()
+    self.events = events_connector.data
+
   def extract(self, name=None, event_id=None, backfill=None):
-    events = Event.query.filter(Event.primary_type == Tag.FOOD_DRINK)
+    connector = self.get_connector()
 
-    if name is not None:
-      events = events.filter(Event.name == name)
-    if event_id is not None:
-      events = events.filter(Event.event_id == event_id)
+    for key, event in self.events.items():
+      place_id = get_from(event, ['place_id'])
+      place_name = get_from(event, ['name'])
 
-    events = events.order_by(Event.event_id)
+      if not place_id: continue
+      if event_id is not None and place_id != event_id: continue
+      if name is not None and name != place_name: continue
 
-    for row_event in events:
+      if backfill and place_id in connector.data:
+        print("Found Place ID {} => {}".format(place_id, connector.data[place_id]['name']))
+        continue
+
       search_results = None
       b_details = None
 
-      # TODO: Handlle in the query if possible to filter by json
-      if backfill and self.TYPE in row_event.meta:
-        continue
+      event_name = event['name']
+      event_addr = get_from(event, ['address'])
+      event_city = event['city']
+      event_state = event['state']
 
       if not search_results:
         kwargs = {
-          'name': row_event.name,
-          'address1': row_event.address,
-          'city': row_event.city,
-          'state': row_event.state
+          'name': event_name,
+          'address1': event_addr,
+          'city': event_city,
+          'state': event_state
         }
         print(" | ".join(["{}: \"{}\"".format(k,v) for k,v in kwargs.items()]))
 
@@ -58,8 +70,8 @@ class ConnectorYelp(ConnectorEvent):
 
       if not search_results or len(search_results['businesses']) == 0:
         try:
-          term = " ".join([row_event.name, row_event.city, row_event.state])
-          location = " ".join([row_event.city, row_event.state])
+          term = " ".join([event_name, event_city, event_state])
+          location = " ".join([event_city, event_state])
 
           kwargs = {
             'term': term,
@@ -84,10 +96,17 @@ class ConnectorYelp(ConnectorEvent):
             print(r['id'])
 
         if b_details:
-          row_event.update_meta(self.TYPE, {**r, **b_details})
-          db_session.merge(row_event)
+          # row_event.update_meta(self.TYPE, {**r, **b_details})
+          # db_session.merge(row_event)
+          # db_session.commit()
+          connector.data[place_id] = b_details
+          db_session.merge(connector)
           db_session.commit()
-      yield row_event.name, b_details
+          #
+          yield b_details['name'], b_details
+        else:
+          print("Unable to find {}".format(place_id))
+    #
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -98,7 +117,7 @@ if __name__ == '__main__':
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())
 
-  e = ConnectorYelp()
+  e = ConnectYelp()
   e.sync(args)
 
 # {
