@@ -199,6 +199,8 @@ class TransformEvents:
     cost = get_from(ev_meta, [ConnectGoogle.TYPE, 'cost'])
     if cost: event.cost = len(cost)
 
+    event.meta = ev_meta
+
     if not skip_write:
       db_session.merge(event)
       db_session.commit()

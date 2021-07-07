@@ -10,7 +10,7 @@ from models.tag import Tag
 from models.user import User
 from models.user_event import UserEvent
 
-from models.data.connect_mmv import ConnectMMV
+from models.data.extract_mmv import ExtractMMV
 
 from utils.get_from import get_from
 
