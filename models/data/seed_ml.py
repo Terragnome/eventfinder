@@ -44,7 +44,7 @@ class SeedMICHAELLIN:
 
     for i, e in enumerate(events):
       print(i, e.event_id, e.name)
-      tier = get_from(e.meta, [ConnectMMV.TYPE, 'tier'])
+      tier = get_from(e.meta, [ExtractMMV.TYPE, 'tier'])
       if tier in ['♡', '☆']:
         print("\tAdded {}".format(tier))
         interest = tier_to_interest[tier]
