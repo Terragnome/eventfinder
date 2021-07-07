@@ -56,6 +56,8 @@ class ExtractMercuryNews(ConnectorEvent):
           results['city'] = city.strip()
           results['headline'] = blurb.strip()
 
+          results['tier'] = "2021 Mercury News Bay Area's 50 Best Restaurants"
+
           tag = header
 
           tag = tag.find_next('p')

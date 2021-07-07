@@ -19,10 +19,23 @@ from models.data.connect_yelp import ConnectYelp
 from models.data.connect_tmdb import ConnectTMDB
 from utils.get_from import get_from
 
-# TODO: This does not scale, but built to bypass Heroku table limit. Refactor for performance later
+# TODO: This runs very slowly does not scale, but reduces number of rows for developer tier limit. Refactor for performance
 class TransformEvents:
   def __init__(self):
     self.lookup_place_id = ExtractEvents.get_connector(read_only=True).data
+
+    self.reverse_lookup_place_id = {}
+    for k,v in self.lookup_place_id.items():
+      place_id = get_from(v, ['place_id'])
+      if place_id:
+        if place_id not in self.reverse_lookup_place_id:
+          self.reverse_lookup_place_id[place_id] = []
+        self.reverse_lookup_place_id[place_id].append(k)
+
+    self.connectors = {
+      x.TYPE: x.get_connector(read_only=True).data
+      for x in [ConnectGoogle, ConnectYelp, ExtractMMV, ExtractMercuryNews, ExtractMichelin, ExtractSFChronicle]
+    }
 
   def get_place_id(self, event):
     return get_from(
@@ -38,12 +51,22 @@ class TransformEvents:
 
     res_key = "{} | {}".format(event.name, event.city)
 
-    met = {
-      ExtractEvents.TYPE: get_from(self.lookup_place_id, [res_key]),
-      ExtractMMV.TYPE: get_from(ExtractMMV.get_connector(read_only=True).data, [res_key]),
-      ConnectGoogle.TYPE: get_from(ConnectGoogle.get_connector(read_only=True).data, [place_id]),
-      ConnectYelp.TYPE:   get_from(ConnectYelp.get_connector(read_only=True).data, [place_id]),
-    }
+    met = { ExtractEvents.TYPE: get_from(self.lookup_place_id, [res_key]) }
+    for conn_type in [ConnectGoogle, ConnectYelp]:
+      met[conn_type.TYPE] = get_from(self.connectors, [conn_type.TYPE, place_id])
+
+    potential_keys = get_from(self.reverse_lookup_place_id, [place_id])
+    if potential_keys:
+      for conn_type in [ExtractMMV, ExtractMercuryNews, ExtractMichelin, ExtractSFChronicle]:
+        lookup = get_from(self.connectors, [conn_type.TYPE])
+
+        match = None
+        for pot_key in potential_keys:
+          match = get_from(lookup, [pot_key])
+          if match: 
+            met[conn_type.TYPE] = match
+            break
+
     return met
 
   def format_coord(self, val):
@@ -61,7 +84,7 @@ class TransformEvents:
 
     google_addr = {}
     try:
-      for addr in google_raw_addr[0]:
+      for addr in get_from(google_raw_addr, [0], []):
         addr_type = get_from(addr, ["types", 0])
         if addr_type:
           google_addr[addr_type] = addr["short_name"] if addr_type != "locality" else addr['long_name']
@@ -106,20 +129,24 @@ class TransformEvents:
 
   def transform_event(self, event, skip_write=None):
     ev_meta = self.get_event_metadata(event)
-    print(event.name)
-    print(event.city)
-    print(event.meta)
-    print(json.dumps(ev_meta, indent=2))
 
     tags = get_from(ev_meta, [ExtractMMV.TYPE, 'tags'], [])
     for tag in tags:
       if tag:
         event.add_tag(tag, Tag.FOOD_DRINK)
 
-    # accolades = get_from(ev_meta, [ConnectMMV.TYPE, 'accolades'])
-    # if accolades:
-    #   accolades = [x.strip() for x in accolades.split(",")]
-    #   event.accolades = accolades
+    accolade_connectors = [
+      ExtractMercuryNews,
+      ExtractMichelin,
+      ExtractSFChronicle
+    ]
+    accolades = []
+    for conn_type in accolade_connectors:
+      match = get_from(ev_meta, [conn_type.TYPE])
+      if match:
+        accolades.append(match['tier'])
+    if accolades:
+      event.accolades = sorted(accolades)
 
     self.transform_event_details(event, ev_meta=ev_meta)
 
@@ -132,8 +159,7 @@ class TransformEvents:
       (x.TYPE, get_from(ev_meta, [x.TYPE, 'description'])) for x in description_connectors
     ]
     descriptions = [x for x in descriptions if x[1]]
-    if descriptions:
-      event.description = "\n\n".join('{}: "{}"'.format(*descriptions))
+    if descriptions: event.description = descriptions
 
     google_link = get_from(event.details, [ConnectGoogle.TYPE, 'url'])
     if google_link: event.add_url(ConnectGoogle.TYPE, google_link)
@@ -247,7 +273,7 @@ class TransformEvents:
       print("tags: {}".format([t.tag_name for t in event.tags]))
       print("accolades: {}".format(event.accolades))
       print("url: {}".format(event.urls))
-      print(json.dumps(event.details, indent=2))
+      # print(json.dumps(event.details, indent=2))
       print("\n")
 
     if rating_delta:

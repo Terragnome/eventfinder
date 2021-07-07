@@ -55,6 +55,8 @@ class ExtractSFChronicle(ConnectorEvent):
         tag = tag.find_next('p')
         results['description'] = tag.text
 
+        results['tier'] = '2021 SF Chronicle Top 100 Bay Area Restaurants'
+
         while tag:
           tag = tag.find_next('p')
 

@@ -27,7 +27,7 @@ class Event(Base):
   name = Column(String)
   primary_type = Column(String)
 
-  description = Column(String)
+  description = Column(JSON)
   short_name = Column(String)
 
   img_url = Column(String)

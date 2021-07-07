@@ -27,7 +27,13 @@
     <div class='event_body'>
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_links.html" %}{% endwith %}
       {% if event.description %}
-        <p class='event_description'>asdadasdasdsada{{ event.description or "" }}</p>
+        <div class='event_description'>
+          {% for reviewer, desc in event.description %}
+            <p>
+              <span>{{reviewer}}</span> "{{desc}}"
+            </p>
+          {% endfor %}
+        </div>
       {% endif %}
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
       {% if event.card_user_count %}

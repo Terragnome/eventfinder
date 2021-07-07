@@ -3,7 +3,8 @@ import geocoder
 import traceback
 
 from flask import current_app, request, session
-from sqlalchemy import alias, asc, case, desc, distinct, nullslast
+import sqlalchemy as sa
+from sqlalchemy import alias, asc, case, cast, desc, distinct, nullslast
 from sqlalchemy import and_, or_
 from sqlalchemy.sql import func
 
@@ -101,9 +102,12 @@ class EventController:
     return events.filter(
       or_(
         Event.name.ilike("%{}%".format(query)),
-        Event.description.ilike("%{}%".format(query)),
+        cast(Event.description, sa.Text).ilike("%{}%".format(query)),
+        cast(Event.accolades, sa.Text).ilike("%{}%".format(query)),
         Event.venue_name.ilike("%{}%".format(query)),
-        Event.city.ilike("%{}%".format(query))
+        cast(Event.address, sa.Text).ilike("%{}%".format(query)),
+        Event.city.ilike("%{}%".format(query)),
+        Event.state.ilike("%{}%".format(query))
       )
     )
 
