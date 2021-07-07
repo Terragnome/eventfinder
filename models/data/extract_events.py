@@ -142,7 +142,7 @@ class ExtractEvents(ConnectorEvent):
       ev.primary_type = Tag.FOOD_DRINK
       ev.address = get_from(res, ['address'])
       ev.city = res['city']
-      ev.state = res['state']
+      ev.state = get_from(res, ['state'])
       if not ev.meta: ev.meta = {}
       ev.meta[self.TYPE] = res
       db_session.merge(ev)

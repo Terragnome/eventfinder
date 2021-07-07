@@ -49,7 +49,7 @@ class ConnectYelp(ConnectorEvent):
       event_name = event['name']
       event_addr = get_from(event, ['address'])
       event_city = event['city']
-      event_state = event['state']
+      event_state = get_from(event, ['state'])
 
       if not search_results:
         kwargs = {
