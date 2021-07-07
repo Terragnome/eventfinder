@@ -671,7 +671,7 @@ svg{
 }
 
 .event_choices{
-  margin: 5px 0 10px 0;
+  margin: 20px 0 10px 0;
   text-align: center;
 }
 
@@ -768,12 +768,13 @@ svg{
   font-size: 13px;
   text-align: left;
   text-transform: none;
-  margin: 15px 10px 15px 10px;
+  padding: 10px 0 0 0;
   border-bottom: 1px solid var(--neutral-color);
 }
 
 .event_section.event_links_section{
   text-align: left;
+  padding-bottom: 10px;
 }
 
 .event_section > .title {
@@ -828,13 +829,18 @@ svg{
 }
 
 .event_section > .expander > svg{
+  transform: rotate(180deg);
   height: 18px;
   transition: 0.3s;
 }
 
 .event_section.collapsed > .expander > svg{
-  transform: rotate(180deg);
+  transform: rotate(0deg);
   transition: 0.3s;
+}
+
+.event_section.event_links_section{
+  margin-top: 5px;
 }
 
 .event_header{
@@ -1348,10 +1354,6 @@ svg{
     text-align: center;
   }
 
-  .event_section.event_links_section{
-    text-align: center;
-  }
-
   .accolade_icon{
     background-size: auto 40px;
     height: 40px;
@@ -1416,5 +1418,10 @@ svg{
     margin-top: 10px;
     margin-right: 0px;
     margin-left: 0px;
+  }
+  .event_section.event_links_section{
+    text-align: center;
+    padding-top: 0px;
+    margin: 0px;
   }
 }
