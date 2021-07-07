@@ -172,13 +172,17 @@ class TransformEvents:
       ExtractSFChronicle
     ]
     specialties = [
-      (
+      [
         x.TYPE,
         get_from(ev_meta, [x.TYPE, 'order'])
-      ) for x in specialty_connectors
+      ] for x in specialty_connectors
     ]
     specialties = [x for x in specialties if x[1]]
-    if specialties: event.details[Event.DETAILS_SPECIALTIES] = specialties
+    if specialties:
+      for i, x in enumerate(specialties):
+        if x[1].__class__ is not str:
+          specialties[i][1] = ", ".join(x[1])
+      event.details[Event.DETAILS_SPECIALTIES] = specialties
 
     google_link = get_from(event.details, [ConnectGoogle.TYPE, 'url'])
     if google_link: event.add_url(ConnectGoogle.TYPE, google_link)
