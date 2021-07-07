@@ -151,6 +151,7 @@ class TransformEvents:
     self.transform_event_details(event, ev_meta=ev_meta)
 
     description_connectors = [
+      ExtractMMV,
       ExtractMercuryNews,
       ExtractMichelin,
       ExtractSFChronicle
