@@ -51,8 +51,14 @@ class ExtractEvents(ConnectorEvent):
 
         res_addr = get_from(res, ['address'])
         if res_addr: obj['address'] = res_addr
+        
         res_state = get_from(res, ['state'])
-        if res_state: obj['state'] = res_state
+        if res_state:
+          obj['state'] = res_state
+        elif res_addr:
+          state_match = re.search(r'([A-Z]{2}) +[0-9]+', res_addr)
+          if state_match:
+            obj['state'] = state_match.group(1)
 
         if ty == ExtractMMV: obj['place_id'] = res['place id']
 
@@ -76,7 +82,12 @@ class ExtractEvents(ConnectorEvent):
 
       place_id = get_from(res, ['place_id'])
       if place_id:
-        # print("Found {} | {} => {}".format(i, place_id, res_key))
+        print("Found {} | {} => {}".format(i, place_id, res_key))
+        if res != connector.data[res_key]:
+          "\tUpdate"
+          connector.data[res_key] = res
+          db_session.merge(connector)
+          db_session.commit()
         pass
       else:
         place_q = ", ".join([
