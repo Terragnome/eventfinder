@@ -68,7 +68,9 @@ class ExtractMichelin(ConnectorEvent):
     if r.status_code == 200:
       parser = BeautifulSoup(r.text, 'html.parser')
 
-      results = {}
+      results = {
+        'url': url
+      }
       results['name'] = parser.find('h2', attrs={'class': 'restaurant-details__heading--title'}).text
 
       address = parser.find('ul', attrs={'class': 'restaurant-details__heading--list'}).find('li').text

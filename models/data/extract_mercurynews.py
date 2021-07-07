@@ -42,7 +42,9 @@ class ExtractMercuryNews(ConnectorEvent):
       
       headers = parser.find_all('h4', attrs={'class': ''})
       for header in headers:
-        results = {}
+        results = {
+          'url': url
+        }
 
         t = header.text
         if re.search(r'[^,]:.*', t):

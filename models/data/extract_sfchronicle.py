@@ -47,7 +47,9 @@ class ExtractSFChronicle(ConnectorEvent):
 
       headers = parser.find_all('h1', attrs={'class': 'articleHeader--headline'})
       for header in headers:
-        results = {}
+        results = {
+          'url': url
+        }
         results['name'] = header.text.replace("(New)", "").replace("(closed)", "").strip()
 
         tag = header
