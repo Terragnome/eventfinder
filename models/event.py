@@ -19,6 +19,7 @@ class Event(Base):
   DETAILS_RATING = "rating"
   DETAILS_REVIEW_COUNT = "review_count"
   DETAILS_URL = "url"
+  DETAILS_SPECIALTIES = "specialties"
 
   __tablename__ = 'events'
   event_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -136,6 +137,17 @@ class Event(Base):
   def display_address(self):
     addr_components = [x for x in [self.address, self.city, self.state] if x is not None and x != ""]
     return ", ".join(addr_components)
+
+
+  @property
+  def short_description(self):
+    return [
+      (
+        reviewer,
+        url,
+        ". ".join([x.strip() for x in desc.split(".")[:3]])
+      ) for reviewer, url, desc in self.description
+    ]
 
   @property
   def display_end_date_day(self):

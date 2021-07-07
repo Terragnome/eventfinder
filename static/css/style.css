@@ -93,9 +93,7 @@ body{
   padding: 0px;
 }
 
-div{
-  text-transform: uppercase;
-}
+div{}
 
 img{
   border: 0px;
@@ -107,6 +105,10 @@ img{
 
 span{
   text-transform: uppercase;
+}
+
+svg{
+  pointer-events: none;
 }
 
 .anim_fade_in{
@@ -284,22 +286,36 @@ span{
 }
 
 .app_search > .icon.search{
+  background-color: transparent;
   background-position: center center;
   background-size: auto 20px;
   background-repeat: no-repeat;
 
-  cursor: pointer;
   display: inline-block;
-  font-size: 46px;
-  height: 30px;
-  margin: 5px 7px 5px 5px;
+  cursor: pointer;
   position: absolute;
-  padding: 5px;
-  right: 30px;
   top: 0px;
-  width: 30px;
+  right: 30px;
+/*  color: black;
+  fill: black;*/
+  width: 38px;
+  height: 38px;
+  border-radius: 19px;
+  margin: 1px;
   z-index: 5;
 }
+/*.app_search > .icon.search > svg {
+  width: 20px;
+  height: 20px;
+  margin-top: 9px;
+}
+
+.app_search > .icon.search:hover{
+  background-color: black;
+  color: white;
+  fill: white;
+  transition: 0.3s;
+}*/
 
 .app_section{
   text-align: center;
@@ -356,7 +372,7 @@ span{
 .button_back{
   background-color: white;
   border: 1px solid white;
-  border-radius: 20px;
+  border-radius: 19px;
   cursor: pointer;
   color: white;
   fill: white;
@@ -595,7 +611,7 @@ span{
   border-radius: 10px;
   margin: 10px 10px 20px 10px;
   min-width: 540px;
-  max-width: 1024px;
+  max-width: 50%;
   padding-right: 10px;
   text-align: left;
 }
@@ -748,22 +764,82 @@ span{
   color: white;
 }
 
-.event_description{
+.event_section {
   font-size: 13px;
-  text-align: justify;
+  text-align: left;
   text-transform: none;
-  margin: 15px 10px 25px 10px;
+  margin: 15px 10px 15px 10px;
+  border-bottom: 1px solid var(--neutral-color);
 }
 
-.event_description > a{
+.event_section.event_links_section{
+  text-align: left;
+}
+
+.event_section > .title {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.event_section.collapsed > .title {
+  margin-bottom: 0px;
+}
+.event_section.collapsed > .body {
+  display: none;
+}
+
+.event_section > .body {
+  text-align: justify;
+}
+
+.event_section > .body > a {
+  float: left;
   font-weight: bold;
   text-decoration: underline;
   text-align: left;
+  margin-right: 5px;
+}
+
+.event_section > .body > p > a{
+  color: var(--dark-color);
+}
+
+.event_section > .expander {
+  cursor: pointer;
+  background-color: var(--neutral-color);
+  background-position: center;
+  color: black;
+  fill: black;
+  height: 20px;
+  width: 200px;
+  /*border: 1px solid black;*/
+  border-radius: 10px;
+  margin: 0 auto -10px auto;
+  text-align: center;
+}
+
+.event_section > .expander:hover{
+  background-color: black;
+  color: white;
+  fill: white;
+}
+
+.event_section > .expander > svg{
+  height: 18px;
+  transition: 0.3s;
+}
+
+.event_section.collapsed > .expander > svg{
+  transform: rotate(180deg);
+  transition: 0.3s;
 }
 
 .event_header{
   color: black;
-  pointer-events: auto;
+  pointer-events: auto
 }
 
 .event_img{
@@ -867,7 +943,7 @@ span{
 .event_links {
   margin-top: 5px;
   margin-bottom: 5px;
-  text-align: center;
+  text-align: left;
 }
 
 .event_links > a {
@@ -952,7 +1028,6 @@ span{
 .icon.yelp { background: url(/static/icons/svg/yelp.svg) no-repeat; }
 .icon.user { background: url(/static/icons/svg/user.svg) no-repeat; }
 .icon.search { background: url(/static/icons/svg/search.svg) no-repeat; }
-
 
 .left{
   float: left;
@@ -1067,7 +1142,7 @@ span{
 }
 
 .title{
-  color: white;
+  color: black;
   font-family: Rubik,sans-serif;
   font-weight: bold;
   font-size: 18px;
@@ -1267,8 +1342,13 @@ span{
     box-shadow: none;
     margin: 0px;
     min-width: auto;
+    max-width: inherit;
     padding: 0px;
     position: relative;
+    text-align: center;
+  }
+
+  .event_section.event_links_section{
     text-align: center;
   }
 

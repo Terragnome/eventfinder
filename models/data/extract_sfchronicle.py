@@ -50,19 +50,28 @@ class ExtractSFChronicle(ConnectorEvent):
         results = {
           'url': url
         }
+        results['tier'] = '2021 SF Chronicle Top 100 Bay Area Restaurants'
         results['name'] = header.text.replace("(New)", "").replace("(closed)", "").strip()
 
         tag = header
 
         tag = tag.find_next('p')
+        max_loops = 5
+        loop_counter = 0
+        while len(tag.text) < 50 and loop_counter < max_loops:
+          loop_counter += 1
+          tag = tag.find_next('p')
         results['description'] = tag.text
-
-        results['tier'] = '2021 SF Chronicle Top 100 Bay Area Restaurants'
 
         while tag:
           tag = tag.find_next('p')
 
           if tag:
+            match = re.search(r'Cuisine: +(.*)', tag.text, re.IGNORECASE)
+            if match:
+              results['tags'] = match.group(1).strip()
+              continue
+
             match = re.search(r'Vitals: +(.*)', tag.text, re.IGNORECASE)
             if match:
               addr = [x.strip() for x in re.search(r': +([^;]*);', tag.text).group(1).split(",")]

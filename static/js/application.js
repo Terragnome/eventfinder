@@ -44,6 +44,20 @@ Application.initLocationButtons = function(){
   // }
 }
 
+Application.initExpanderButtons = function(){
+  let expanderButtons = $('.event_section > .expander');
+  if(expanderButtons){
+    try{
+      expanderButtons.unbind('click', Application.toggleSection);
+    }catch(e){}
+    expanderButtons.click(Application.toggleSection);
+  }
+}
+Application.toggleSection = function(e){
+  let section = $(e.target.parentNode);
+  section.toggleClass('collapsed');
+}
+
 Application.onAjaxStart = function(){
   $(Application.main).removeClass('anim_fade_in');
   Scroll.disable();
@@ -54,6 +68,7 @@ Application.onAjaxComplete = function(){
   Application.initGroupChips();
   Application.initBackButtons();
   Application.initLocationButtons();
+  Application.initExpanderButtons();
   Scroll.enable();
 }
 

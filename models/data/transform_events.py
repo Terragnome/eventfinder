@@ -166,6 +166,20 @@ class TransformEvents:
     descriptions = [x for x in descriptions if x[2]]
     if descriptions: event.description = descriptions
 
+    specialty_connectors = [
+      ExtractMercuryNews,
+      ExtractMichelin,
+      ExtractSFChronicle
+    ]
+    specialties = [
+      (
+        x.TYPE,
+        get_from(ev_meta, [x.TYPE, 'order'])
+      ) for x in specialty_connectors
+    ]
+    specialties = [x for x in specialties if x[1]]
+    if specialties: event.details[Event.DETAILS_SPECIALTIES] = specialties
+
     google_link = get_from(event.details, [ConnectGoogle.TYPE, 'url'])
     if google_link: event.add_url(ConnectGoogle.TYPE, google_link)
 
@@ -280,7 +294,7 @@ class TransformEvents:
       print("tags: {}".format([t.tag_name for t in event.tags]))
       print("accolades: {}".format(event.accolades))
       print("url: {}".format(event.urls))
-      # print(json.dumps(event.details, indent=2))
+      print(json.dumps(event.details, indent=2))
       print("\n")
 
     if rating_delta:

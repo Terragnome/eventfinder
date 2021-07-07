@@ -25,13 +25,31 @@
       {% endif %}
     </div>
     <div class='event_body'>
-      {% with event=event, card=card, vargs=vargs%}{% include "events/_event_links.html" %}{% endwith %}
+      <div class='event_section event_links_section'>
+        {% with event=event, card=card, vargs=vargs%}{% include "events/_event_links.html" %}{% endwith %}
+      </div>
       {% if event.description %}
-        <div class='event_description'>
-          {% for reviewer, url, desc in event.description %}
-            <a href="{{url}}" target='_blank'>{{reviewer}}</a>
-            <p>{{desc}}</p>
-          {% endfor %}
+        <div class='event_section'>
+          <div class='title'>Summary</div>
+          <div class='body'>
+            {% for reviewer, url, desc in event.short_description %}
+              <a href="{{url}}" target='_blank'>{{reviewer}}</a>
+              <p>{{desc}} <a href="{{url}}" target='_blank'>Read more...</a></p>
+            {% endfor %}
+          </div>
+          {% include "_expander.html" %}
+        </div>
+      {% endif %}
+      {% if 'specialties' in event.details %}
+        <div class='event_section'>
+          <div class='title'>Specialties</div>
+          <div class='body'>
+            {% for reviewer, desc in event.details['specialties'] %}
+              <a href="{{url}}" target='_blank'>{{reviewer}}</a>
+              <p>{{desc}}</p>
+            {% endfor %}
+          </div>
+          {% include "_expander.html" %}
         </div>
       {% endif %}
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_choices.html" %}{% endwith %}
