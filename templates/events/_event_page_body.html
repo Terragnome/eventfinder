@@ -28,10 +28,9 @@
       {% with event=event, card=card, vargs=vargs%}{% include "events/_event_links.html" %}{% endwith %}
       {% if event.description %}
         <div class='event_description'>
-          {% for reviewer, desc in event.description %}
-            <p>
-              <span>{{reviewer}}</span> "{{desc}}"
-            </p>
+          {% for reviewer, url, desc in event.description %}
+            <a href="{{url}}" target='_blank'>{{reviewer}}</a>
+            <p>{{desc}}</p>
           {% endfor %}
         </div>
       {% endif %}

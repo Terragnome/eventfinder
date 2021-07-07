@@ -157,9 +157,13 @@ class TransformEvents:
       ExtractSFChronicle
     ]
     descriptions = [
-      (x.TYPE, get_from(ev_meta, [x.TYPE, 'description'])) for x in description_connectors
+      (
+        x.TYPE,
+        get_from(ev_meta, [x.TYPE, 'url']),
+        get_from(ev_meta, [x.TYPE, 'description'])
+      ) for x in description_connectors
     ]
-    descriptions = [x for x in descriptions if x[1]]
+    descriptions = [x for x in descriptions if x[2]]
     if descriptions: event.description = descriptions
 
     google_link = get_from(event.details, [ConnectGoogle.TYPE, 'url'])

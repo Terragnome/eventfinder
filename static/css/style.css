@@ -755,6 +755,12 @@ span{
   margin: 15px 10px 25px 10px;
 }
 
+.event_description > a{
+  font-weight: bold;
+  text-decoration: underline;
+  text-align: left;
+}
+
 .event_header{
   color: black;
   pointer-events: auto;
