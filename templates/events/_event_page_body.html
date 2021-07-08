@@ -29,6 +29,30 @@
         {% with event=event, card=card, vargs=vargs%}{% include "events/_event_links.html" %}{% endwith %}
         <div class='divider'></div>
       </div>
+      <div class='event_section event_info'>
+        <div class='title'>Info</div>
+        <div class='body'>
+          {% if event.website%}
+            <div>
+              <div class='icon'>{% include "icon/_website.html" %}</div>
+              <a class='text_link' href='{{event.website}}', target='_blank'>{{strip_url(event.website)}}</a>
+            </div>
+          {% endif %}
+          {% if event.cost %}
+            <div>
+              <div class='icon'>{% include "icon/_coin.html" %}</div>
+              {% for i in range(0, event.cost) %}${% endfor %}
+            </div>
+          {% endif %}
+          {% if event.phone %}
+            <div>
+              <div class='icon'>{% include "icon/_phone.html" %}</div>
+              <a class='text_link' href="tel:{{strip_phone(event.phone)}}">{{event.phone}}</a>
+            </div>
+          {% endif %}
+        </div>
+        {% include "_expander.html" %}
+      </div>
       {% if event.description %}
         <div class='event_section'>
           <div class='title'>Summary</div>
@@ -54,7 +78,7 @@
         </div>
       {% endif %}
       {% if event.card_user_count %}
-        <div class='event_section event_users_section'>
+        <div class='event_section no_title'>
           <div class='body'>
             {% with event=event, card=card, vargs=vargs%}{% include "events/_event_users.html" %}{% endwith %}
           </div>

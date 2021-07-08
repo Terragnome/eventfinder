@@ -137,8 +137,18 @@ class Event(Base):
 
   @property
   def website(self):
-    return get_from(self.details, [Event.DETAILS_URL], None)
+    return get_from(self.details, [Event.DETAILS_URL])
   
+  @property
+  def phone(self):
+    from models.data.connect_google import ConnectGoogle
+    from models.data.connect_yelp import ConnectYelp
+    phone = None
+    if not phone:
+      phone = get_from(self.details, [ConnectGoogle.TYPE, Event.DETAILS_PHONE])
+    if not phone:
+      phone = get_from(self.details, [ConnectYelp.TYPE, Event.DETAILS_PHONE])
+    return phone
 
   @property
   def display_address(self):

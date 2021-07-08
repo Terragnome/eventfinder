@@ -86,6 +86,11 @@ a{
   text-transform: uppercase;
 }
 
+a.text_link {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 body{
   border: 0px;
   font-family: Roboto,sans-serif;
@@ -618,7 +623,7 @@ svg{
   background-color: white;
   border-radius: 10px;
   margin: 10px 10px 20px 10px;
-  min-width: 540px;
+  min-width: 600px;
   max-width: 50%;
   padding-right: 10px;
   text-align: left;
@@ -736,6 +741,21 @@ svg{
   content: " ▲";
 }
 
+.event_info > .body > div{
+  margin: 8px auto 8px auto;
+}
+
+.event_info > .body > div > .icon{
+  float: left;
+  margin-right: 5px;
+  margin-top: -2px;
+}
+
+.event_info > .body > div > .icon > svg{
+  width: 20px;
+  height: 20px;
+}
+
 .event_collapse{
   -webkit-animation: anim-collapse 0.2s ease forwards;
 }
@@ -782,6 +802,11 @@ svg{
   text-transform: none;
 }
 
+.event_section.no_title > .body{
+  min-height: 60px;
+  margin-bottom: 0px;
+}
+
 .event_section > .title {
   font-size: 16px;
   font-weight: bold;
@@ -793,17 +818,11 @@ svg{
 
 .event_section > .body {
   text-align: justify;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .event_section.event_links_section{
   text-align: left;
-  padding-bottom: 10px;
-}
-
-.event_section.event_users_section > .body{
-  min-height: 30px;
-  margin-bottom: 0px;
 }
 
 .event_section.event_users_section > .divider{
@@ -830,7 +849,6 @@ svg{
 
 .event_section > .expander {
   cursor: pointer;
-  /*background-color: var(--neutral-color);*/
   background-color: white;
   background-position: center;
   color: black;
@@ -839,7 +857,7 @@ svg{
   width: 120px;
   border: 1px solid var(--neutral-color);
   border-radius: 10px;
-  margin: -10px auto 0 auto;
+  margin: 0 auto 0 auto;
   text-align: center;
 }
 
@@ -856,21 +874,22 @@ svg{
 
 
 .event_section.collapsed {
-  margin-top: 0px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .event_section.collapsed > .divider{
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .event_section.collapsed > .title {
   margin: 5px 0 5px 0;
 }
 .event_section.collapsed > .body {
+  pointer-events: none;
   overflow: hidden;
   opacity: 0;
-  height: 0px;
-  margin-bottom: 0px;
+  height: 25px;
   transition: 0.1s;
 }
 
@@ -878,6 +897,7 @@ svg{
   background-color: var(--neutral-color);
   color: black;
   fill: black;
+  margin-top: -55px;
 }
 
 .event_section.collapsed > .expander > svg{
@@ -964,6 +984,7 @@ svg{
   display: inline-block;
   font-size: 18px;
   margin: 5px auto 0 auto;
+  /*max-width: 390px;*/
   text-align: center;
   text-decoration: none;
 }
@@ -971,7 +992,8 @@ svg{
 .event_venue_name{
   font-size: 13px;
   margin: -2px 0 10px 0;
-  max-width: 370px;
+  text-transform: uppercase;
+  /*max-width: 370px;*/
 }
 
 .event_page > .event_header > .event_title{
@@ -1005,11 +1027,11 @@ svg{
 }
 
 .event_links > a {
-  font-size: 13px;
+  font-size: 12px;
   margin: 0 5px 0 5px;
   border: 1px solid black;
-  border-radius: 50px;
-  padding: 5px;
+  border-radius: 20px;
+  padding: 4px;
   text-align: left;
 }
 
@@ -1054,8 +1076,8 @@ svg{
   background-position: center center;
   background-size: auto 32px;
   background-repeat: no-repeat; 
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   /*margin-right: 7px;*/
 }
 

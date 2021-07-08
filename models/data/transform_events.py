@@ -224,8 +224,14 @@ class TransformEvents:
     state = get_from(event.details, [ConnectGoogle.TYPE, 'state'])
     if state: event.state = state
 
-    cost = get_from(ev_meta, [ConnectGoogle.TYPE, 'cost'])
-    if cost: event.cost = len(cost)
+    cost = get_from(event.details, [ConnectGoogle.TYPE, 'cost'])
+    if cost:
+      event.cost = cost
+    else:
+      cost = get_from(event.details, [ConnectYelp.TYPE, 'cost'])
+      if cost:
+        event.cost = cost
+
 
     event.meta = ev_meta
 
