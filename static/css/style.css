@@ -851,7 +851,7 @@ svg{
 
 .event_section > .expander > svg{
   height: 18px;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 
@@ -871,6 +871,7 @@ svg{
   opacity: 0;
   height: 0px;
   margin-bottom: 0px;
+  transition: 0.1s;
 }
 
 .event_section.collapsed > .expander {
