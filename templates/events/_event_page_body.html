@@ -33,9 +33,9 @@
         <div class='event_section'>
           <div class='title'>Summary</div>
           <div class='body'>
-            {% for reviewer, url, desc in event.short_description %}
+            {% for reviewer, url, desc, is_shortened in event.short_description %}
               <a href="{{url}}" target='_blank'>{{reviewer}}</a>
-              <p>{{desc}}<a href="{{url}}" target='_blank'>Read more...</a></p>
+              <p>{{desc}}{% if is_shortened %}<a href="{{url}}" target='_blank'>Read more...</a>{% endif %}</p>
             {% endfor %}
           </div>
           {% include "_expander.html" %}

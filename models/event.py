@@ -152,7 +152,8 @@ class Event(Base):
       (
         reviewer,
         url,
-        ". ".join([x.strip() for x in desc.split(".")[:3]])
+        ". ".join([x.strip() for x in desc.split(".")[:3]]),
+        ". ".join([x.strip() for x in desc.split(".")[:3]]) != desc
       ) for reviewer, url, desc in self.description
     ]
 
