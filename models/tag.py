@@ -33,8 +33,8 @@ class Tag(Base):
   OPEN_NOW = "open"
   FLAGS = [
     ACCOLADES,
-    NEARBY,
-    OPEN_NOW
+    NEARBY
+    # OPEN_NOW
   ]
 
   __tablename__ = 'tags'
