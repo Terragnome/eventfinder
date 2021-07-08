@@ -23,6 +23,11 @@
       {% if event.img_url %}
         <img id="event_img_{{ event.event_id }}" class="event_img" onerror="Application.removeElem('#event_img_{{ event.event_id }}')" src="{{ event.img_url }}"></img>
       {% endif %}
+      {% if event.photos_url %}
+        <a class='icon photos shadow' target="_blank" href='{{event.photos_url}}'>
+          {% include "icon/_gallery.html"%}
+        </a>
+      {% endif %}
     </div>
     <div class='event_body'>
       <div class='event_section event_links_section'>
@@ -38,10 +43,10 @@
               <a class='text_link' href='{{event.website}}', target='_blank'>{{strip_url(event.website)}}</a>
             </div>
           {% endif %}
-          {% if event.cost %}
+          {% if event.cost %} 
             <div>
               <div class='icon'>{% include "icon/_coin.html" %}</div>
-              {% for i in range(0, event.cost) %}${% endfor %}
+              {{"$"*event.cost}}
             </div>
           {% endif %}
           {% if event.phone %}

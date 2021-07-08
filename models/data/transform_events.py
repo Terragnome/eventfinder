@@ -225,17 +225,12 @@ class TransformEvents:
     if state: event.state = state
 
     cost = get_from(event.details, [ConnectGoogle.TYPE, 'cost'])
+    if not cost:
+      cost = get_from(event.details, [ConnectYelp.TYPE, 'cost'])
     if cost:
       event.cost = cost
-    else:
-      cost = get_from(event.details, [ConnectYelp.TYPE, 'cost'])
-      if cost:
-        event.cost = cost
+      event.add_tag("$"*event.cost, Tag.FOOD_DRINK)
 
-    # google_link = get_from(event.details, [ConnectGoogle.TYPE, 'url'])
-    # if google_link: event.add_url(ConnectGoogle.TYPE, google_link)
-    # yelp_link = get_from(ev_meta, [ConnectYelp.TYPE, 'url'])
-    # if yelp_link: event.add_url(ConnectYelp.TYPE, yelp_link)
     urls = [
       (
         conn.TYPE,

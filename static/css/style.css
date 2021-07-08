@@ -341,6 +341,13 @@ svg{
   border-top: 1px solid var(--mid-color);
   margin: 20px 40px 20px 40px;
 }
+.splitter{
+  display: inline-block;
+  padding: 0 10px 0 10px;
+}
+.splitter::after{
+  content: "|";
+}
 
 .widescreen_only{
   display: inherit;
@@ -630,10 +637,36 @@ svg{
 }
 
 .event_page > .event_img_wrapper {
+  position: relative;
   float: left;
   margin-right: 10px;
   min-height: 100px;
   min-width: 10px;
+}
+
+.event_page > .event_img_wrapper > .icon.photos {
+  pointer-events:  auto;
+  position: absolute;
+  bottom: 15px;
+  right: 5px;
+  background-color: white;
+  width: 38px;
+  height: 38px;
+  text-align: center;
+  border-radius: 19px;
+  z-index: 2;
+}
+
+.event_page > .event_img_wrapper > .icon.photos:hover{
+  background-color: black;
+  color: white;
+  fill: white;
+}
+
+.event_page > .event_img_wrapper > .icon.photos > svg {
+  width: 24px;
+  height: 24px;
+  margin-top: 6px;
 }
 
 .event_page > .event_img_wrapper > .event_img{
