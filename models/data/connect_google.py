@@ -83,6 +83,9 @@ class ConnectGoogle(ConnectorEvent):
 
       results = get_from(results, ["result"])
       if results:
+        print(json.dumps(connector.data, indent=2))
+        print("**********")
+        print(json.dumps(results, indent=2))
         connector.data[place_id] = results
         db_session.merge(connector)
         db_session.commit()

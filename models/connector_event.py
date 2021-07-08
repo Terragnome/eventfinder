@@ -27,7 +27,7 @@ class ConnectorEvent(Base):
   def create_key(self, name, city, *args):
     key_components = [name, city]
     key_components.extend(args or [])
-    return " | ".join(key_components)
+    return " | ".join(key_components).lower()
 
   @property
   def type(self):

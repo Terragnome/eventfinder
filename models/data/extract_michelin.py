@@ -88,6 +88,7 @@ class ExtractMichelin(ConnectorEvent):
         tier = "MICHELIN Bib Gourmand"
       tier = tier.replace("The ", "")
       results['tier'] = "2021 {}".format(tier)
+      print(results['name'], results['tier'])
 
       try:
         specialties = parser.find('ul', attrs={'class': 'restaurant-details__text-componets--list'}).find_all('li')
