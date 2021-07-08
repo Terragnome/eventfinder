@@ -244,8 +244,6 @@ class TransformEvents:
   ):
     events = Event.query.filter(Event.primary_type == Tag.FOOD_DRINK)
 
-    print(len([x for x in events]))
-
     if name is not None: events = Event.query.filter(Event.name == name)
     if event_id is not None: events = Event.query.filter(Event.event_id == event_id)
     if no_img:

@@ -640,6 +640,10 @@ svg{
   margin-top: 30px;
 }
 
+.event_name{
+  text-transform: uppercase;
+}
+
 .event_address{
   font-size: 11px;
   margin: 5px 0 0px 0;
