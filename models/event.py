@@ -21,6 +21,7 @@ class Event(Base):
   DETAILS_RATING = "rating"
   DETAILS_REVIEW_COUNT = "review_count"
   DETAILS_URL = "url"
+  DETAILS_PHOTOS_URL = "photos_url"
   DETAILS_SPECIALTIES = "specialties"
 
   __tablename__ = 'events'
@@ -113,12 +114,12 @@ class Event(Base):
     EventTag.query.filter(EventTag.event_id == self.event_id).delete()
     db_session.commit()
 
-  def add_url(self, url_type, url):
-    if self.urls is None:
-      self.urls = {}
-    self.urls[url_type] = url
-    db_session.merge(self)
-    db_session.commit()
+  # def add_url(self, url_type, url):
+  #   if self.urls is None:
+  #     self.urls = {}
+  #   self.urls[url_type] = url
+  #   db_session.merge(self)
+  #   db_session.commit()
 
   @property
   def current_user_event(self):
@@ -134,6 +135,10 @@ class Event(Base):
       and self.current_user_event.interest != None
       and self.current_user_event.interest>0
     )
+
+  @property
+  def photos_url(self):
+    return get_from(self.details, [Event.DETAILS_PHOTOS_URL])
 
   @property
   def website(self):

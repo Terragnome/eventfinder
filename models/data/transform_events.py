@@ -4,6 +4,7 @@ import re
 
 from sqlalchemy import or_
 
+from helpers.jinja_helper import strip_url_params
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
@@ -79,7 +80,7 @@ class TransformEvents:
     google_raw_addr = get_from(ev_meta, [ConnectGoogle.TYPE, 'address_components'], [])
 
     if not google_raw_addr:
-      print("No Google Address for {}".format(event.name))
+      print("!!!ERROR!!! No Google Address for {}".format(event.name))
       return
 
     google_addr = {}
@@ -106,8 +107,12 @@ class TransformEvents:
       Event.DETAILS_URL:          get_from(ev_meta, [ConnectGoogle.TYPE, 'url'])
     }
 
+
     yelp_addr = get_from(ev_meta, [ConnectYelp.TYPE, 'location', 'display_address'])
     yelp_cost = get_from(ev_meta, [ConnectYelp.TYPE, 'price'])
+    yelp_url = get_from(ev_meta, [ConnectYelp.TYPE, 'url'])
+    if yelp_url:
+      yelp_url = strip_url_params(yelp_url)
     yelp_details = {
       'address': ", ".join(yelp_addr) if yelp_addr else None,
       'city': get_from(ev_meta, [ConnectYelp.TYPE, 'location', 'city']),
@@ -118,7 +123,7 @@ class TransformEvents:
       Event.DETAILS_PHONE:        get_from(ev_meta, [ConnectYelp.TYPE, 'display_phone']),
       Event.DETAILS_RATING:       get_from(ev_meta, [ConnectYelp.TYPE, 'rating']),
       Event.DETAILS_REVIEW_COUNT: get_from(ev_meta, [ConnectYelp.TYPE, 'review_count']),
-      Event.DETAILS_URL:          get_from(ev_meta, [ConnectYelp.TYPE, 'url'])
+      Event.DETAILS_URL:          yelp_url
     }
 
     event.details = {
@@ -126,6 +131,8 @@ class TransformEvents:
       ConnectGoogle.TYPE: google_details,
       ConnectYelp.TYPE: yelp_details
     }
+    if yelp_url:
+      event.details[Event.DETAILS_PHOTOS_URL] = re.sub(r'/biz/', "/biz_photos/", yelp_url)
 
   def transform_event(self, event, skip_write=None):
     ev_meta = self.get_event_metadata(event)
@@ -190,13 +197,6 @@ class TransformEvents:
           specialties[i][1] = ", ".join(x[1])
       event.details[Event.DETAILS_SPECIALTIES] = specialties
 
-    google_link = get_from(event.details, [ConnectGoogle.TYPE, 'url'])
-    if google_link: event.add_url(ConnectGoogle.TYPE, google_link)
-
-    # Details
-    yelp_link = get_from(ev_meta, [ConnectYelp.TYPE, 'url'])
-    if yelp_link: event.add_url(ConnectYelp.TYPE, yelp_link)
-
     img_url = get_from(ev_meta, [ConnectYelp.TYPE, 'image_url'])
     if img_url:
       event.img_url = re.sub(r'/o.jpg', '/348s.jpg', img_url) # '/l.jpg'
@@ -232,6 +232,17 @@ class TransformEvents:
       if cost:
         event.cost = cost
 
+    # google_link = get_from(event.details, [ConnectGoogle.TYPE, 'url'])
+    # if google_link: event.add_url(ConnectGoogle.TYPE, google_link)
+    # yelp_link = get_from(ev_meta, [ConnectYelp.TYPE, 'url'])
+    # if yelp_link: event.add_url(ConnectYelp.TYPE, yelp_link)
+    urls = [
+      (
+        conn.TYPE,
+        get_from(event.details, [conn.TYPE, Event.DETAILS_URL])
+      ) for conn in [ConnectGoogle, ConnectYelp] if get_from(event.details, [conn.TYPE, Event.DETAILS_URL])
+    ]
+    event.urls = urls
 
     event.meta = ev_meta
 

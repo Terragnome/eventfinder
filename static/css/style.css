@@ -624,7 +624,7 @@ svg{
   border-radius: 10px;
   margin: 10px 10px 20px 10px;
   min-width: 600px;
-  max-width: 50%;
+  max-width: 39%;
   padding-right: 10px;
   text-align: left;
 }
@@ -1078,7 +1078,14 @@ svg{
   background-repeat: no-repeat; 
   width: 30px;
   height: 30px;
+  text-align: center;
   /*margin-right: 7px;*/
+}
+
+.event_link > .icon > svg {
+  width: 28px;
+  height: 28px;
+  margin-top: 1px;
 }
 
 .event_link > .rating {

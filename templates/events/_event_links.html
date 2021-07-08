@@ -3,7 +3,7 @@
 
 <div class='event_links {{"card" if card else "page"}} clearfix'>
   {% if event.urls %}
-    {% for url_type, url in event.urls.items() %}
+    {% for url_type, url in event.urls %}
       <a class='event_link cap_button' target="_blank" href='{{url}}'>
         <div class='icon {{url_type.lower()}}'></div>
         {% set rating = get_from(event.details, [url_type, 'rating']) %}
@@ -16,5 +16,12 @@
         {% endif %}
       </a>
     {% endfor %}
+  {% endif %}
+  {% if event.photos_url %}
+    <a class='event_link cap_button' target="_blank" href='{{event.photos_url}}'>
+      <div class='icon'>
+        {% include "icon/_gallery.html"%}
+      </div>
+    </a>
   {% endif %}
 </div>
