@@ -802,7 +802,7 @@ svg{
 }
 
 .event_section.event_users_section > .body{
-  min-height: 20px;
+  min-height: 30px;
   margin-bottom: 0px;
 }
 
@@ -830,13 +830,14 @@ svg{
 
 .event_section > .expander {
   cursor: pointer;
-  background-color: var(--neutral-color);
+  /*background-color: var(--neutral-color);*/
+  background-color: white;
   background-position: center;
   color: black;
   fill: black;
   height: 20px;
-  width: 200px;
-  /*border: 1px solid black;*/
+  width: 120px;
+  border: 1px solid var(--neutral-color);
   border-radius: 10px;
   margin: -10px auto 0 auto;
   text-align: center;
@@ -863,13 +864,19 @@ svg{
 }
 
 .event_section.collapsed > .title {
-  margin: 0px;
+  margin: 5px 0 5px 0;
 }
 .event_section.collapsed > .body {
   overflow: hidden;
   opacity: 0;
   height: 0px;
   margin-bottom: 0px;
+}
+
+.event_section.collapsed > .expander {
+  background-color: var(--neutral-color);
+  color: black;
+  fill: black;
 }
 
 .event_section.collapsed > .expander > svg{
