@@ -13,6 +13,8 @@ from .event_tag import EventTag
 from .tag import Tag
 from .user_event import UserEvent
 
+from utils.get_from import get_from
+
 class Event(Base):
   DETAILS_COST = "cost"
   DETAILS_PHONE = "phone"
@@ -132,6 +134,11 @@ class Event(Base):
       and self.current_user_event.interest != None
       and self.current_user_event.interest>0
     )
+
+  @property
+  def website(self):
+    return get_from(self.details, [Event.DETAILS_URL], None)
+  
 
   @property
   def display_address(self):
