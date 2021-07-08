@@ -996,6 +996,10 @@ svg{
   /*max-width: 370px;*/
 }
 
+.event_page > .event_header {
+  max-width: 430px;
+}
+
 .event_page > .event_header > .event_title{
   font-size: 24px;
   margin-top: 10px;
@@ -1083,9 +1087,9 @@ svg{
 }
 
 .event_link > .icon > svg {
-  width: 28px;
-  height: 28px;
-  margin-top: 1px;
+  width: 24px;
+  height: 24px;
+  margin-top: 3px;
 }
 
 .event_link > .rating {
