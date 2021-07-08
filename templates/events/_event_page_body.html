@@ -34,7 +34,7 @@
           <div class='body'>
             {% for reviewer, url, desc in event.short_description %}
               <a href="{{url}}" target='_blank'>{{reviewer}}</a>
-              <p>{{desc}} <a href="{{url}}" target='_blank'>Read more...</a></p>
+              <p>{{desc}}<a href="{{url}}" target='_blank'>Read more...</a></p>
             {% endfor %}
           </div>
           {% include "_expander.html" %}
