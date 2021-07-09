@@ -775,7 +775,8 @@ svg{
 }
 
 .event_info > .body > div{
-  margin: 8px auto 8px auto;
+  font-size: 15px;
+  margin: 15px auto 15px auto;
 }
 
 .event_info > .body > div > .icon{
@@ -785,8 +786,8 @@ svg{
 }
 
 .event_info > .body > div > .icon > svg{
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 .event_collapse{
@@ -923,7 +924,6 @@ svg{
   overflow: hidden;
   opacity: 0;
   height: 25px;
-  transition: 0.1s;
 }
 
 .event_section.collapsed > .expander {

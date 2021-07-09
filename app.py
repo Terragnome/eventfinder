@@ -2,6 +2,7 @@ import functools
 import geocoder
 import json
 import os
+import re
 import redis
 from urllib.parse import urlparse
 
@@ -256,6 +257,17 @@ def _parse_chips(
     'chip_name': f,
     'selected': f in flags
   } for f in Tag.FLAGS]
+
+  def tag_sort_key(t):
+    weight = 0
+    match = re.search(r'\$+', t['chip_name'])
+    if match:
+      weight += len(match.group(0))*10000
+    weight += t['ct']
+    return weight*-1
+
+  tags = [t for t in tags]
+  tags.sort(key=tag_sort_key)
 
   results = {
     'categories': _parse_chip(categories, key="c", mode=Tag.EXCLUSIVE, display_name="Categories"),
