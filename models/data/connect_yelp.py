@@ -7,7 +7,6 @@ from sqlalchemy import and_, not_
 from yelpapi import YelpAPI
 
 from helpers.secret_helper import get_secret
-
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event

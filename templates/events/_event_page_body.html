@@ -36,7 +36,7 @@
       </div>
       <div class='event_section event_info'>
         <div class='title'>Info</div>
-        <div class='body'>
+        <div class='body clearfix'>
           {% if event.website%}
             <div>
               <div class='icon'>{% include "icon/_website.html" %}</div>
@@ -70,7 +70,7 @@
           {% include "_expander.html" %}
         </div>
       {% endif %}
-      {% if 'specialties' in event.details %}
+      {% if event.details and 'specialties' in event.details %}
         <div class='event_section'>
           <div class='title'>Specialties</div>
           <div class='body'>

@@ -721,7 +721,7 @@ svg{
 }
 
 .event_choices{
-  margin: 30px 0 20px 0;
+  margin: 15px 0 20px 0;
   text-align: center;
 }
 
@@ -775,8 +775,10 @@ svg{
 }
 
 .event_info > .body > div{
-  font-size: 15px;
-  margin: 15px auto 15px auto;
+  float: left;
+  font-size: 13px;
+  /*margin: 15px auto 15px auto;*/
+  margin: 15px;
 }
 
 .event_info > .body > div > .icon{
@@ -786,8 +788,8 @@ svg{
 }
 
 .event_info > .body > div > .icon > svg{
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .event_collapse{

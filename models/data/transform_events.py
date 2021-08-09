@@ -94,6 +94,15 @@ class TransformEvents:
 
     google_city = get_from(google_addr, ["locality"])
     google_state = get_from(google_addr, ["administrative_area_level_1"])
+    google_status = get_from(ev_meta, [ConnectGoogle.TYPE, 'business_status'])
+    if google_status == 'OPERATIONAL':
+      google_status = Event.STATUS_OPEN
+    elif google_status == "CLOSED_TEMPORARILY":
+      google_status = Event.STATUS_CLOSED_TEMP
+    elif google_status == "CLOSED_PERMANENTLY":
+      google_status = Event.STATUS_CLOSED_PERM
+    else:
+      google_status = None
     google_details = {
       'address': get_from(ev_meta, [ConnectGoogle.TYPE, 'formatted_address']),
       'city': google_city,
@@ -104,15 +113,15 @@ class TransformEvents:
       Event.DETAILS_PHONE:        get_from(ev_meta, [ConnectGoogle.TYPE, 'formatted_phone_number']),
       Event.DETAILS_RATING:       get_from(ev_meta, [ConnectGoogle.TYPE, 'rating']),
       Event.DETAILS_REVIEW_COUNT: get_from(ev_meta, [ConnectGoogle.TYPE, 'user_ratings_total']),
-      Event.DETAILS_URL:          get_from(ev_meta, [ConnectGoogle.TYPE, 'url'])
+      Event.DETAILS_URL:          get_from(ev_meta, [ConnectGoogle.TYPE, 'url']),
+      Event.DETAILS_STATUS:       google_status
     }
-
 
     yelp_addr = get_from(ev_meta, [ConnectYelp.TYPE, 'location', 'display_address'])
     yelp_cost = get_from(ev_meta, [ConnectYelp.TYPE, 'price'])
     yelp_url = get_from(ev_meta, [ConnectYelp.TYPE, 'url'])
-    if yelp_url:
-      yelp_url = strip_url_params(yelp_url)
+    if yelp_url: yelp_url = strip_url_params(yelp_url)
+    yelp_closed = get_from(ev_meta, [ConnectYelp.TYPE, 'is_closed'])
     yelp_details = {
       'address': ", ".join(yelp_addr) if yelp_addr else None,
       'city': get_from(ev_meta, [ConnectYelp.TYPE, 'location', 'city']),
@@ -123,7 +132,8 @@ class TransformEvents:
       Event.DETAILS_PHONE:        get_from(ev_meta, [ConnectYelp.TYPE, 'display_phone']),
       Event.DETAILS_RATING:       get_from(ev_meta, [ConnectYelp.TYPE, 'rating']),
       Event.DETAILS_REVIEW_COUNT: get_from(ev_meta, [ConnectYelp.TYPE, 'review_count']),
-      Event.DETAILS_URL:          yelp_url
+      Event.DETAILS_URL:          yelp_url,
+      Event.DETAILS_STATUS:       Event.STATUS_CLOSED_PERM if yelp_closed else Event.STATUS_OPEN
     }
 
     event.details = {
@@ -239,6 +249,17 @@ class TransformEvents:
     ]
     event.urls = urls
 
+    statuses = set(
+      get_from(event.details, [conn.TYPE, Event.DETAILS_STATUS]) for conn in [ConnectGoogle, ConnectYelp]
+    )
+
+    status = Event.STATUS_OPEN
+    if Event.STATUS_CLOSED_PERM in statuses:
+      status = Event.STATUS_CLOSED_PERM
+    elif Event.STATUS_CLOSED_TEMP in statuses:
+      status = Event.STATUS_CLOSED_TEMP
+    event.status = status
+
     event.meta = ev_meta
 
     if not skip_write:
@@ -318,6 +339,7 @@ class TransformEvents:
         print("url: {}".format(event.urls))
         print(json.dumps(event.details, indent=2))
         print("\n")
+      print("----------")
 
     if rating_delta:
       print("Rating Delta >={}: {} of {} ({}%)".format(

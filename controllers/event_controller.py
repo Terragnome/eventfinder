@@ -113,8 +113,8 @@ class EventController:
     return events.filter(
       or_(
         Event.name.ilike("%{}%".format(query)),
-        cast(Event.description, sa.Text).ilike("%{}%".format(query)),
-        cast(Event.accolades, sa.Text).ilike("%{}%".format(query)),
+        # cast(Event.description, sa.Text).ilike("%{}%".format(query)),
+        # cast(Event.accolades, sa.Text).ilike("%{}%".format(query)),
         Event.venue_name.ilike("%{}%".format(query)),
         cast(Event.address, sa.Text).ilike("%{}%".format(query)),
         Event.city.ilike("%{}%".format(query)),
@@ -317,6 +317,8 @@ class EventController:
           Event.end_time >= datetime.datetime.now()
         )
       )
+
+    events = events.filter(Event.status != Event.STATUS_CLOSED_PERM)
 
     events, selected_tags = klass._filter_events(
       events,

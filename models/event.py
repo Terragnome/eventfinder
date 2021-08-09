@@ -23,6 +23,11 @@ class Event(Base):
   DETAILS_URL = "url"
   DETAILS_PHOTOS_URL = "photos_url"
   DETAILS_SPECIALTIES = "specialties"
+  DETAILS_STATUS = "status"
+
+  STATUS_OPEN = "open"
+  STATUS_CLOSED_TEMP = "temporarily_closed"
+  STATUS_CLOSED_PERM = "permanently_closed"
 
   __tablename__ = 'events'
   event_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -39,6 +44,7 @@ class Event(Base):
 
   start_time = Column(DateTime)
   end_time = Column(DateTime)
+  status = Column(String)
 
   cost = Column(Integer)
   currency = Column(String)  
@@ -64,6 +70,10 @@ class Event(Base):
   @orm.reconstructor
   def init_on_load(self):
     pass
+
+  @property
+  def is_open(self):
+    return self.status == Event.STATUS_OPEN
 
   def update_meta(self, meta_type, meta_data):
     if self.meta is None: self.meta = {}
@@ -190,6 +200,8 @@ class Event(Base):
 
   @property
   def display_name(self):
+    if self.status is not None and not self.is_open:
+      return "({}) {}".format(self.display_status, self.name)
     return self.name
 
   @property
@@ -223,6 +235,15 @@ class Event(Base):
   @property
   def display_venue_name(self):
     return "" if self.venue_name in self.display_title else self.venue_name
+
+  @property
+  def display_status(self):
+    if self.status == Event.STATUS_OPEN:
+      return "Open"
+    if self.status == Event.STATUS_CLOSED_TEMP:
+      return "Temporarily Closed"
+    if self.status == Event.STATUS_CLOSED_PERM:
+      return "Permanently Closed"
 
   @property
   def start_date(self):
