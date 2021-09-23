@@ -10,7 +10,7 @@ from models.tag import Tag
 from models.user import User
 from models.user_event import UserEvent
 
-from models.data.connect_mmv import ConnectMMV
+from models.data.extract_mmv import ExtractMMV
 
 from utils.get_from import get_from
 
@@ -44,7 +44,7 @@ class SeedMICHAELLIN:
 
     for i, e in enumerate(events):
       print(i, e.event_id, e.name)
-      tier = get_from(e.meta, [ConnectMMV.TYPE, 'tier'])
+      tier = get_from(e.meta, [ExtractMMV.TYPE, 'tier'])
       if tier in ['♡', '☆']:
         print("\tAdded {}".format(tier))
         interest = tier_to_interest[tier]

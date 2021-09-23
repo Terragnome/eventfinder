@@ -25,6 +25,8 @@ class ConnectorEvent(Base):
 
   @classmethod
   def create_key(self, name, city, *args):
+    if not name or not city:
+      return None
     key_components = [name, city]
     key_components.extend(args or [])
     return " | ".join(key_components)

@@ -73,7 +73,10 @@ class ExtractMichelin(ConnectorEvent):
 
       address = parser.find('ul', attrs={'class': 'restaurant-details__heading--list'}).find('li').text
       results['address'] = address
-      city = re.search(r', *([^,]*) *, *[0-9]{5}', address).group(1)
+      try:
+        city = re.search(r', *([^,]*) *, *[0-9]{5}', address).group(1)
+      except Exception as e:
+        city = None
       results['city'] = city
 
       description = parser.find('div', attrs={'class': 'restaurant-details__description--text'}).find_all('p')
@@ -109,7 +112,10 @@ class ExtractMichelin(ConnectorEvent):
         connector_type = self.TYPE
       )
 
-    events = { self.create_key(x['name'], x['city']): x for x in self.data }
+    events = {}
+    for x in self.data:
+      k = self.create_key(x['name'], x['city'])
+      if k: events[k] = x
     row_connector_event.data = events
     db_session.merge(row_connector_event)
     db_session.commit()
