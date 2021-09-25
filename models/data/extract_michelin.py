@@ -19,6 +19,8 @@ class ExtractMichelin(ConnectorEvent):
   TARGET_URLS = "https://guide.michelin.com/us/en/california/restaurants"
   ID = TARGET_URLS
 
+  BAY_AREA_CITIES={"alameda", "albany", "alhambra", "american-canyon", "antioch", "aptos", "atherton", "belmont", "belvedere", "benicia", "berkeley", "boonville", "brentwood", "brisbane", "burlingame", "calistoga", "campbell", "carmel", "carmel-by-the-sea", "carmel-valley", "clayton", "cloverdale", "colma", "concord", "corte-madera", "cotati", "cupertino", "daly-city", "danville", "dixon", "dublin", "east-palo-alto", "el-cerrito", "elk", "emeryville", "fairfax", "fairfield", "forestville", "foster-city", "fremont", "geyserville","gilroy", "half-moon-bay", "hayward", "healdsburg", "hercules", "hillsborough", "lafayette", "larkspur", "livermore", "los-altos", "los-altos-hills", "los-gatos", "martinez", "marshall", "menlo-park", "mill-valley", "millbrae", "milpitas", "monte-sereno", "monterey", "moraga", "morgan-hill", "mountain-view", "napa", "newark", "novato", "oakland", "oakley", "orinda", "pacifica", "palo-alto", "pebble-beach", "petaluma", "piedmont", "pinole", "pittsburg", "pleasant-hill", "pleasanton", "portola-valley", "redwood-city", "richmond", "rio-vista", "rohnert-park", "ross", "rutherford", "saint-helena", "san-anselmo", "san-bruno", "san-carlos", "san-francisco", "san-jose", "san-leandro", "san-mateo", "san-pablo", "san-rafael", "san-ramon", "santa-clara", "santa-rosa", "saratoga", "sausalito", "sebastopol", "sonoma", "south-san-francisco", "suisun-city", "sunnyvale", "tiburon", "union-city", "vacaville", "vallejo", "walnut-creek", "windsor", "woodside", "yountville"}
+
   def __init__(self):
     r = requests.get(self.TARGET_URLS)
     if r.status_code != 200: return
@@ -45,7 +47,11 @@ class ExtractMichelin(ConnectorEvent):
     article_urls = sorted(set(article_urls))
 
     for a in article_urls:
-      self.data.extend([self.parse_article_url(a)])
+      restaurant = re.search(r'restaurants/page/([0-9]+)', pl)
+      if restaurant:
+        restaurant_entity = self.parse_article_url(a)
+        if restaurant_entity:
+          self.data.extend([restaurant_entity])
 
   def full_url(self, url):
     return "{}{}".format(self.URL_ROOT, url)
@@ -63,6 +69,10 @@ class ExtractMichelin(ConnectorEvent):
 
   def parse_article_url(self, url):
     print("Article: {}".format(url))
+    article_city = re.search("california/(.+)/restaurant", url).group(1)
+    if article_city not in self.BAY_AREA_CITIES:
+      print("\tSkip: {}".format(article_city))
+      return None
 
     r = requests.get(url)
     if r.status_code == 200:
@@ -75,7 +85,10 @@ class ExtractMichelin(ConnectorEvent):
 
       address = parser.find('ul', attrs={'class': 'restaurant-details__heading--list'}).find('li').text
       results['address'] = address
-      city = re.search(r', *([^,]*) *, *[0-9]{5}', address).group(1)
+      try:
+        city = re.search(r', *([^,]*) *, *[0-9]{5}', address).group(1)
+      except Exception as e:
+        city = None
       results['city'] = city
 
       description = parser.find('div', attrs={'class': 'restaurant-details__description--text'}).find_all('p')
@@ -112,7 +125,10 @@ class ExtractMichelin(ConnectorEvent):
         connector_type = self.TYPE
       )
 
-    events = { self.create_key(x['name'], x['city']): x for x in self.data }
+    events = {}
+    for x in self.data:
+      k = self.create_key(x['name'], x['city'])
+      if k: events[k] = x
     row_connector_event.data = events
     db_session.merge(row_connector_event)
     db_session.commit()

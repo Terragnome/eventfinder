@@ -25,12 +25,12 @@ class ExtractEvents(ConnectorEvent):
     api_key = get_secret('GOOGLE', "api_key")
     self.client = googlemaps.Client(key=api_key)
 
-    connector_types = (
+    connector_types = [
       ExtractMMV,
       ExtractMercuryNews,
       ExtractMichelin,
-      ExtractSFChronicle,
-    )
+      ExtractSFChronicle
+    ]
 
     connector = self.get_connector()
     self.data = connector.data or {}

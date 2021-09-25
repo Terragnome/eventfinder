@@ -35,7 +35,7 @@ class TransformEvents:
 
     self.connectors = {
       x.TYPE: x.get_connector(read_only=True).data
-      for x in [ConnectGoogle, ConnectYelp, ExtractMMV, ExtractMercuryNews, ExtractMichelin, ExtractSFChronicle]
+      for x in [ConnectGoogle, ConnectYelp, ExtractMMV, ExtractMercuryNews]#, ExtractMichelin, ExtractSFChronicle]
     }
 
   def get_place_id(self, event):

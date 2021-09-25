@@ -124,12 +124,11 @@ class Event(Base):
     EventTag.query.filter(EventTag.event_id == self.event_id).delete()
     db_session.commit()
 
-  # def add_url(self, url_type, url):
-  #   if self.urls is None:
-  #     self.urls = {}
-  #   self.urls[url_type] = url
-  #   db_session.merge(self)
-  #   db_session.commit()
+  def add_url(self, url_type, url):
+    if self.urls is None: self.urls = {}
+    self.urls[url_type] = url
+    db_session.merge(self)
+    db_session.commit()
 
   @property
   def current_user_event(self):
