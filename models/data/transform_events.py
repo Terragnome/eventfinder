@@ -103,6 +103,29 @@ class TransformEvents:
       google_status = Event.STATUS_CLOSED_PERM
     else:
       google_status = None
+    
+    raw_google_hours = get_from(ev_meta, [ConnectGoogle.TYPE, 'opening_hours', 'periods'])
+    google_hours = None
+    if raw_google_hours:
+      google_hours = {}
+      for x in raw_google_hours:
+        d = get_from(x, ['open', 'day']) or get_from(x, ['close', 'day'])
+
+        if d is not None:
+          if d not in google_hours: google_hours[d] = []
+
+          h = {}
+
+          open_time = get_from(x, ['open', 'time'])
+          if open_time and open_time != "0000":
+            h['open'] = open_time
+
+          close_time = get_from(x, ['close', 'time'])
+          if close_time and close_time != "0000":
+            h['close'] = close_time
+
+          google_hours[d].append(h)
+
     google_details = {
       'address': get_from(ev_meta, [ConnectGoogle.TYPE, 'formatted_address']),
       'city': google_city,
@@ -114,7 +137,8 @@ class TransformEvents:
       Event.DETAILS_RATING:       get_from(ev_meta, [ConnectGoogle.TYPE, 'rating']),
       Event.DETAILS_REVIEW_COUNT: get_from(ev_meta, [ConnectGoogle.TYPE, 'user_ratings_total']),
       Event.DETAILS_URL:          get_from(ev_meta, [ConnectGoogle.TYPE, 'url']),
-      Event.DETAILS_STATUS:       google_status
+      Event.DETAILS_STATUS:       google_status,
+      Event.DETAILS_HOURS:        google_hours
     }
 
     yelp_addr = get_from(ev_meta, [ConnectYelp.TYPE, 'location', 'display_address'])
@@ -122,6 +146,17 @@ class TransformEvents:
     yelp_url = get_from(ev_meta, [ConnectYelp.TYPE, 'url'])
     if yelp_url: yelp_url = strip_url_params(yelp_url)
     yelp_closed = get_from(ev_meta, [ConnectYelp.TYPE, 'is_closed'])
+    raw_yelp_hours = get_from(ev_meta, [ConnectYelp.TYPE, 'hours', 0, 'open'])
+    yelp_hours = None
+    if raw_yelp_hours:
+      yelp_hours = {}
+      for x in raw_yelp_hours:
+        d = x['day']
+        h = {'open': x['start'], 'close': x['end']}
+        if x['day'] not in yelp_hours:
+          yelp_hours[d] = [h]
+        else:
+          yelp_hours[d].append(h)
     yelp_details = {
       'address': ", ".join(yelp_addr) if yelp_addr else None,
       'city': get_from(ev_meta, [ConnectYelp.TYPE, 'location', 'city']),
@@ -133,11 +168,29 @@ class TransformEvents:
       Event.DETAILS_RATING:       get_from(ev_meta, [ConnectYelp.TYPE, 'rating']),
       Event.DETAILS_REVIEW_COUNT: get_from(ev_meta, [ConnectYelp.TYPE, 'review_count']),
       Event.DETAILS_URL:          yelp_url,
-      Event.DETAILS_STATUS:       Event.STATUS_CLOSED_PERM if yelp_closed else Event.STATUS_OPEN
+      Event.DETAILS_STATUS:       Event.STATUS_CLOSED_PERM if yelp_closed else Event.STATUS_OPEN,
+      Event.DETAILS_HOURS:        yelp_hours
     }
+
+    print("yelp")
+    # for x in raw_yelp_hours:
+    #   print(x)
+    h = get_from(yelp_details, [Event.DETAILS_HOURS])
+    if h:
+      for i, x in enumerate(h):
+        print(i, x, h[x])
+    print("----------")
+    print("google")
+    # for x in raw_google_hours:
+    #   print(x)
+    h = get_from(google_details, [Event.DETAILS_HOURS])
+    if h:
+      for i, x in enumerate(h):
+        print(i, x, h[x])
 
     event.details = {
       Event.DETAILS_URL: get_from(ev_meta, [ConnectGoogle.TYPE, 'website']),
+      Event.DETAILS_HOURS: google_details[Event.DETAILS_HOURS],
       ConnectGoogle.TYPE: google_details,
       ConnectYelp.TYPE: yelp_details
     }
@@ -259,6 +312,26 @@ class TransformEvents:
     elif Event.STATUS_CLOSED_TEMP in statuses:
       status = Event.STATUS_CLOSED_TEMP
     event.status = status
+
+    hours = {}
+    # for conn in [ConnectGoogle, ConnectYelp]:
+    #   h = get_from(event.details, [conn.TYPE, Event.DETAILS_HOURS])
+    #   if h:
+    #     for d, r in h.items():
+    #       if d not in hours:
+    #         hours[d] = r
+    #         continue
+    #       else:
+    #         op = get_from(r, ["open"])
+    #         cl = get_from(r, ["close"])
+
+    #         cur = hours[d]
+    #         cur_op = get_from(cur, ["open"])
+    #         cur_cl = get_from(cur, ["closes"])
+
+    #         if op < cur_op: hours[d]["open"] = op
+    #         if cl > cur_op: hours[d]["close"] = cl
+    # event.details[Event.DETAILS_HOURS] = days
 
     event.meta = ev_meta
 

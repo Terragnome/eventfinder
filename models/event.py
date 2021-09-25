@@ -17,6 +17,7 @@ from utils.get_from import get_from
 
 class Event(Base):
   DETAILS_COST = "cost"
+  DETAILS_HOURS = "hours"
   DETAILS_PHONE = "phone"
   DETAILS_RATING = "rating"
   DETAILS_REVIEW_COUNT = "review_count"
