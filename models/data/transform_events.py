@@ -24,6 +24,8 @@ from utils.get_from import get_from
 # TODO: This runs very slowly does not scale, but reduces number of rows for developer tier limit. Refactor for performance
 class TransformEvents:
   connector_types = [
+    ConnectGoogle,
+    ConnectYelp,
     ExtractMMV,
     ExtractMercuryNews,
     ExtractMichelin,
@@ -224,12 +226,16 @@ class TransformEvents:
 
     accolades = []
     for conn_type in self.connector_types:
-      match = get_from(ev_meta, [conn_type.TYPE])
-      if match:
-        accolades.append(match['tier'])
+      if conn_type is ExtractMMV:
+        continue
+      tier = get_from(ev_meta, [conn_type.TYPE, 'tier'])
+      if tier: accolades.append(tier)
     
-    if accolades:
-      event.accolades = sorted(accolades)
+    if accolades and len(accolades) > 0:
+      accolades = sorted(accolades)
+    else:
+      accolades = None
+    event.accolades = accolades
 
     self.transform_event_details(event, ev_meta=ev_meta)
 

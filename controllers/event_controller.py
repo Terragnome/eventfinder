@@ -66,7 +66,7 @@ class EventController:
   @classmethod
   def _filter_events_by_flags(klass, events, flags):
     if Tag.ACCOLADES in flags:
-      events = events.filter(Event.accolades != None)
+      events = events.filter(cast(Event.accolades, sa.String) != 'null')
     if Tag.NEARBY in flags or Tag.LOCAL in flags:
       geo_latlon, geo_city = get_geo()
 
