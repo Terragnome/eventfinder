@@ -4,6 +4,19 @@ from sigfig import round
 from flask import current_app
 from urllib.parse import parse_qsl, urlencode, urlparse, urlsplit, urlunsplit
 
+def strip_url(url):
+  return re.search(r'http[s]?://w*\.?([^/]+)/', url).group(1)
+
+def strip_url_params(url):
+  try:
+    return re.search(r'(.*)\?', url).group(1)
+  except Exception as e:
+    print(e)
+  return url
+
+def strip_phone(ph):
+  return re.sub(r'[^0-9]', "", ph)
+
 def relpath(url):
   return re.search(r'http[s]?://[^/]+(/.*)', url).group(1)
 

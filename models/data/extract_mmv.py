@@ -120,7 +120,7 @@ class ExtractMMV(ConnectorEvent):
         "zoo",
       }
       location_tags = location_tags & filter_location_tags
-      location_categories = location_categories | location_tags
+      # location_categories = location_categories | location_tags
 
       if location_rating not in ['♡', '☆', '◎']:
         continue

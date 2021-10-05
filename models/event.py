@@ -13,12 +13,22 @@ from .event_tag import EventTag
 from .tag import Tag
 from .user_event import UserEvent
 
+from utils.get_from import get_from
+
 class Event(Base):
   DETAILS_COST = "cost"
+  DETAILS_HOURS = "hours"
   DETAILS_PHONE = "phone"
   DETAILS_RATING = "rating"
   DETAILS_REVIEW_COUNT = "review_count"
   DETAILS_URL = "url"
+  DETAILS_PHOTOS_URL = "photos_url"
+  DETAILS_SPECIALTIES = "specialties"
+  DETAILS_STATUS = "status"
+
+  STATUS_OPEN = "open"
+  STATUS_CLOSED_TEMP = "temporarily_closed"
+  STATUS_CLOSED_PERM = "permanently_closed"
 
   __tablename__ = 'events'
   event_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -35,6 +45,7 @@ class Event(Base):
 
   start_time = Column(DateTime)
   end_time = Column(DateTime)
+  status = Column(String)
 
   cost = Column(Integer)
   currency = Column(String)  
@@ -60,6 +71,10 @@ class Event(Base):
   @orm.reconstructor
   def init_on_load(self):
     pass
+
+  @property
+  def is_open(self):
+    return self.status == Event.STATUS_OPEN
 
   def update_meta(self, meta_type, meta_data):
     if self.meta is None: self.meta = {}
@@ -132,9 +147,40 @@ class Event(Base):
     )
 
   @property
+  def photos_url(self):
+    return get_from(self.details, [Event.DETAILS_PHOTOS_URL])
+
+  @property
+  def website(self):
+    return get_from(self.details, [Event.DETAILS_URL])
+  
+  @property
+  def phone(self):
+    from models.data.connect_google import ConnectGoogle
+    from models.data.connect_yelp import ConnectYelp
+    phone = None
+    if not phone:
+      phone = get_from(self.details, [ConnectGoogle.TYPE, Event.DETAILS_PHONE])
+    if not phone:
+      phone = get_from(self.details, [ConnectYelp.TYPE, Event.DETAILS_PHONE])
+    return phone
+
+  @property
   def display_address(self):
     addr_components = [x for x in [self.address, self.city, self.state] if x is not None and x != ""]
     return ", ".join(addr_components)
+
+
+  @property
+  def short_description(self):
+    return [
+      (
+        reviewer,
+        url,
+        ". ".join([x.strip() for x in desc.split(".")[:3]]),
+        ". ".join([x.strip() for x in desc.split(".")[:3]]) != desc
+      ) for reviewer, url, desc in self.description
+    ]
 
   @property
   def display_end_date_day(self):
@@ -154,6 +200,8 @@ class Event(Base):
 
   @property
   def display_name(self):
+    if self.status is not None and not self.is_open:
+      return "({}) {}".format(self.display_status, self.name)
     return self.name
 
   @property
@@ -187,6 +235,15 @@ class Event(Base):
   @property
   def display_venue_name(self):
     return "" if self.venue_name in self.display_title else self.venue_name
+
+  @property
+  def display_status(self):
+    if self.status == Event.STATUS_OPEN:
+      return "Open"
+    if self.status == Event.STATUS_CLOSED_TEMP:
+      return "Temporarily Closed"
+    if self.status == Event.STATUS_CLOSED_PERM:
+      return "Permanently Closed"
 
   @property
   def start_date(self):

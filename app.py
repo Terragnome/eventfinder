@@ -2,6 +2,7 @@ import functools
 import geocoder
 import json
 import os
+import re
 import redis
 from urllib.parse import urlparse
 
@@ -19,7 +20,9 @@ from config.app_config import app_config
 from controllers.event_controller import EventController
 from controllers.user_controller import UserController
 from helpers.env_helper import is_prod
-from helpers.jinja_helper import relpath, round_ct, pluralize, filter_url_params, update_url_params
+from helpers.jinja_helper import round_ct, pluralize
+from helpers.jinja_helper import filter_url_params, update_url_params
+from helpers.jinja_helper import relpath, strip_url, strip_url_params, strip_phone
 from helpers.geo_helper import get_geo, set_geo
 from helpers.secret_helper import get_secret
 from models.base import db_session
@@ -56,6 +59,9 @@ app.jinja_env.globals.update(get_from=get_from)
 app.jinja_env.globals.update(pluralize=pluralize)
 app.jinja_env.globals.update(relpath=relpath)
 app.jinja_env.globals.update(round_ct=round_ct)
+app.jinja_env.globals.update(strip_url=strip_url)
+app.jinja_env.globals.update(strip_url_params=strip_url_params)
+app.jinja_env.globals.update(strip_phone=strip_phone)
 app.jinja_env.globals.update(update_url_params=update_url_params)
 app.jinja_env.globals.update(filter_url_params=filter_url_params)
 app.jinja_env.globals.update(get_secret=get_secret)
@@ -251,6 +257,17 @@ def _parse_chips(
     'chip_name': f,
     'selected': f in flags
   } for f in Tag.FLAGS]
+
+  def tag_sort_key(t):
+    weight = 0
+    match = re.search(r'\$+', t['chip_name'])
+    if match:
+      weight += len(match.group(0))*10000
+    weight += t['ct']
+    return weight*-1
+
+  tags = [t for t in tags]
+  tags.sort(key=tag_sort_key)
 
   results = {
     'categories': _parse_chip(categories, key="c", mode=Tag.EXCLUSIVE, display_name="Categories"),

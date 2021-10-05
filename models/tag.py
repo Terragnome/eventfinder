@@ -30,11 +30,13 @@ class Tag(Base):
 
   ACCOLADES = "accolades"
   NEARBY = "nearby"
+  LOCAL = "local"
   OPEN_NOW = "open"
   FLAGS = [
     ACCOLADES,
     NEARBY,
-    OPEN_NOW
+    LOCAL
+    # OPEN_NOW
   ]
 
   __tablename__ = 'tags'

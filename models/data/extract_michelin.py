@@ -78,7 +78,9 @@ class ExtractMichelin(ConnectorEvent):
     if r.status_code == 200:
       parser = BeautifulSoup(r.text, 'html.parser')
 
-      results = {}
+      results = {
+        'url': url
+      }
       results['name'] = parser.find('h2', attrs={'class': 'restaurant-details__heading--title'}).text
 
       address = parser.find('ul', attrs={'class': 'restaurant-details__heading--list'}).find('li').text
@@ -99,6 +101,7 @@ class ExtractMichelin(ConnectorEvent):
         tier = "MICHELIN Bib Gourmand"
       tier = tier.replace("The ", "")
       results['tier'] = "2021 {}".format(tier)
+      print(results['name'], results['tier'], "\n")
 
       try:
         specialties = parser.find('ul', attrs={'class': 'restaurant-details__text-componets--list'}).find_all('li')

@@ -53,8 +53,19 @@ class ExtractEvents(ConnectorEvent):
 
         res_addr = get_from(res, ['address'])
         if res_addr: obj['address'] = res_addr
+        
         res_state = get_from(res, ['state'])
-        if res_state: obj['state'] = res_state
+
+        if not res_state and res_addr:
+          state_match = re.search(r'([A-Z]{2}) +[0-9]+', res_addr)
+          if state_match:
+            obj['state'] = state_match.group(1)
+
+        if not res_state:
+          res_state = 'CA'
+
+        if res_state:
+          obj['state'] = res_state
 
         if ty == ExtractMMV: obj['place_id'] = res['place id']
 
@@ -62,6 +73,7 @@ class ExtractEvents(ConnectorEvent):
         res_obj = get_from(self.data, [res_key], {})
         res_obj.update(obj)
         self.data[res_key] = res_obj
+        print(ty.TYPE, res_key)
 
     # print(json.dumps(self.data, indent=2))
     # print(len(self.data.keys()))
@@ -78,7 +90,12 @@ class ExtractEvents(ConnectorEvent):
 
       place_id = get_from(res, ['place_id'])
       if place_id:
-        # print("Found {} | {} => {}".format(i, place_id, res_key))
+        print("Found {} | {} => {}".format(i, place_id, res_key))
+        if res_key not in connector.data or res != connector.data[res_key]:
+          "\tUpdate"
+          connector.data[res_key] = res
+          db_session.merge(connector)
+          db_session.commit()
         pass
       else:
         place_q = ", ".join([
@@ -131,7 +148,7 @@ class ExtractEvents(ConnectorEvent):
           place_id,
           res['name'])
         )
-        print(res)
+        print("\t{}".format(res))
 
         ev = Event(
           name = res['name'],

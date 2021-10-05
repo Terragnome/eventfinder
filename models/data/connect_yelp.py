@@ -7,7 +7,6 @@ from sqlalchemy import and_, not_
 from yelpapi import YelpAPI
 
 from helpers.secret_helper import get_secret
-
 from models.base import db_session
 from models.connector_event import ConnectorEvent
 from models.event import Event
@@ -49,7 +48,7 @@ class ConnectYelp(ConnectorEvent):
       event_name = event['name']
       event_addr = get_from(event, ['address'])
       event_city = event['city']
-      event_state = get_from(event, ['state'])
+      event_state = get_from(event, ['state'], 'CA')
 
       if not search_results:
         kwargs = {

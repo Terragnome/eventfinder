@@ -28,13 +28,14 @@ class ConnectGoogle(ConnectorEvent):
     ).first()
     self.events = events_connector.data
 
-  def extract(self, name=None, event_id=None, backfill=None):
+  def extract(self, name=None, event_id=None, backfill=None, index=None):
     connector = self.get_connector()
 
     detail_fields = [
       # Basic
       "address_component",
       "adr_address",
+      "business_status",
       "formatted_address",
       "geometry",
       "icon",
@@ -59,7 +60,13 @@ class ConnectGoogle(ConnectorEvent):
       "user_ratings_total"
     ]
 
+    i = 0
     for key, event in self.events.items():
+      i += 1
+      if index and i<=int(index):
+        print("Skip {}".format(i))
+        continue
+
       place_id = get_from(event, ['place_id'])
       place_name = get_from(event, ['name'])
 
@@ -83,6 +90,9 @@ class ConnectGoogle(ConnectorEvent):
 
       results = get_from(results, ["result"])
       if results:
+        # print(json.dumps(connector.data, indent=2))
+        print("**********")
+        # print(json.dumps(results, indent=2))
         connector.data[place_id] = results
         db_session.merge(connector)
         db_session.commit()
@@ -94,6 +104,7 @@ if __name__ == '__main__':
   parser.add_argument('--purge', action="store_true")
   parser.add_argument('--backfill', action="store_true")
   parser.add_argument('--name', action="store")
+  parser.add_argument('--index', action="store")
   parser.add_argument('--event_id', action="store")
   group = parser.add_mutually_exclusive_group()
   args = vars(parser.parse_args())

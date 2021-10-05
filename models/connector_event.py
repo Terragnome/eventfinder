@@ -29,7 +29,7 @@ class ConnectorEvent(Base):
       return None
     key_components = [name, city]
     key_components.extend(args or [])
-    return " | ".join(key_components)
+    return " | ".join(key_components).lower()
 
   @property
   def type(self):
