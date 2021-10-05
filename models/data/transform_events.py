@@ -15,6 +15,7 @@ from models.data.extract_mmv import ExtractMMV
 from models.data.extract_mercurynews import ExtractMercuryNews
 from models.data.extract_michelin import ExtractMichelin
 from models.data.extract_sfchronicle import ExtractSFChronicle
+from models.data.extract_sfchronicle_bayarea25best import ExtractSFChronicleBayArea25Best
 from models.data.connect_google import ConnectGoogle
 from models.data.connect_yelp import ConnectYelp
 from models.data.connect_tmdb import ConnectTMDB
