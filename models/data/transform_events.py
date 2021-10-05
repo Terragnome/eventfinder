@@ -216,7 +216,8 @@ class TransformEvents:
     accolade_connectors = [
       ExtractMercuryNews,
       ExtractMichelin,
-      ExtractSFChronicle
+      ExtractSFChronicle,
+      ExtractSFChronicleBayArea25Best
     ]
     accolades = []
     for conn_type in accolade_connectors:
@@ -232,7 +233,8 @@ class TransformEvents:
       ExtractMMV,
       ExtractMercuryNews,
       ExtractMichelin,
-      ExtractSFChronicle
+      ExtractSFChronicle,
+      ExtractSFChronicleBayArea25Best
     ]
     descriptions = [
       (
