@@ -23,6 +23,14 @@ from utils.get_from import get_from
 
 # TODO: This runs very slowly does not scale, but reduces number of rows for developer tier limit. Refactor for performance
 class TransformEvents:
+  connector_types = [
+    ExtractMMV,
+    ExtractMercuryNews,
+    ExtractMichelin,
+    ExtractSFChronicle,
+    ExtractSFChronicleBayArea25Best
+  ]
+
   def __init__(self):
     self.lookup_place_id = ExtractEvents.get_connector(read_only=True).data
 
@@ -36,7 +44,7 @@ class TransformEvents:
 
     self.connectors = {
       x.TYPE: x.get_connector(read_only=True).data
-      for x in [ConnectGoogle, ConnectYelp, ExtractMMV, ExtractMercuryNews]#, ExtractMichelin, ExtractSFChronicle]
+      for x in self.connector_types
     }
 
   def get_place_id(self, event):
@@ -59,7 +67,7 @@ class TransformEvents:
 
     potential_keys = get_from(self.reverse_lookup_place_id, [place_id])
     if potential_keys:
-      for conn_type in [ExtractMMV, ExtractMercuryNews, ExtractMichelin, ExtractSFChronicle]:
+      for conn_type in self.connector_types:
         lookup = get_from(self.connectors, [conn_type.TYPE])
 
         match = None
@@ -175,21 +183,21 @@ class TransformEvents:
       Event.DETAILS_HOURS:        yelp_hours
     }
 
-    print("\n\n\nyelp")
+    # print("\n\n\nyelp")
     # for x in raw_yelp_hours:
     #   print(x)
-    h = get_from(yelp_details, [Event.DETAILS_HOURS])
-    if h:
-      for i, x in enumerate(h):
-        print(i, x, h[x])
-    print("----------")
-    print("google")
+    # h = get_from(yelp_details, [Event.DETAILS_HOURS])
+    # if h:
+    #   for i, x in enumerate(h):
+    #     print(i, x, h[x])
+    # print("----------")
+    # print("google")
     # for x in raw_google_hours:
     #   print(x)
-    h = get_from(google_details, [Event.DETAILS_HOURS])
-    if h:
-      for i, x in enumerate(h):
-        print(i, x, h[x])
+    # h = get_from(google_details, [Event.DETAILS_HOURS])
+    # if h:
+    #   for i, x in enumerate(h):
+    #     print(i, x, h[x])
 
     event.details = {
       Event.DETAILS_URL: get_from(ev_meta, [ConnectGoogle.TYPE, 'website']),
@@ -214,44 +222,28 @@ class TransformEvents:
       if tag_title:
         event.add_tag(tag_title, Tag.FOOD_DRINK)
 
-    accolade_connectors = [
-      ExtractMercuryNews,
-      ExtractMichelin,
-      ExtractSFChronicle,
-      ExtractSFChronicleBayArea25Best
-    ]
     accolades = []
-    for conn_type in accolade_connectors:
+    for conn_type in self.connector_types:
       match = get_from(ev_meta, [conn_type.TYPE])
       if match:
         accolades.append(match['tier'])
+    
     if accolades:
       event.accolades = sorted(accolades)
 
     self.transform_event_details(event, ev_meta=ev_meta)
 
-    description_connectors = [
-      ExtractMMV,
-      ExtractMercuryNews,
-      ExtractMichelin,
-      ExtractSFChronicle,
-      ExtractSFChronicleBayArea25Best
-    ]
     descriptions = [
       (
         x.TYPE,
         get_from(ev_meta, [x.TYPE, 'url']),
         get_from(ev_meta, [x.TYPE, 'description'])
-      ) for x in description_connectors
+      ) for x in self.connector_types
     ]
     descriptions = [x for x in descriptions if x[2]]
     if descriptions: event.description = descriptions
 
-    specialty_connectors = [
-      ExtractMercuryNews,
-      ExtractMichelin,
-      ExtractSFChronicle
-    ]
+    specialty_connectors = self.connector_types
     specialties = [
       [
         x.TYPE,
