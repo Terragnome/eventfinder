@@ -106,22 +106,25 @@ class ExtractEvents(ConnectorEvent):
 
         print("!!!GEOCODE!!! {} | {} => {}".format(i, res_key, place_q))
 
-        results = self.client.find_place(
-          input = place_q,
-          input_type = 'textquery',
-          fields = ["place_id", "name", "formatted_address"]
-        )
-        res_data = get_from(results, ['candidates', 0], {})
-        
-        res_addr = get_from(res_data, ['formatted_address'])
-        if 'formatted_address' in res_data: del res_data["formatted_address"]
-        if res_addr: res_data["address"] = res_addr
+        try:
+          results = self.client.find_place(
+            input = place_q,
+            input_type = 'textquery',
+            fields = ["place_id", "name", "formatted_address"]
+          )
+          res_data = get_from(results, ['candidates', 0], {})
+          
+          res_addr = get_from(res_data, ['formatted_address'])
+          if 'formatted_address' in res_data: del res_data["formatted_address"]
+          if res_addr: res_data["address"] = res_addr
 
-        res.update(res_data)
+          res.update(res_data)
 
-        connector.data[res_key] = res
-        db_session.merge(connector)
-        db_session.commit()
+          connector.data[res_key] = res
+          db_session.merge(connector)
+          db_session.commit()
+        except Exception as e:
+          print("\t!!!ERROR!!! => {}".format(e))
 
         print("\t{}".format(res))
       i += 1
