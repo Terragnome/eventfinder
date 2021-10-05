@@ -108,6 +108,7 @@ class TransformEvents:
     google_hours = None
     if raw_google_hours:
       google_hours = {}
+
       for x in raw_google_hours:
         d = get_from(x, ['open', 'day']) or get_from(x, ['close', 'day'])
 
@@ -150,6 +151,7 @@ class TransformEvents:
     yelp_hours = None
     if raw_yelp_hours:
       yelp_hours = {}
+
       for x in raw_yelp_hours:
         d = x['day']
         h = {'open': x['start'], 'close': x['end']}
@@ -172,7 +174,7 @@ class TransformEvents:
       Event.DETAILS_HOURS:        yelp_hours
     }
 
-    print("yelp")
+    print("\n\n\nyelp")
     # for x in raw_yelp_hours:
     #   print(x)
     h = get_from(yelp_details, [Event.DETAILS_HOURS])
