@@ -15,6 +15,7 @@ from models.data.extract_mmv import ExtractMMV
 from models.data.extract_mercurynews import ExtractMercuryNews
 from models.data.extract_michelin import ExtractMichelin
 from models.data.extract_sfchronicle import ExtractSFChronicle
+from models.data.extract_sfchronicle_bayarea25best import ExtractSFChronicleBayArea25Best
 
 from utils.get_from import get_from
 
@@ -29,7 +30,8 @@ class ExtractEvents(ConnectorEvent):
       ExtractMMV,
       ExtractMercuryNews,
       ExtractMichelin,
-      ExtractSFChronicle
+      ExtractSFChronicle,
+      ExtractSFChronicleBayArea25Best
     ]
 
     connector = self.get_connector()

@@ -35,9 +35,7 @@ class ExtractSFChronicle(ConnectorEvent):
 
     for i, au in enumerate(sorted(article_urls)):
       results = [x for x in self.parse_article_url(au)]
-
       print(i, json.dumps(results, indent=2))
-
       self.data.extend(results)
 
   def parse_article_url(self, url):
