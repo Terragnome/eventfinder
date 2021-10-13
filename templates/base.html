@@ -1,5 +1,5 @@
-{% set app_name="Omakase" %}
-{% set cachebreaker = 25 %}
+{% set app_title = app_name()+" | "+title if title else app_name() %}
+{% set cachebreaker=app_cachebreaker() %}
 
 <!doctype html>
 <head>
@@ -23,7 +23,7 @@
   <script type='application/javascript' src="{{ url_for('static', filename='js/application.js', v=cachebreaker) }}"></script>
   {% block scripts %}{% endblock %}
 </head>
-<title>{% block title %}{{ app_name }}{% endblock %}</title>
+<title>{% block title %}{{ app_title }}{% endblock %}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
   <div class='app_background'>
   </div>
@@ -35,7 +35,7 @@
   <header class='app_header box_outline'>
     <a id="app_panel_toggle" class="left app_menu"></a>
     <a class='app_title nav_link_get' href="{{ url_for('events') }}">
-      {% block header %}{{ app_name }}{% endblock %}
+      {% block header %}{{ app_name() }}{% endblock %}
     </a>
     <div class='app_login'>
       {% if session.user %}

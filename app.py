@@ -100,6 +100,17 @@ TEMPLATE_USERS_LIST       = "users/_users_list.html"
 TEMPLATE_USER_CARD        = "users/_user_card.html"
 TEMPLATE_USER_PAGE        = "users/_user_page.html"
 
+def app_name():
+  name = "Omakase"
+  if is_prod():
+    return name
+  return "(Dev) {}".format(name)
+app.jinja_env.globals.update(app_name=app_name)
+
+def app_cachebreaker():
+  return 25
+app.jinja_env.globals.update(app_cachebreaker=app_cachebreaker)
+
 def get_oauth2_callback():
   if not is_prod():
     return "https://linfamily.us/auth/"
@@ -383,6 +394,7 @@ def event(event_id):
     template = TEMPLATE_EVENT_PAGE
 
     vargs = {
+      'title': event.display_name,
       'current_user': current_user,
       'event': event
     }

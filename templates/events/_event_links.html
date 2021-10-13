@@ -4,7 +4,7 @@
 <div class='event_links {{"card" if card else "page"}} clearfix'>
   {% if event.urls %}
     {% for url_type, url in event.urls %}
-      <a class='event_link cap_button' target="_blank" href='{{url}}'>
+      <a class='event_link cap_button' href='{{url}}'>
         <div class='icon {{url_type.lower()}}'></div>
         {% set rating = get_from(event.details, [url_type, 'rating']) %}
         {% set review_ct = get_from(event.details, [url_type, 'review_count']) %}

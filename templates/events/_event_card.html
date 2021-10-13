@@ -8,7 +8,7 @@
 
 <div id="event_{{ event.event_id }}" class='entity_card event_container'>
   <div class='event event_card box_outline {{ event_selected_class }}'>
-    <a class='event_header nav_link_get' href="{{ url_for('event', event_id=event.event_id) }}">
+    <a class='event_header' href="{{ url_for('event', event_id=event.event_id) }}" target="_blank">
       {% if not is_skip or is_me %}
         {% if event.img_url %}
           {% with event=event, card=card, vargs=vargs %}{% include "events/_event_accolades.html" %}{% endwith %}
