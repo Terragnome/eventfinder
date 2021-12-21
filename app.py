@@ -108,7 +108,7 @@ def app_name():
 app.jinja_env.globals.update(app_name=app_name)
 
 def app_cachebreaker():
-  return 25
+  return 26
 app.jinja_env.globals.update(app_cachebreaker=app_cachebreaker)
 
 def get_oauth2_callback():
