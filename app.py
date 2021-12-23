@@ -13,6 +13,7 @@ from flask import jsonify
 from flask import redirect, render_template, request
 from flask import url_for
 from flask_session import Session
+from flask_talisman import Talisman, ALLOW_FROM
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 
@@ -71,6 +72,7 @@ import functools
 url_for = functools.partial(url_for, _external=True, _scheme='https')
 
 Session(app)
+talisman = Talisman(app, content_security_policy=None, force_https=True)
 
 param_to_kwarg = {
   'c': 'category',
