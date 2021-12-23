@@ -34,7 +34,7 @@ class Tag(Base):
   OPEN_NOW = "open"
   FLAGS = [
     ACCOLADES,
-    NEARBY,
+    # NEARBY,
     LOCAL
     # OPEN_NOW
   ]

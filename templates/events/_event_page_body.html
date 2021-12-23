@@ -34,30 +34,32 @@
         {% with event=event, card=card, vargs=vargs%}{% include "events/_event_links.html" %}{% endwith %}
         <div class='divider'></div>
       </div>
-      <div class='event_section event_info'>
-        <div class='title'>Info</div>
-        <div class='body clearfix'>
-          {% if event.website%}
-            <div>
-              <div class='icon'>{% include "icon/_website.html" %}</div>
-              <a class='text_link' href='{{event.website}}', target='_blank'>{{strip_url(event.website)}}</a>
-            </div>
-          {% endif %}
-          {% if event.cost %} 
-            <div>
-              <div class='icon'>{% include "icon/_coin.html" %}</div>
-              {{"$"*event.cost}}
-            </div>
-          {% endif %}
-          {% if event.phone %}
-            <div>
-              <div class='icon'>{% include "icon/_phone.html" %}</div>
-              <a class='text_link' href="tel:{{strip_phone(event.phone)}}">{{event.phone}}</a>
-            </div>
-          {% endif %}
+
+      {% if event.website or event.cost or event.phone %}
+        <div class='event_section event_info'>
+          <div class='body'>
+            {% if event.website %}
+              <div>
+                <div class='icon'>{% include "icon/_website.html" %}</div>
+                <a class='text_link' href='{{event.website}}', target='_blank'>{{strip_url(event.website)}}</a>
+              </div>
+            {% endif %}
+            {% if event.cost %} 
+              <div>
+                <div class='icon'>{% include "icon/_coin.html" %}</div>
+                {{"$"*event.cost}}
+              </div>
+            {% endif %}
+            {% if event.phone %}
+              <div>
+                <div class='icon'>{% include "icon/_phone.html" %}</div>
+                <a class='text_link' href="tel:{{strip_phone(event.phone)}}">{{event.phone}}</a>
+              </div>
+            {% endif %}
+          </div>
+          <div class='divider'></div>
         </div>
-        {% include "_expander.html" %}
-      </div>
+      {% endif %}
       {% if event.description %}
         <div class='event_section'>
           <div class='title'>Summary</div>
@@ -95,3 +97,5 @@
   </div>
   {% with event=event, card=card, vargs=vargs %}{% include "events/_event_accolades.html" %}{% endwith %}
 </div>
+
+<div class='event_page_map'>{% include "events/_event_page_map.html" %}</div>

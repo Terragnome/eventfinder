@@ -1,4 +1,4 @@
- :root{
+:root{
   --dark-color: #A0A0A0;
   --mid-color: #D0D0D0;
   --neutral-color: #DEDEDE;
@@ -686,6 +686,10 @@ svg{
   margin-top: 30px;
 }
 
+.event_page_map{
+  float: right;
+}
+
 .event_name{
   text-transform: uppercase;
 }
@@ -768,17 +772,19 @@ svg{
   content: " ▼";
 }
 
-.event_chips > .cap_button.cap_group.highlighted::after
-.event_chips > .cap_button.cap_group.selected.highlighted::after,
-{
+.event_chips > .cap_button.cap_group.highlighted::after,
+.event_chips > .cap_button.cap_group.selected.highlighted::after {
   content: " ▲";
 }
 
 .event_info > .body > div{
-  float: left;
-  font-size: 13px;
+  font-size: 12px;
   /*margin: 15px auto 15px auto;*/
-  margin: 15px;
+  margin: 10px 15px 10px 15px;
+}
+
+.event_section.event_info > .body {
+  margin:  0px;
 }
 
 .event_info > .body > div > .icon{
@@ -788,8 +794,12 @@ svg{
 }
 
 .event_info > .body > div > .icon > svg{
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
+}
+
+.event_info > .body > div > .text_link {
+  font-weight: normal;
 }
 
 .event_collapse{
@@ -834,6 +844,7 @@ svg{
 
 .event_section {
   font-size: 13px;
+  width: 100%;
   text-align: left;
   text-transform: none;
 }
@@ -861,10 +872,6 @@ svg{
   text-align: left;
 }
 
-.event_section.event_users_section > .divider{
-  margin-top: 10px;
-}
-
 .event_section > .body > a {
   float: left;
   font-weight: bold;
@@ -879,7 +886,9 @@ svg{
 }
 
 .event_section > .divider {
-  margin-top: 20px;
+  text-align: center;
+  margin-top: 10px;
+  margin-left: 150px; margin-right: 150px;
   margin-bottom: 0px;
 }
 
