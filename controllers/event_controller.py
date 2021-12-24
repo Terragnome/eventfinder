@@ -67,7 +67,7 @@ class EventController:
   def _filter_events_by_flags(klass, events, flags):
     if Tag.ACCOLADES in flags:
       events = events.filter(cast(Event.accolades, sa.String) != 'null')
-    if Tag.NEARBY in flags or Tag.LOCAL in flags:
+    if Tag.NEARBY in flags in flags:
       geo_latlon, geo_city = get_geo()
 
       current_app.logger.debug("geo latlon: {} | city: {}".format(
@@ -81,12 +81,12 @@ class EventController:
         # 1 deg latitude ~69 miles
         # 1 deg longitude ~55 miles
 
-        # ~20mi x ~20mi bbox around geo_latlon
-        if Tag.LOCAL in flags:
-          lat_mod = 0.082
-          lng_mod = 0.091
         # ~10mi x ~10mi bbox around geo_latlon
-        elif Tag.NEARBY in flags:
+        # lat_mod = 0.082
+        # lng_mod = 0.091
+        
+        # ~20mi x ~20mi bbox around geo_latlon
+        if Tag.NEARBY in flags:
           lat_mod = 0.014
           lng_mod = 0.091
 

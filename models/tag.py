@@ -30,12 +30,10 @@ class Tag(Base):
 
   ACCOLADES = "accolades"
   NEARBY = "nearby"
-  LOCAL = "local"
   OPEN_NOW = "open"
   FLAGS = [
     ACCOLADES,
     NEARBY,
-    LOCAL
     # OPEN_NOW
   ]
 
