@@ -263,13 +263,15 @@ class EventController:
     tags = distinct_tags.values()
 
 
-    category_cts = {c[0]: c[1] for c in category_query}
-    categories = [
-      {
-        'chip_name': c,
-        'ct': get_from(category_cts, [c], ""),
-      } for c in Tag.TYPES
-    ]
+    # category_cts = {c[0]: c[1] for c in category_query}
+    # categories = [
+    #   {
+    #     'chip_name': c,
+    #     'ct': get_from(category_cts, [c], ""),
+    #   } for c in Tag.TYPES
+    # ]
+    categories=[]
+    #
 
     if selected_categories:
       is_any_category_selected = False
