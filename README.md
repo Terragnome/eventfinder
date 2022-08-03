@@ -4,6 +4,7 @@
 # Needs config/secrets/client_secret.json
 # Needs config/secrets/EventFinder-xxxx.json
 # chrome://flags/#allow-insecure-localhost
+# gcloud auth configure docker
 
 # ============================== #
 # Auth                           #
