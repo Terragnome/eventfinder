@@ -26,22 +26,7 @@ class ExtractSFChronicleBayArea25Best(ConnectorEvent):
     if r.status_code != 200: return
 
     self.parser = BeautifulSoup(r.text, 'html.parser')
-    # self.parse_restaurants()
     self.parse_subarticles()
-
-  # def parse_restaurants(self):
-  #   tier = "2021 SF Chronicle Top 25 Restaurants"
-
-  #   restaurants = self.parser.find_all('div', attrs={'class': 'top-100-item'})
-  #   for res in restaurants:
-  #     result = {}
-  #     result['name'] = res.find('h4').text
-  #     result['city'] = res.find('p', attrs={'class': 'restaurant-location'}).find('em').text.split(",")[-1].strip()
-  #     short_desc = res.find('div', attrs={'class': 'checkbox-container'}).find_next('p').text
-  #     full_desc = res.find('div', attrs={'class': 'to-order'}).text
-  #     result['description'] = " ".join([short_desc, full_desc])
-  #     result['tier'] = tier
-  #     self.data.append(result)
 
   def parse_subarticles(self):
     article_urls = []
@@ -61,7 +46,7 @@ class ExtractSFChronicleBayArea25Best(ConnectorEvent):
       parser = BeautifulSoup(r.text, 'html.parser')
 
       title = parser.find('div', attrs={'id': 'title'}).find('h1').text
-      tier = "2021 SF Chronicle {}".format(title)
+      tier = "SF Chronicle {}".format(title)
 
       restaurants_list = parser.find_all('section', attrs={'class': 'restaurants-list'})
       for res_sec in restaurants_list:
@@ -79,6 +64,7 @@ class ExtractSFChronicleBayArea25Best(ConnectorEvent):
             results['city'] = addr.split(",")[-1].strip()
             results['description']  = desc
             results['tier'] = tier
+            results['url'] = url
           except Exception as e:
             pass
 

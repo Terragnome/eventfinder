@@ -104,7 +104,7 @@ class ExtractMichelin(ConnectorEvent):
       except Exception as e:
         classification = None
         tier = None
-      results['tier'] = "2022 {}".format(tier)
+      results['tier'] = tier
       print(results['name'], results['tier'], "\n")
 
       try:

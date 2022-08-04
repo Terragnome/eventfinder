@@ -15,7 +15,7 @@ from utils.get_from import get_from
 class ExtractSFChronicle(ConnectorEvent):
   TYPE = "SF Chronicle"
 
-  TARGET_URLS = "https://www.sfchronicle.com/top-100-restaurants/"
+  TARGET_URLS = "https://www.sfchronicle.com/projects/best-san-francisco-restaurants/"
   ID = TARGET_URLS
 
   def __init__(self):
