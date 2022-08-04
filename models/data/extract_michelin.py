@@ -94,13 +94,17 @@ class ExtractMichelin(ConnectorEvent):
       description = parser.find('div', attrs={'class': 'restaurant-details__description--text'}).find_all('p')
       results['description'] = " ".join([p.text.strip() for p in description])
 
-      classification = parser.find('ul', attrs={'class': 'restaurant-details__classification--list'}).find('li').text[2:].strip()
-      
-      tier = classification.split(":")[0].strip()
-      if tier == "Bib Gourmand":
-        tier = "MICHELIN Bib Gourmand"
-      tier = tier.replace("The ", "")
-      results['tier'] = "2021 {}".format(tier)
+      try:
+        classification = parser.find('ul', attrs={'class': 'restaurant-details__classification--list'}).find('li').text[2:].strip()
+        
+        tier = classification.split(":")[0].strip()
+        if tier == "Bib Gourmand":
+          tier = "MICHELIN Bib Gourmand"
+        tier = tier.replace("The ", "")
+      except Exception as e:
+        classification = None
+        tier = None
+      results['tier'] = "2022 {}".format(tier)
       print(results['name'], results['tier'], "\n")
 
       try:

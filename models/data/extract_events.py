@@ -45,6 +45,10 @@ class ExtractEvents(ConnectorEvent):
         )
       ).first()
 
+      if not ce or not ce.data:
+        print("!!!SKIP!!! ", ty)
+        continue
+
       for key, res in ce.data.items():
         obj = {
           'name': res['name'],

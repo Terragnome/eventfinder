@@ -253,7 +253,7 @@ svg{
   margin: 6px;
 }
 .app_search > .cap_button::after {
-  content: " ✖";
+  content: " ×";
 }
 
 .app_search > .search_field{
@@ -762,7 +762,8 @@ svg{
 }
 
 .event_chips > .cap_button.selected::after { 
-  content: " ✕";
+  /*content: " ✕";*/
+  content: " ▼";
 }
 .event_chips > .cap_button.cap_group.selected::after { 
   content: " ▼";

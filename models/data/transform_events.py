@@ -44,10 +44,11 @@ class TransformEvents:
           self.reverse_lookup_place_id[place_id] = []
         self.reverse_lookup_place_id[place_id].append(k)
 
-    self.connectors = {
-      x.TYPE: x.get_connector(read_only=True).data
-      for x in self.connector_types
-    }
+    self.connectors = {}
+    for ct in self.connector_types:
+      conn = ct.get_connector(read_only=True)
+      if conn and conn.data:
+        self.connectors[ct.TYPE] = conn.data
 
   def get_place_id(self, event):
     return get_from(
